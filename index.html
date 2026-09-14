@@ -1,0 +1,5970 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Doctor MIMO™ — V5.3</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<style>
+:root{
+    --bg:#071019;
+    --bg2:#0b1621;
+    --card:#0e1a25;
+    --card2:#09131d;
+    --border:#203444;
+    --text:#edf5fa;
+    --muted:#8ea2b3;
+    --accent:#45d8ff;
+    --green:#3be58e;
+    --yellow:#ffd166;
+    --red:#ff6578;
+    --blue:#78a5ff;
+    --shadow:0 15px 45px rgba(0,0,0,.24);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    font-family:
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 85% -10%,
+            rgba(69,216,255,.10),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            var(--bg) 0%,
+            #08121c 100%
+        );
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    border:1px solid var(--border);
+    background:#132332;
+    color:var(--text);
+    border-radius:12px;
+    padding:11px 16px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.18s ease;
+}
+
+button:hover{
+    transform:translateY(-1px);
+    background:#183044;
+}
+
+button:active{
+    transform:translateY(0);
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
+}
+
+button.primary{
+    border:none;
+    color:#041018;
+    background:
+        linear-gradient(
+            135deg,
+            #34d7ff,
+            #6d96ff
+        );
+}
+
+button.danger{
+    color:#ff9aa7;
+    background:#25151b;
+    border-color:#46262f;
+}
+
+.container{
+    width:min(1400px,94%);
+    margin:22px auto 50px;
+}
+
+.header{
+    padding:24px 26px;
+    margin-bottom:18px;
+    border:1px solid var(--border);
+    border-radius:22px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.012)
+        );
+    box-shadow:var(--shadow);
+}
+
+.header h1{
+    margin:0 0 7px;
+    font-size:clamp(25px,3vw,40px);
+    letter-spacing:-.5px;
+}
+
+.header p{
+    margin:0;
+    color:var(--muted);
+    line-height:1.8;
+}
+
+.mainGrid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:18px;
+}
+
+.card{
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:18px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(14,26,37,.98),
+            rgba(9,19,29,.98)
+        );
+    box-shadow:var(--shadow);
+}
+
+.card h2{
+    margin:0 0 16px;
+    font-size:19px;
+}
+
+.videoWrap{
+    position:relative;
+    aspect-ratio:16/10;
+    width:100%;
+    overflow:hidden;
+    background:#02070c;
+    border:1px solid #203443;
+    border-radius:18px;
+}
+
+#video{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transform:scaleX(-1);
+}
+
+#overlay{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    transform:scaleX(-1);
+    pointer-events:none;
+}
+
+.faceStatus{
+    position:absolute;
+    top:13px;
+    right:13px;
+    z-index:10;
+    padding:8px 13px;
+    border-radius:999px;
+    background:rgba(0,0,0,.58);
+    color:#d8e6ee;
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);
+    font-size:12px;
+    font-weight:800;
+}
+
+.faceStatus.ok{
+    color:#04150b;
+    background:rgba(59,229,142,.95);
+}
+
+.faceStatus.warn{
+    color:#2a2104;
+    background:rgba(255,209,102,.95);
+}
+
+.faceStatus.bad{
+    color:#31060d;
+    background:rgba(255,99,117,.95);
+}
+
+.roi{
+    position:absolute;
+    display:none;
+    left:50%;
+    top:32%;
+    width:26%;
+    height:15%;
+    transform:translate(-50%,-50%);
+    border:2px solid rgba(69,216,255,.88);
+    border-radius:18px;
+    pointer-events:none;
+    box-shadow:0 0 25px rgba(69,216,255,.12);
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-top:14px;
+}
+
+.formGrid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+label{
+    color:var(--muted);
+    font-size:12px;
+}
+
+input,
+select{
+    width:100%;
+    padding:11px 12px;
+    border-radius:11px;
+    border:1px solid #263949;
+    background:#08131d;
+    color:var(--text);
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:var(--accent);
+}
+
+.metrics{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+
+.metric{
+    padding:14px;
+    border:1px solid #1d313f;
+    border-radius:15px;
+    background:#08131d;
+}
+
+.metric .label{
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.metric .value{
+    font-size:26px;
+    font-weight:900;
+    line-height:1;
+}
+
+.metric .sub{
+    margin-top:6px;
+    color:#72899a;
+    font-size:11px;
+}
+
+.statusRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:11px 13px;
+    margin-top:9px;
+    border:1px solid #1b2e3c;
+    border-radius:14px;
+    background:#08131d;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    padding:5px 10px;
+    font-size:11px;
+    font-weight:900;
+}
+
+.badge.high{
+    color:var(--green);
+    background:rgba(59,229,142,.12);
+}
+
+.badge.medium{
+    color:var(--yellow);
+    background:rgba(255,209,102,.12);
+}
+
+.badge.low{
+    color:var(--red);
+    background:rgba(255,99,117,.12);
+}
+
+.reasonBox{
+    margin-top:12px;
+    padding:11px 13px;
+    border:1px solid #1b2e3c;
+    border-radius:14px;
+    background:#08131d;
+}
+
+.reasonTitle{
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:5px;
+}
+
+.reasonText{
+    font-size:13px;
+    line-height:1.65;
+}
+
+.signalBox{
+    margin-top:14px;
+    padding:10px;
+    border:1px solid #1b303e;
+    border-radius:16px;
+    background:#061019;
+}
+
+.signal{
+    display:block;
+    width:100%;
+    height:180px;
+}
+
+.report{
+    min-height:150px;
+    margin-top:14px;
+    padding:14px;
+    white-space:pre-wrap;
+    line-height:1.8;
+    border:1px solid #1c2e3d;
+    border-radius:15px;
+    background:#08131d;
+    font-size:13px;
+}
+
+.small{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.7;
+}
+
+.tableWrap{
+    overflow:auto;
+    margin-top:15px;
+}
+
+table{
+    width:100%;
+    min-width:1200px;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:9px 10px;
+    border-bottom:1px solid #1a2d3b;
+    text-align:right;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+th{
+    position:sticky;
+    top:0;
+    z-index:2;
+    color:#d6e4ed;
+    background:#0b1721;
+}
+
+td{
+    color:#a9b9c6;
+}
+
+.good{
+    color:var(--green)!important;
+}
+
+.warnText{
+    color:var(--yellow)!important;
+}
+
+.badText{
+    color:var(--red)!important;
+}
+
+@media(max-width:1000px){
+
+    .mainGrid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:620px){
+
+    .container{
+        width:96%;
+    }
+
+    .header,
+    .card{
+        padding:14px;
+        border-radius:17px;
+    }
+
+    .formGrid,
+    .metrics{
+        grid-template-columns:1fr;
+    }
+
+    .controls button{
+        width:100%;
+    }
+
+    .metric .value{
+        font-size:23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <section class="header">
+        <h1>Doctor MIMO™</h1>
+
+        <p>
+            Robust Multi-Method rPPG & Measurement Intelligence Engine — V5.3
+            <br>
+            Research Prototype / Reference Validation Edition
+        </p>
+    </section>
+
+
+    <div class="mainGrid">
+
+        <!-- =================================================
+             CAMERA
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>1. الكاميرا وتحليل الوجه</h2>
+
+            <div class="videoWrap">
+
+                <video
+                    id="video"
+                    autoplay
+                    playsinline
+                    muted>
+                </video>
+
+                <canvas id="overlay"></canvas>
+
+                <div
+                    id="faceStatus"
+                    class="faceStatus">
+                    في انتظار الكاميرا
+                </div>
+
+                <div
+                    id="roi"
+                    class="roi">
+                </div>
+
+            </div>
+
+
+            <div class="controls">
+
+                <button
+                    id="startBtn"
+                    class="primary">
+                    تشغيل الكاميرا
+                </button>
+
+                <button
+                    id="stopBtn"
+                    disabled>
+                    إيقاف الكاميرا
+                </button>
+
+                <button
+                    id="scanBtn"
+                    class="primary"
+                    disabled>
+                    فحص 15 ثانية
+                </button>
+
+                <button
+                    id="clearBtn"
+                    class="danger">
+                    مسح الإشارة
+                </button>
+
+            </div>
+
+
+            <div class="statusRow">
+                <span>حالة التسجيل</span>
+                <strong id="recordingState">
+                    غير نشط
+                </strong>
+            </div>
+
+            <div class="statusRow">
+                <span>العينات</span>
+                <strong id="samplesCount">
+                    0
+                </strong>
+            </div>
+
+            <div class="statusRow">
+                <span>معدل أخذ العينات</span>
+                <strong id="sampleRateValue">
+                    --
+                </strong>
+            </div>
+
+            <div class="statusRow">
+                <span>حالة التحليل</span>
+                <strong id="analysisState">
+                    جاهز
+                </strong>
+            </div>
+
+
+            <div class="signalBox">
+
+                <canvas
+                    id="signalCanvas"
+                    class="signal">
+                </canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ANALYSIS
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>2. MIMO Fusion Analysis</h2>
+
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="label">
+                        Final MIMO BPM
+                    </div>
+
+                    <div
+                        id="bpmValue"
+                        class="value">
+                        --
+                    </div>
+
+                    <div class="sub">
+                        Robust fused estimate
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="label">
+                        Green
+                    </div>
+
+                    <div
+                        id="greenBpm"
+                        class="value">
+                        --
+                    </div>
+
+                    <div class="sub">
+                        Green rPPG
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="label">
+                        CHROM
+                    </div>
+
+                    <div
+                        id="chromBpm"
+                        class="value">
+                        --
+                    </div>
+
+                    <div class="sub">
+                        CHROM-style
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="label">
+                        POS
+                    </div>
+
+                    <div
+                        id="posBpm"
+                        class="value">
+                        --
+                    </div>
+
+                    <div class="sub">
+                        POS-style
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="label">
+                        Signal Quality
+                    </div>
+
+                    <div
+                        id="qualityValue"
+                        class="value">
+                        0%
+                    </div>
+
+                    <div class="sub">
+                        SQI heuristic
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="label">
+                        Measurement Confidence
+                    </div>
+
+                    <div
+                        id="confidenceValue"
+                        class="value">
+                        0%
+                    </div>
+
+                    <div
+                        id="confidenceLabel"
+                        class="sub">
+                        LOW
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="statusRow">
+                <span>Method Agreement</span>
+                <strong id="agreementValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Candidate BPM</span>
+                <strong id="candidateValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Candidate Support</span>
+                <strong id="supportValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Temporal Stability</span>
+                <strong id="temporalValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Face Stability</span>
+                <strong id="faceStabilityValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Lighting</span>
+                <strong id="lightingValue">--</strong>
+            </div>
+
+
+            <div class="statusRow">
+                <span>Overall State</span>
+
+                <span
+                    id="measurementBadge"
+                    class="badge low">
+                    LOW
+                </span>
+
+            </div>
+
+
+            <div class="reasonBox">
+
+                <div class="reasonTitle">
+                    سبب قرار الثقة
+                </div>
+
+                <div
+                    id="confidenceReason"
+                    class="reasonText">
+                    في انتظار بيانات كافية.
+                </div>
+
+            </div>
+
+
+            <div
+                id="report"
+                class="report">
+                لم يتم إجراء قياس بعد.
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESEARCH LAB
+    ====================================================== -->
+
+    <section
+        class="card"
+        style="margin-top:18px;">
+
+        <h2>
+            3. Research Recording Lab
+        </h2>
+
+
+        <div class="formGrid">
+
+            <div class="field">
+
+                <label>
+                    Subject ID
+                </label>
+
+                <input
+                    id="subjectId"
+                    placeholder="S001">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Session Label
+                </label>
+
+                <input
+                    id="sessionLabel"
+                    value="Baseline">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Environment
+                </label>
+
+                <select id="environment">
+
+                    <option>Indoor</option>
+                    <option>Natural Light</option>
+                    <option>Bright Light</option>
+                    <option>Low Light</option>
+                    <option>Mixed Light</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Movement
+                </label>
+
+                <select id="movement">
+
+                    <option>Low Movement</option>
+                    <option>Medium Movement</option>
+                    <option>High Movement</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Reference BPM — KF-65B
+                </label>
+
+                <input
+                    id="refBpm"
+                    type="number"
+                    min="30"
+                    max="220"
+                    placeholder="80">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Reference SYS
+                </label>
+
+                <input
+                    id="refSys"
+                    type="number"
+                    min="50"
+                    max="250"
+                    placeholder="124">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Reference DIA
+                </label>
+
+                <input
+                    id="refDia"
+                    type="number"
+                    min="30"
+                    max="180"
+                    placeholder="72">
+
+            </div>
+
+        </div>
+
+
+        <div class="controls">
+
+            <button
+                id="saveSessionBtn"
+                class="primary">
+                حفظ جلسة البحث
+            </button>
+
+            <button id="exportCsvBtn">
+                تصدير CSV
+            </button>
+
+            <button id="exportJsonBtn">
+                تصدير JSON
+            </button>
+
+            <button
+                id="clearSessionsBtn"
+                class="danger">
+                حذف كل الجلسات
+            </button>
+
+        </div>
+
+
+        <div
+            class="small"
+            style="margin-top:12px;">
+
+            المرجع الخارجي يستخدم بعد القياس للتحقق من الأداء.
+            لا يدخل في حساب الـMIMO BPM أو Measurement Confidence.
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DATABASE
+    ====================================================== -->
+
+    <section
+        class="card"
+        style="margin-top:18px;">
+
+        <h2>
+            4. Recorded Sessions
+        </h2>
+
+        <div class="small">
+            يتم حفظ جلسات البحث محليًا داخل المتصفح.
+        </div>
+
+
+        <div class="tableWrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Session</th>
+                        <th>Subject</th>
+                        <th>Environment</th>
+                        <th>Movement</th>
+                        <th>MIMO</th>
+                        <th>Reference</th>
+                        <th>Error</th>
+                        <th>Abs Error</th>
+                        <th>Quality</th>
+                        <th>Confidence</th>
+                        <th>Agreement</th>
+                        <th>Support</th>
+                        <th>Green</th>
+                        <th>CHROM</th>
+                        <th>POS</th>
+                        <th>SYS</th>
+                        <th>DIA</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody
+                    id="sessionsTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const video =
+    document.getElementById("video");
+
+const overlay =
+    document.getElementById("overlay");
+
+const overlayCtx =
+    overlay.getContext("2d");
+
+const signalCanvas =
+    document.getElementById("signalCanvas");
+
+const signalCtx =
+    signalCanvas.getContext("2d");
+
+const faceStatus =
+    document.getElementById("faceStatus");
+
+const roiBox =
+    document.getElementById("roi");
+
+
+/* =========================================================
+   CAMERA / FACE STATE
+========================================================= */
+
+let faceMesh = null;
+let camera = null;
+
+let cameraRunning = false;
+let faceDetected = false;
+
+let previousFaceCenter = null;
+
+
+/* =========================================================
+   RECORDING STATE
+========================================================= */
+
+let recording = false;
+let recordingStart = 0;
+let recordingTimer = null;
+
+
+/* =========================================================
+   RAW SIGNAL
+========================================================= */
+
+let signalTimes = [];
+let redSignal = [];
+let greenSignal = [];
+let blueSignal = [];
+
+
+/* =========================================================
+   CURRENT STATE
+========================================================= */
+
+let latestLighting = 0;
+let latestFaceStability = 0;
+
+let currentBpm = null;
+
+let latestSignalQuality = 0;
+let latestConfidence = 0;
+
+let latestAnalysis = null;
+
+let currentFusion = {
+
+    finalBpm:null,
+
+    candidateBpm:null,
+
+    candidateSupport:0,
+
+    agreement:0,
+
+    spread:Infinity,
+
+    methodValues:[],
+
+    methodCount:0,
+
+    temporalBpm:null,
+
+    temporalSpread:Infinity,
+
+    green:null,
+    chrom:null,
+    pos:null
+};
+
+
+/* =========================================================
+   PERFORMANCE
+========================================================= */
+
+let lastAnalysisTime = 0;
+let analysisBusy = false;
+
+const ANALYSIS_INTERVAL = 500;
+
+const MAX_RAW_SAMPLES = 700;
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+const STORAGE_KEY =
+    "doctor_mimo_v53_sessions";
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+function clamp(
+    value,
+    min,
+    max
+){
+
+    return Math.max(
+        min,
+        Math.min(max,value)
+    );
+}
+
+
+function mean(arr){
+
+    if(!arr.length){
+        return 0;
+    }
+
+    let sum = 0;
+
+    for(let i=0;i<arr.length;i++){
+        sum += arr[i];
+    }
+
+    return sum/arr.length;
+}
+
+
+function std(arr){
+
+    if(arr.length < 2){
+        return 0;
+    }
+
+    const m =
+        mean(arr);
+
+    let total = 0;
+
+    for(let i=0;i<arr.length;i++){
+
+        const d =
+            arr[i]-m;
+
+        total += d*d;
+    }
+
+    return Math.sqrt(
+        total/(arr.length-1)
+    );
+}
+
+
+function median(arr){
+
+    if(!arr.length){
+        return 0;
+    }
+
+    const values =
+        [...arr].sort(
+            (a,b)=>a-b
+        );
+
+    const middle =
+        Math.floor(
+            values.length/2
+        );
+
+    return (
+        values.length%2
+            ? values[middle]
+            : (
+                values[middle-1]+
+                values[middle]
+            )/2
+    );
+}
+
+
+function fmt(
+    value,
+    decimals=1
+){
+
+    return Number.isFinite(value)
+        ? value.toFixed(decimals)
+        : "--";
+}
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function getSessions(){
+
+    try{
+
+        const parsed =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE_KEY
+                ) || "[]"
+            );
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    }catch(error){
+
+        return [];
+    }
+}
+
+
+function saveSessions(
+    sessions
+){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(sessions)
+    );
+}
+
+
+/* =========================================================
+   SIGNAL PROCESSING
+========================================================= */
+
+function detrend(signal){
+
+    if(signal.length < 3){
+        return [...signal];
+    }
+
+    const n =
+        signal.length;
+
+    let sx = 0;
+    let sy = 0;
+    let sxy = 0;
+    let sxx = 0;
+
+    for(let i=0;i<n;i++){
+
+        const x = i;
+        const y = signal[i];
+
+        sx += x;
+        sy += y;
+        sxy += x*y;
+        sxx += x*x;
+    }
+
+    const denominator =
+        n*sxx-sx*sx;
+
+    const slope =
+        Math.abs(denominator)<1e-12
+            ? 0
+            : (
+                n*sxy-sx*sy
+            )/denominator;
+
+    const intercept =
+        (sy-slope*sx)/n;
+
+    const result =
+        new Array(n);
+
+    for(let i=0;i<n;i++){
+
+        result[i] =
+            signal[i]-
+            (
+                intercept+
+                slope*i
+            );
+    }
+
+    return result;
+}
+
+
+/*
+ * First-order low-pass.
+ */
+function lowPass(
+    signal,
+    cutoff,
+    fs
+){
+
+    if(
+        signal.length < 2 ||
+        cutoff <= 0 ||
+        fs <= 0
+    ){
+        return [...signal];
+    }
+
+    const dt =
+        1/fs;
+
+    const rc =
+        1/
+        (
+            2*
+            Math.PI*
+            cutoff
+        );
+
+    const alpha =
+        dt/
+        (rc+dt);
+
+    const out =
+        new Array(
+            signal.length
+        );
+
+    out[0] =
+        signal[0];
+
+    for(let i=1;i<signal.length;i++){
+
+        out[i] =
+            out[i-1]+
+            alpha*
+            (
+                signal[i]-
+                out[i-1]
+            );
+    }
+
+    return out;
+}
+
+
+/*
+ * First-order high-pass.
+ */
+function highPass(
+    signal,
+    cutoff,
+    fs
+){
+
+    if(
+        signal.length < 2 ||
+        cutoff <= 0 ||
+        fs <= 0
+    ){
+        return [...signal];
+    }
+
+    const dt =
+        1/fs;
+
+    const rc =
+        1/
+        (
+            2*
+            Math.PI*
+            cutoff
+        );
+
+    const alpha =
+        rc/
+        (rc+dt);
+
+    const out =
+        new Array(
+            signal.length
+        );
+
+    out[0] = 0;
+
+    for(let i=1;i<signal.length;i++){
+
+        out[i] =
+            alpha*
+            (
+                out[i-1]+
+                signal[i]-
+                signal[i-1]
+            );
+    }
+
+    return out;
+}
+
+
+/*
+ * Actual lightweight band-pass:
+ * 0.65–3.5 Hz.
+ */
+function bandpass(
+    signal,
+    fs
+){
+
+    if(
+        signal.length <
+        Math.round(fs*3)
+    ){
+        return [...signal];
+    }
+
+    const detrended =
+        detrend(signal);
+
+    const high =
+        highPass(
+            detrended,
+            .65,
+            fs
+        );
+
+    const band =
+        lowPass(
+            high,
+            3.5,
+            fs
+        );
+
+    return band;
+}
+
+
+/* =========================================================
+   INTERPOLATION / RESAMPLING
+========================================================= */
+
+function resampleUniform(
+    data,
+    times,
+    targetFs=20
+){
+
+    if(
+        data.length < 5 ||
+        data.length !== times.length
+    ){
+
+        return {
+            data:[],
+            times:[],
+            fs:targetFs
+        };
+    }
+
+    const start =
+        times[0];
+
+    const end =
+        times[times.length-1];
+
+    if(end<=start){
+        return {
+            data:[],
+            times:[],
+            fs:targetFs
+        };
+    }
+
+    const step =
+        1/targetFs;
+
+    const outputData = [];
+    const outputTimes = [];
+
+    let index = 0;
+
+    for(
+        let t=start;
+        t<=end;
+        t+=step
+    ){
+
+        while(
+            index<times.length-2 &&
+            times[index+1]<t
+        ){
+
+            index++;
+        }
+
+        const t1 =
+            times[index];
+
+        const t2 =
+            times[
+                Math.min(
+                    index+1,
+                    times.length-1
+                )
+            ];
+
+        const y1 =
+            data[index];
+
+        const y2 =
+            data[
+                Math.min(
+                    index+1,
+                    data.length-1
+                )
+            ];
+
+        let value =
+            y1;
+
+        if(t2>t1){
+
+            const ratio =
+                (t-t1)/(t2-t1);
+
+            value =
+                y1+
+                (y2-y1)*ratio;
+        }
+
+        outputTimes.push(t);
+        outputData.push(value);
+    }
+
+    return {
+        data:outputData,
+        times:outputTimes,
+        fs:targetFs
+    };
+}
+
+
+/* =========================================================
+   DFT / SPECTRAL ANALYSIS
+========================================================= */
+
+function estimateBpmDFT(
+    signal,
+    fs
+){
+
+    if(
+        signal.length <
+        Math.round(fs*5)
+    ){
+
+        return {
+            bpm:null,
+            peakPower:0,
+            prominence:0,
+            snr:0
+        };
+    }
+
+    const x =
+        detrend(signal);
+
+    const deviation =
+        std(x);
+
+    if(deviation < 1e-8){
+
+        return {
+            bpm:null,
+            peakPower:0,
+            prominence:0,
+            snr:0
+        };
+    }
+
+    const normalized =
+        x.map(
+            v=>v/deviation
+        );
+
+    const minHz =
+        .65;
+
+    const maxHz =
+        3.0;
+
+    const step =
+        .01;
+
+    const spectrum = [];
+
+    let best =
+        null;
+
+    for(
+        let frequency=minHz;
+        frequency<=maxHz;
+        frequency+=step
+    ){
+
+        let re = 0;
+        let im = 0;
+
+        for(
+            let i=0;
+            i<normalized.length;
+            i++
+        ){
+
+            const phase =
+                2*
+                Math.PI*
+                frequency*
+                i/fs;
+
+            re +=
+                normalized[i]*
+                Math.cos(phase);
+
+            im -=
+                normalized[i]*
+                Math.sin(phase);
+        }
+
+        const power =
+            re*re+im*im;
+
+        const item = {
+            frequency,
+            power
+        };
+
+        spectrum.push(item);
+
+        if(
+            !best ||
+            power>best.power
+        ){
+            best=item;
+        }
+    }
+
+    if(!best){
+
+        return {
+            bpm:null,
+            peakPower:0,
+            prominence:0,
+            snr:0
+        };
+    }
+
+
+    /*
+     * Local-vs-background prominence.
+     */
+    const neighborhood =
+        spectrum.filter(
+            item =>
+                Math.abs(
+                    item.frequency-
+                    best.frequency
+                )>.08
+        );
+
+    const backgroundValues =
+        neighborhood
+            .map(
+                item=>item.power
+            );
+
+    const background =
+        backgroundValues.length
+            ? median(backgroundValues)
+            : 0;
+
+    const prominence =
+        best.power>0
+            ? clamp(
+                (
+                    best.power-
+                    background
+                )/
+                best.power,
+                0,
+                1
+            )
+            : 0;
+
+    const snr =
+        background>0
+            ? clamp(
+                (
+                    best.power/
+                    background
+                )/10,
+                0,
+                1
+            )
+            : 1;
+
+    return {
+        bpm:
+            best.frequency*60,
+
+        peakPower:
+            best.power,
+
+        prominence,
+
+        snr
+    };
+}
+
+
+/* =========================================================
+   AUTOCORRELATION
+========================================================= */
+
+function autocorrelationScore(
+    signal,
+    fs
+){
+
+    if(
+        signal.length <
+        fs*5
+    ){
+        return 0;
+    }
+
+    const x =
+        detrend(signal);
+
+    const minLag =
+        Math.max(
+            1,
+            Math.floor(
+                fs*(60/180)
+            )
+        );
+
+    const maxLag =
+        Math.min(
+            x.length-2,
+            Math.floor(
+                fs*(60/42)
+            )
+        );
+
+    if(maxLag<=minLag){
+        return 0;
+    }
+
+    let best = -Infinity;
+
+    for(
+        let lag=minLag;
+        lag<=maxLag;
+        lag++
+    ){
+
+        let sum = 0;
+        let count = 0;
+
+        for(
+            let i=lag;
+            i<x.length;
+            i++
+        ){
+
+            sum +=
+                x[i]*
+                x[i-lag];
+
+            count++;
+        }
+
+        if(count){
+
+            const correlation =
+                sum/count;
+
+            if(
+                correlation>best
+            ){
+                best=correlation;
+            }
+        }
+    }
+
+    return Number.isFinite(best)
+        ? clamp(
+            (best+1)/2,
+            0,
+            1
+        )
+        : 0;
+}
+
+
+/* =========================================================
+   RGB NORMALIZATION
+========================================================= */
+
+function normalizeRGB(
+    r,
+    g,
+    b
+){
+
+    const meanR =
+        mean(r);
+
+    const meanG =
+        mean(g);
+
+    const meanB =
+        mean(b);
+
+    if(
+        meanR<1e-9 ||
+        meanG<1e-9 ||
+        meanB<1e-9
+    ){
+        return null;
+    }
+
+    const rn = [];
+    const gn = [];
+    const bn = [];
+
+    for(let i=0;i<r.length;i++){
+
+        rn.push(
+            r[i]/meanR
+        );
+
+        gn.push(
+            g[i]/meanG
+        );
+
+        bn.push(
+            b[i]/meanB
+        );
+    }
+
+    return {
+        r:rn,
+        g:gn,
+        b:bn
+    };
+}
+
+
+/* =========================================================
+   CHROM-STYLE
+========================================================= */
+
+function computeChrom(
+    rgb
+){
+
+    if(
+        !rgb ||
+        rgb.r.length<10
+    ){
+        return [];
+    }
+
+    const X = [];
+    const Y = [];
+
+    for(
+        let i=0;
+        i<rgb.r.length;
+        i++
+    ){
+
+        X.push(
+            3*rgb.r[i]-
+            2*rgb.g[i]
+        );
+
+        Y.push(
+            1.5*rgb.r[i]+
+            rgb.g[i]-
+            1.5*rgb.b[i]
+        );
+    }
+
+    const sx =
+        std(X);
+
+    const sy =
+        std(Y);
+
+    if(
+        sx<1e-9 ||
+        sy<1e-9
+    ){
+        return [];
+    }
+
+    const alpha =
+        sx/sy;
+
+    const output =
+        new Array(
+            X.length
+        );
+
+    for(
+        let i=0;
+        i<X.length;
+        i++
+    ){
+
+        output[i] =
+            X[i]-
+            alpha*Y[i];
+    }
+
+    return detrend(output);
+}
+
+
+/* =========================================================
+   POS-STYLE
+========================================================= */
+
+function computePOS(
+    rgb
+){
+
+    if(
+        !rgb ||
+        rgb.r.length<10
+    ){
+        return [];
+    }
+
+    const S1 = [];
+    const S2 = [];
+
+    for(
+        let i=0;
+        i<rgb.r.length;
+        i++
+    ){
+
+        S1.push(
+            -rgb.r[i]+
+            rgb.b[i]
+        );
+
+        S2.push(
+            rgb.r[i]-
+            2*rgb.g[i]+
+            rgb.b[i]
+        );
+    }
+
+    const std1 =
+        std(S1);
+
+    const std2 =
+        std(S2);
+
+    if(
+        std1<1e-9 ||
+        std2<1e-9
+    ){
+        return [];
+    }
+
+    const alpha =
+        std1/std2;
+
+    const output =
+        new Array(
+            S1.length
+        );
+
+    for(
+        let i=0;
+        i<S1.length;
+        i++
+    ){
+
+        output[i] =
+            S1[i]-
+            alpha*S2[i];
+    }
+
+    return detrend(output);
+}
+
+
+/* =========================================================
+   WINDOW EXTRACTION
+========================================================= */
+
+function getWindow(
+    data,
+    times,
+    seconds
+){
+
+    if(
+        data.length<3 ||
+        data.length!==times.length
+    ){
+
+        return {
+            data:[],
+            times:[]
+        };
+    }
+
+    const end =
+        times[times.length-1];
+
+    const start =
+        end-seconds;
+
+    const resultData = [];
+    const resultTimes = [];
+
+    for(let i=0;i<times.length;i++){
+
+        if(times[i]>=start){
+
+            resultData.push(
+                data[i]
+            );
+
+            resultTimes.push(
+                times[i]
+            );
+        }
+    }
+
+    return {
+        data:resultData,
+        times:resultTimes
+    };
+}
+
+
+/* =========================================================
+   ESTIMATE ONE CHANNEL
+========================================================= */
+
+function estimateChannel(
+    data,
+    times,
+    seconds=10
+){
+
+    const window =
+        getWindow(
+            data,
+            times,
+            seconds
+        );
+
+    if(
+        window.data.length<50
+    ){
+
+        return {
+            bpm:null,
+            quality:0,
+            temporalValues:[]
+        };
+    }
+
+    const uniform =
+        resampleUniform(
+            window.data,
+            window.times,
+            20
+        );
+
+    if(
+        uniform.data.length<80
+    ){
+
+        return {
+            bpm:null,
+            quality:0,
+            temporalValues:[]
+        };
+    }
+
+    const filtered =
+        bandpass(
+            uniform.data,
+            20
+        );
+
+    const spectral =
+        estimateBpmDFT(
+            filtered,
+            20
+        );
+
+    const periodicity =
+        autocorrelationScore(
+            filtered,
+            20
+        );
+
+    const quality =
+        Math.round(
+            clamp(
+                spectral.prominence*.50+
+                spectral.snr*.20+
+                periodicity*.30,
+                0,
+                1
+            )*100
+        );
+
+    return {
+        bpm:spectral.bpm,
+        quality,
+        spectral,
+        periodicity
+    };
+}
+
+
+/* =========================================================
+   TEMPORAL GREEN CONSISTENCY
+========================================================= */
+
+function temporalGreenAnalysis(){
+
+    const windows =
+        [5,7,10,12];
+
+    const values = [];
+
+    for(
+        let i=0;
+        i<windows.length;
+        i++
+    ){
+
+        const estimate =
+            estimateChannel(
+                greenSignal,
+                signalTimes,
+                windows[i]
+            );
+
+        if(
+            Number.isFinite(
+                estimate.bpm
+            )
+        ){
+
+            values.push(
+                estimate.bpm
+            );
+        }
+    }
+
+    if(!values.length){
+
+        return {
+            bpm:null,
+            values:[],
+            spread:Infinity
+        };
+    }
+
+    return {
+        bpm:median(values),
+        values,
+        spread:
+            values.length>1
+                ? std(values)
+                : 0
+    };
+}
+
+
+/* =========================================================
+   METHOD CANDIDATE CLUSTERING
+========================================================= */
+
+function buildCandidates(
+    estimates
+){
+
+    const methods = [];
+
+    const addMethod =
+        (
+            name,
+            estimate,
+            weight
+        )=>{
+
+            if(
+                estimate &&
+                Number.isFinite(
+                    estimate.bpm
+                )
+            ){
+
+                methods.push({
+
+                    name,
+
+                    bpm:estimate.bpm,
+
+                    quality:
+                        estimate.quality ?? 0,
+
+                    weight
+                });
+            }
+        };
+
+
+    addMethod(
+        "Green",
+        estimates.green,
+        .90
+    );
+
+    addMethod(
+        "CHROM",
+        estimates.chrom,
+        1.10
+    );
+
+    addMethod(
+        "POS",
+        estimates.pos,
+        1.15
+    );
+
+
+    if(!methods.length){
+
+        return {
+            candidates:[],
+            best:null
+        };
+    }
+
+
+    /*
+     * Cluster width = 10 BPM.
+     *
+     * Values inside 10 BPM are considered
+     * the same candidate family.
+     */
+
+    const clusters = [];
+
+    for(
+        let i=0;
+        i<methods.length;
+        i++
+    ){
+
+        const method =
+            methods[i];
+
+        let bestCluster =
+            null;
+
+        let smallestDistance =
+            Infinity;
+
+        for(
+            let c=0;
+            c<clusters.length;
+            c++
+        ){
+
+            const cluster =
+                clusters[c];
+
+            const distance =
+                Math.abs(
+                    method.bpm-
+                    cluster.center
+                );
+
+            if(
+                distance<=10 &&
+                distance<smallestDistance
+            ){
+
+                smallestDistance =
+                    distance;
+
+                bestCluster =
+                    cluster;
+            }
+        }
+
+
+        if(!bestCluster){
+
+            clusters.push({
+
+                center:method.bpm,
+
+                methods:[
+                    method
+                ]
+
+            });
+
+        }else{
+
+            bestCluster.methods.push(
+                method
+            );
+
+            bestCluster.center =
+                median(
+                    bestCluster.methods
+                        .map(
+                            item=>item.bpm
+                        )
+                );
+        }
+    }
+
+
+    /*
+     * Score each candidate.
+     *
+     * More methods agreeing = stronger.
+     * Higher method quality = stronger.
+     * Lower internal spread = stronger.
+     */
+
+    for(
+        let c=0;
+        c<clusters.length;
+        c++
+    ){
+
+        const cluster =
+            clusters[c];
+
+        const values =
+            cluster.methods
+                .map(
+                    item=>item.bpm
+                );
+
+        const spread =
+            values.length>1
+                ? std(values)
+                : 12;
+
+        const methodSupport =
+            clamp(
+                cluster.methods.length/3,
+                0,
+                1
+            );
+
+        const averageQuality =
+            mean(
+                cluster.methods
+                    .map(
+                        item =>
+                            item.quality
+                    )
+            )/100;
+
+        const spreadScore =
+            clamp(
+                1-spread/10,
+                0,
+                1
+            );
+
+        const methodWeight =
+            mean(
+                cluster.methods
+                    .map(
+                        item=>item.weight
+                    )
+            )/1.15;
+
+        cluster.spread =
+            spread;
+
+        cluster.support =
+            cluster.methods.length;
+
+        cluster.score =
+            methodSupport*.50+
+            averageQuality*.20+
+            spreadScore*.20+
+            methodWeight*.10;
+    }
+
+
+    clusters.sort(
+        (a,b)=>
+            b.score-a.score
+    );
+
+
+    const best =
+        clusters[0];
+
+
+    return {
+        candidates:clusters,
+        best
+    };
+}
+
+
+/* =========================================================
+   ROBUST FUSION
+========================================================= */
+
+function robustFusion(
+    estimates,
+    temporal
+){
+
+    const candidateData =
+        buildCandidates(
+            estimates
+        );
+
+    const best =
+        candidateData.best;
+
+
+    if(!best){
+
+        return {
+
+            finalBpm:null,
+
+            candidateBpm:null,
+
+            candidateSupport:0,
+
+            agreement:0,
+
+            spread:Infinity,
+
+            methods:[],
+
+            temporalBpm:
+                temporal.bpm,
+
+            temporalSpread:
+                temporal.spread,
+
+            candidates:[]
+        };
+    }
+
+
+    const methodValues =
+        best.methods.map(
+            item=>item.bpm
+        );
+
+
+    /*
+     * Agreement calculation.
+     *
+     * Two methods near each other:
+     * 100% before quality weighting.
+     *
+     * One lonely method:
+     * maximum 35%.
+     */
+
+    let baseAgreement;
+
+    if(best.support>=3){
+
+        baseAgreement =
+            clamp(
+                1-best.spread/10,
+                0,
+                1
+            )*100;
+
+    }else if(best.support===2){
+
+        baseAgreement =
+            55+
+            clamp(
+                1-best.spread/10,
+                0,
+                1
+            )*45;
+
+    }else{
+
+        baseAgreement =
+            35;
+    }
+
+
+    const averageQuality =
+        mean(
+            best.methods.map(
+                item=>item.quality
+            )
+        );
+
+
+    const agreement =
+        Math.round(
+            baseAgreement*
+            (
+                .55+
+                .45*
+                averageQuality/
+                100
+            )
+        );
+
+
+    /*
+     * If temporal Green is consistent with the
+     * candidate, we reward it slightly.
+     *
+     * It never overrides multi-method consensus.
+     */
+
+    let finalBpm =
+        best.center;
+
+    if(
+        Number.isFinite(
+            temporal.bpm
+        )
+    ){
+
+        const temporalDistance =
+            Math.abs(
+                temporal.bpm-
+                best.center
+            );
+
+        if(
+            temporalDistance<=5
+        ){
+
+            finalBpm =
+                (
+                    best.center*.75+
+                    temporal.bpm*.25
+                );
+        }
+    }
+
+
+    return {
+
+        finalBpm,
+
+        candidateBpm:
+            best.center,
+
+        candidateSupport:
+            best.support,
+
+        agreement,
+
+        spread:
+            best.spread,
+
+        methods:
+            methodValues,
+
+        methodDetails:
+            best.methods,
+
+        temporalBpm:
+            temporal.bpm,
+
+        temporalSpread:
+            temporal.spread,
+
+        candidates:
+            candidateData.candidates
+    };
+}
+
+
+/* =========================================================
+   OVERALL SIGNAL QUALITY
+========================================================= */
+
+function calculateOverallQuality(
+    estimates,
+    fusion
+){
+
+    const qualities = [];
+
+    if(
+        Number.isFinite(
+            estimates.green?.bpm
+        )
+    ){
+
+        qualities.push(
+            estimates.green.quality
+        );
+    }
+
+    if(
+        Number.isFinite(
+            estimates.chrom?.bpm
+        )
+    ){
+
+        qualities.push(
+            estimates.chrom.quality
+        );
+    }
+
+    if(
+        Number.isFinite(
+            estimates.pos?.bpm
+        )
+    ){
+
+        qualities.push(
+            estimates.pos.quality
+        );
+    }
+
+
+    if(!qualities.length){
+        return 0;
+    }
+
+
+    const qualityMean =
+        mean(qualities);
+
+
+    const agreementFactor =
+        fusion.candidateSupport>=2
+            ? fusion.agreement
+            : Math.min(
+                fusion.agreement,
+                55
+            );
+
+
+    return Math.round(
+        clamp(
+            qualityMean*.65+
+            agreementFactor*.35,
+            0,
+            100
+        )
+    );
+}
+
+
+/* =========================================================
+   CONFIDENCE
+========================================================= */
+
+function calculateConfidence(
+    fusion,
+    quality
+){
+
+    if(
+        !Number.isFinite(
+            fusion.finalBpm
+        )
+    ){
+
+        return {
+
+            score:0,
+
+            label:"LOW",
+
+            reason:
+                "لا توجد قمة نبض موثوقة حتى الآن."
+        };
+    }
+
+
+    const qualityScore =
+        clamp(
+            quality/100,
+            0,
+            1
+        );
+
+
+    const agreementScore =
+        clamp(
+            fusion.agreement/100,
+            0,
+            1
+        );
+
+
+    const methodScore =
+        fusion.candidateSupport>=3
+            ? 1
+            : fusion.candidateSupport===2
+                ? .72
+                : .30;
+
+
+    const temporalScore =
+        Number.isFinite(
+            fusion.temporalSpread
+        )
+            ? clamp(
+                1-
+                fusion.temporalSpread/12,
+                0,
+                1
+            )
+            : .35;
+
+
+    const faceScore =
+        clamp(
+            latestFaceStability/100,
+            0,
+            1
+        );
+
+
+    const lightingScore =
+        latestLighting>0
+            ? clamp(
+                1-
+                Math.abs(
+                    latestLighting-120
+                )/180,
+                0,
+                1
+            )
+            : .5;
+
+
+    let score =
+        (
+            qualityScore*.30+
+            agreementScore*.30+
+            methodScore*.20+
+            temporalScore*.10+
+            faceScore*.08+
+            lightingScore*.02
+        )*100;
+
+
+    /*
+     * Hard reliability gates.
+     */
+
+    if(
+        fusion.candidateSupport===1
+    ){
+
+        score =
+            Math.min(
+                score,
+                44
+            );
+    }
+
+
+    if(
+        fusion.candidateSupport>=2 &&
+        fusion.spread>7
+    ){
+
+        score =
+            Math.min(
+                score,
+                58
+            );
+    }
+
+
+    if(
+        fusion.agreement<40
+    ){
+
+        score =
+            Math.min(
+                score,
+                42
+            );
+    }
+
+
+    score =
+        Math.round(
+            clamp(
+                score,
+                0,
+                100
+            )
+        );
+
+
+    let label =
+        "LOW";
+
+
+    if(score>=78){
+
+        label =
+            "HIGH";
+
+    }else if(score>=58){
+
+        label =
+            "MEDIUM";
+    }
+
+
+    let reason =
+        "";
+
+
+    if(
+        fusion.candidateSupport>=2 &&
+        fusion.spread<=5
+    ){
+
+        reason =
+            "عدة طرق مستقلة تدعم نفس المرشح مع تشتت منخفض.";
+
+    }else if(
+        fusion.candidateSupport>=2
+    ){
+
+        reason =
+            "يوجد دعم من طريقتين أو أكثر، لكن يوجد بعض الاختلاف بين التقديرات.";
+
+    }else{
+
+        reason =
+            "يوجد تقدير واحد فقط ضمن المرشح الحالي؛ لذلك تم تقييد الثقة.";
+
+    }
+
+
+    if(
+        fusion.temporalSpread>10
+    ){
+
+        reason +=
+            " الاستقرار الزمني ضعيف.";
+    }
+
+
+    if(
+        latestFaceStability<60
+    ){
+
+        reason +=
+            " حركة الوجه تؤثر في الثقة.";
+    }
+
+
+    return {
+        score,
+        label,
+        reason
+    };
+}
+
+
+/* =========================================================
+   FULL ANALYSIS
+========================================================= */
+
+async function runAnalysis(){
+
+    if(
+        analysisBusy ||
+        signalTimes.length<80
+    ){
+        return;
+    }
+
+
+    analysisBusy =
+        true;
+
+
+    document
+        .getElementById(
+            "analysisState"
+        )
+        .textContent =
+        "يحلل...";
+
+
+    await new Promise(
+        resolve =>
+            requestAnimationFrame(
+                resolve
+            )
+    );
+
+
+    try{
+
+        /*
+         * Analyze latest 12–15 seconds.
+         */
+
+        const sampleCount =
+            Math.min(
+                300,
+                signalTimes.length
+            );
+
+        const start =
+            signalTimes.length-
+            sampleCount;
+
+
+        const rawR =
+            redSignal.slice(start);
+
+        const rawG =
+            greenSignal.slice(start);
+
+        const rawB =
+            blueSignal.slice(start);
+
+        const rawT =
+            signalTimes.slice(start);
+
+
+        /*
+         * Resample common timeline.
+         */
+
+        const r =
+            resampleUniform(
+                rawR,
+                rawT,
+                20
+            );
+
+        const g =
+            resampleUniform(
+                rawG,
+                rawT,
+                20
+            );
+
+        const b =
+            resampleUniform(
+                rawB,
+                rawT,
+                20
+            );
+
+
+        if(
+            g.data.length<80
+        ){
+
+            return;
+        }
+
+
+        const normalized =
+            normalizeRGB(
+                r.data,
+                g.data,
+                b.data
+            );
+
+
+        if(!normalized){
+
+            return;
+        }
+
+
+        /*
+         * Green estimate.
+         */
+
+        const green =
+            estimateChannel(
+                g.data,
+                g.times,
+                10
+            );
+
+
+        /*
+         * CHROM.
+         */
+
+        const chromRaw =
+            computeChrom(
+                normalized
+            );
+
+
+        const chrom =
+            estimateProcessedChannel(
+                chromRaw,
+                g.times
+            );
+
+
+        /*
+         * POS.
+         */
+
+        const posRaw =
+            computePOS(
+                normalized
+            );
+
+
+        const pos =
+            estimateProcessedChannel(
+                posRaw,
+                g.times
+            );
+
+
+        /*
+         * Temporal Green.
+         */
+
+        const temporal =
+            temporalGreenAnalysis();
+
+
+        /*
+         * Robust fusion.
+         */
+
+        const fusion =
+            robustFusion(
+                {
+                    green,
+                    chrom,
+                    pos
+                },
+                temporal
+            );
+
+
+        /*
+         * Overall SQI.
+         */
+
+        latestSignalQuality =
+            calculateOverallQuality(
+                {
+                    green,
+                    chrom,
+                    pos
+                },
+                fusion
+            );
+
+
+        /*
+         * Confidence.
+         */
+
+        const confidence =
+            calculateConfidence(
+                fusion,
+                latestSignalQuality
+            );
+
+
+        latestConfidence =
+            confidence.score;
+
+
+        currentBpm =
+            fusion.finalBpm;
+
+
+        currentFusion = {
+
+            ...fusion,
+
+            green:
+                green.bpm,
+
+            chrom:
+                chrom.bpm,
+
+            pos:
+                pos.bpm
+        };
+
+
+        latestAnalysis = {
+
+            bpm:
+                currentBpm,
+
+            green:
+                green.bpm,
+
+            chrom:
+                chrom.bpm,
+
+            pos:
+                pos.bpm,
+
+            quality:
+                latestSignalQuality,
+
+            confidence:
+                latestConfidence,
+
+            confidenceLabel:
+                confidence.label,
+
+            confidenceReason:
+                confidence.reason,
+
+            agreement:
+                fusion.agreement,
+
+            candidate:
+                fusion.candidateBpm,
+
+            support:
+                fusion.candidateSupport,
+
+            methodSpread:
+                fusion.spread,
+
+            temporalBpm:
+                temporal.bpm,
+
+            temporalSpread:
+                temporal.spread,
+
+            lighting:
+                latestLighting,
+
+            faceStability:
+                latestFaceStability,
+
+            samples:
+                signalTimes.length,
+
+            sampleRate:
+                estimateSampleRate(),
+
+            methodDetails:
+                fusion.methodDetails ||
+                []
+        };
+
+
+        updateUI();
+
+        drawSignal();
+
+
+    }catch(error){
+
+        console.error(
+            "V5.3 analysis error:",
+            error
+        );
+
+        document
+            .getElementById(
+                "analysisState"
+            )
+            .textContent =
+            "خطأ في التحليل";
+
+    }finally{
+
+        analysisBusy =
+            false;
+
+        if(
+            recording
+        ){
+
+            document
+                .getElementById(
+                    "analysisState"
+                )
+                .textContent =
+                "جاهز";
+        }
+    }
+}
+
+
+/* =========================================================
+   PROCESSED CHANNEL ESTIMATOR
+========================================================= */
+
+function estimateProcessedChannel(
+    data,
+    times
+){
+
+    if(
+        !data ||
+        data.length<50 ||
+        data.length!==times.length
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const window =
+        getWindow(
+            data,
+            times,
+            10
+        );
+
+
+    if(
+        window.data.length<50
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const uniform =
+        resampleUniform(
+            window.data,
+            window.times,
+            20
+        );
+
+
+    if(
+        uniform.data.length<80
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const filtered =
+        bandpass(
+            uniform.data,
+            20
+        );
+
+
+    const spectral =
+        estimateBpmDFT(
+            filtered,
+            20
+        );
+
+
+    const periodicity =
+        autocorrelationScore(
+            filtered,
+            20
+        );
+
+
+    const quality =
+        Math.round(
+            clamp(
+                spectral.prominence*.50+
+                spectral.snr*.20+
+                periodicity*.30,
+                0,
+                1
+            )*100
+        );
+
+
+    return {
+        bpm:spectral.bpm,
+        quality,
+        spectral,
+        periodicity
+    };
+}
+
+
+/* =========================================================
+   SAMPLE RATE
+========================================================= */
+
+function estimateSampleRate(){
+
+    if(
+        signalTimes.length<3
+    ){
+        return null;
+    }
+
+
+    const start =
+        signalTimes[
+            Math.max(
+                0,
+                signalTimes.length-50
+            )
+        ];
+
+    const end =
+        signalTimes[
+            signalTimes.length-1
+        ];
+
+    const count =
+        signalTimes.length-
+        Math.max(
+            0,
+            signalTimes.length-50
+        );
+
+
+    if(
+        end<=start ||
+        count<=1
+    ){
+
+        return null;
+    }
+
+
+    return (
+        (count-1)/
+        (end-start)
+    );
+}
+
+
+/* =========================================================
+   ANALYSIS SCHEDULER
+========================================================= */
+
+function requestAnalysis(){
+
+    const now =
+        performance.now();
+
+
+    if(
+        analysisBusy ||
+        now-lastAnalysisTime<
+        ANALYSIS_INTERVAL
+    ){
+        return;
+    }
+
+
+    lastAnalysisTime =
+        now;
+
+
+    runAnalysis();
+}
+
+
+/* =========================================================
+   FACE STABILITY
+========================================================= */
+
+function updateFaceStability(
+    x,
+    y
+){
+
+    if(!previousFaceCenter){
+
+        previousFaceCenter =
+            {
+                x,
+                y
+            };
+
+        latestFaceStability =
+            100;
+
+        return;
+    }
+
+
+    const dx =
+        x-
+        previousFaceCenter.x;
+
+    const dy =
+        y-
+        previousFaceCenter.y;
+
+
+    const movement =
+        Math.sqrt(
+            dx*dx+
+            dy*dy
+        );
+
+
+    previousFaceCenter =
+        {
+            x,
+            y
+        };
+
+
+    const instantScore =
+        clamp(
+            1-
+            movement/.022,
+            0,
+            1
+        );
+
+
+    latestFaceStability =
+        Math.round(
+            latestFaceStability*.80+
+            instantScore*100*.20
+        );
+}
+
+
+/* =========================================================
+   SAMPLE CANVAS
+========================================================= */
+
+const sampleCanvas =
+    document.createElement(
+        "canvas"
+    );
+
+sampleCanvas.width =
+    160;
+
+sampleCanvas.height =
+    120;
+
+const sampleCtx =
+    sampleCanvas.getContext(
+        "2d",
+        {
+            willReadFrequently:true
+        }
+    );
+
+
+/* =========================================================
+   RGB SAMPLING
+========================================================= */
+
+function sampleROI(
+    box
+){
+
+    if(
+        !box ||
+        video.videoWidth<10 ||
+        video.videoHeight<10
+    ){
+
+        return null;
+    }
+
+
+    sampleCtx.drawImage(
+        video,
+        0,
+        0,
+        sampleCanvas.width,
+        sampleCanvas.height
+    );
+
+
+    const x1 =
+        Math.round(
+            clamp(
+                box.x,
+                0,
+                1
+            )*
+            sampleCanvas.width
+        );
+
+
+    const y1 =
+        Math.round(
+            clamp(
+                box.y,
+                0,
+                1
+            )*
+            sampleCanvas.height
+        );
+
+
+    const x2 =
+        Math.round(
+            clamp(
+                box.x+box.w,
+                0,
+                1
+            )*
+            sampleCanvas.width
+        );
+
+
+    const y2 =
+        Math.round(
+            clamp(
+                box.y+box.h,
+                0,
+                1
+            )*
+            sampleCanvas.height
+        );
+
+
+    const width =
+        Math.max(
+            2,
+            x2-x1
+        );
+
+
+    const height =
+        Math.max(
+            2,
+            y2-y1
+        );
+
+
+    let pixels;
+
+
+    try{
+
+        pixels =
+            sampleCtx.getImageData(
+                x1,
+                y1,
+                width,
+                height
+            ).data;
+
+    }catch(error){
+
+        return null;
+    }
+
+
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    let brightness = 0;
+
+    let count = 0;
+
+
+    for(
+        let i=0;
+        i<pixels.length;
+        i+=4
+    ){
+
+        const rr =
+            pixels[i];
+
+        const gg =
+            pixels[i+1];
+
+        const bb =
+            pixels[i+2];
+
+
+        const luminance =
+            .2126*rr+
+            .7152*gg+
+            .0722*bb;
+
+
+        brightness +=
+            luminance;
+
+
+        /*
+         * Remove strongly clipped/dark pixels.
+         */
+
+        if(
+            luminance>18 &&
+            luminance<248
+        ){
+
+            r += rr;
+            g += gg;
+            b += bb;
+
+            count++;
+        }
+    }
+
+
+    if(!count){
+        return null;
+    }
+
+
+    return {
+
+        r:r/count,
+
+        g:g/count,
+
+        b:b/count,
+
+        lighting:
+            brightness/
+            (
+                pixels.length/4
+            )
+    };
+}
+
+
+/* =========================================================
+   FACEMESH
+========================================================= */
+
+function setupFaceMesh(){
+
+    faceMesh =
+        new FaceMesh({
+
+            locateFile:
+                file =>
+                    "https://cdn.jsdelivr.net/npm/" +
+                    "@mediapipe/face_mesh/" +
+                    file
+        });
+
+
+    faceMesh.setOptions({
+
+        maxNumFaces:1,
+
+        refineLandmarks:true,
+
+        minDetectionConfidence:.55,
+
+        minTrackingConfidence:.55
+    });
+
+
+    faceMesh.onResults(
+        handleFaceResults
+    );
+}
+
+
+/* =========================================================
+   FACE RESULTS
+========================================================= */
+
+function handleFaceResults(
+    results
+){
+
+    if(!cameraRunning){
+        return;
+    }
+
+
+    resizeOverlay();
+
+
+    overlayCtx.clearRect(
+        0,
+        0,
+        overlay.width,
+        overlay.height
+    );
+
+
+    if(
+        !results.multiFaceLandmarks ||
+        !results.multiFaceLandmarks.length
+    ){
+
+        faceDetected =
+            false;
+
+        faceStatus.textContent =
+            "لم يتم العثور على الوجه";
+
+        faceStatus.className =
+            "faceStatus bad";
+
+        roiBox.style.display =
+            "none";
+
+        return;
+    }
+
+
+    faceDetected =
+        true;
+
+
+    const landmarks =
+        results.multiFaceLandmarks[0];
+
+
+    const left =
+        landmarks[54];
+
+    const right =
+        landmarks[284];
+
+    const top =
+        landmarks[10];
+
+    const lower =
+        landmarks[152];
+
+
+    const minX =
+        Math.min(
+            left.x,
+            right.x
+        );
+
+
+    const maxX =
+        Math.max(
+            left.x,
+            right.x
+        );
+
+
+    const faceWidth =
+        maxX-minX;
+
+
+    const centerX =
+        (minX+maxX)/2;
+
+
+    const centerY =
+        top.y+
+        (lower.y-top.y)*.27;
+
+
+    const roiW =
+        faceWidth*.72;
+
+
+    const roiH =
+        faceWidth*.36;
+
+
+    const roiX =
+        centerX-roiW/2;
+
+
+    const roiY =
+        centerY-roiH/2;
+
+
+    updateFaceStability(
+        centerX,
+        centerY
+    );
+
+
+    roiBox.style.display =
+        "block";
+
+
+    roiBox.style.left =
+        `${clamp(
+            centerX*100,
+            0,
+            100
+        )}%`;
+
+
+    roiBox.style.top =
+        `${clamp(
+            centerY*100,
+            0,
+            100
+        )}%`;
+
+
+    roiBox.style.width =
+        `${clamp(
+            roiW*100,
+            10,
+            45
+        )}%`;
+
+
+    roiBox.style.height =
+        `${clamp(
+            roiH*100,
+            7,
+            25
+        )}%`;
+
+
+    /*
+     * Draw ROI.
+     */
+
+    overlayCtx.strokeStyle =
+        "rgba(69,216,255,.88)";
+
+
+    overlayCtx.lineWidth =
+        2*devicePixelRatio;
+
+
+    overlayCtx.strokeRect(
+        roiX*overlay.width,
+        roiY*overlay.height,
+        roiW*overlay.width,
+        roiH*overlay.height
+    );
+
+
+    /*
+     * Continuous acquisition.
+     */
+
+    if(recording){
+
+        faceStatus.textContent =
+            "الوجه مكتشف — جارٍ جمع الإشارة";
+
+        faceStatus.className =
+            "faceStatus ok";
+
+
+        const rgb =
+            sampleROI({
+
+                x:roiX,
+
+                y:roiY,
+
+                w:roiW,
+
+                h:roiH
+            });
+
+
+        if(rgb){
+
+            const elapsed =
+                (
+                    performance.now()-
+                    recordingStart
+                )/1000;
+
+
+            signalTimes.push(
+                elapsed
+            );
+
+
+            redSignal.push(
+                rgb.r
+            );
+
+
+            greenSignal.push(
+                rgb.g
+            );
+
+
+            blueSignal.push(
+                rgb.b
+            );
+
+
+            latestLighting =
+                rgb.lighting;
+
+
+            if(
+                signalTimes.length>
+                MAX_RAW_SAMPLES
+            ){
+
+                signalTimes.shift();
+                redSignal.shift();
+                greenSignal.shift();
+                blueSignal.shift();
+            }
+
+
+            document
+                .getElementById(
+                    "samplesCount"
+                )
+                .textContent =
+                signalTimes.length;
+
+
+            const rate =
+                estimateSampleRate();
+
+
+            document
+                .getElementById(
+                    "sampleRateValue"
+                )
+                .textContent =
+                Number.isFinite(rate)
+                    ? `${rate.toFixed(1)} Hz`
+                    : "--";
+        }
+
+
+        requestAnalysis();
+
+    }else{
+
+        faceStatus.textContent =
+            "الوجه مكتشف";
+
+        faceStatus.className =
+            "faceStatus warn";
+    }
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+async function startCamera(){
+
+    if(cameraRunning){
+        return;
+    }
+
+
+    try{
+
+        if(!faceMesh){
+            setupFaceMesh();
+        }
+
+
+        const stream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    video:{
+
+                        facingMode:"user",
+
+                        width:{
+                            ideal:640
+                        },
+
+                        height:{
+                            ideal:480
+                        }
+                    },
+
+                    audio:false
+                });
+
+
+        video.srcObject =
+            stream;
+
+
+        await video.play();
+
+
+        cameraRunning =
+            true;
+
+
+        camera =
+            new Camera(
+                video,
+                {
+
+                    onFrame:
+                        async()=>{
+
+                            if(
+                                cameraRunning &&
+                                faceMesh
+                            ){
+
+                                await faceMesh.send({
+                                    image:video
+                                });
+                            }
+                        },
+
+                    width:640,
+
+                    height:480
+                }
+            );
+
+
+        camera.start();
+
+
+        document
+            .getElementById(
+                "startBtn"
+            )
+            .disabled =
+            true;
+
+
+        document
+            .getElementById(
+                "stopBtn"
+            )
+            .disabled =
+            false;
+
+
+        document
+            .getElementById(
+                "scanBtn"
+            )
+            .disabled =
+            false;
+
+
+        faceStatus.textContent =
+            "الكاميرا تعمل — ضع الوجه داخل الإطار";
+
+        faceStatus.className =
+            "faceStatus warn";
+
+
+    }catch(error){
+
+        console.error(
+            "Camera error:",
+            error
+        );
+
+
+        faceStatus.textContent =
+            "تعذر تشغيل الكاميرا";
+
+        faceStatus.className =
+            "faceStatus bad";
+
+
+        alert(
+            "تعذر الوصول إلى الكاميرا. تأكد من صلاحية Camera."
+        );
+    }
+}
+
+
+/* =========================================================
+   STOP CAMERA
+========================================================= */
+
+function stopCamera(){
+
+    cameraRunning =
+        false;
+
+
+    if(recording){
+
+        recording =
+            false;
+
+        if(recordingTimer){
+
+            clearTimeout(
+                recordingTimer
+            );
+
+            recordingTimer =
+                null;
+        }
+    }
+
+
+    if(camera){
+
+        try{
+            camera.stop();
+        }catch(error){}
+    }
+
+
+    if(video.srcObject){
+
+        video.srcObject
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+        video.srcObject =
+            null;
+    }
+
+
+    document
+        .getElementById(
+            "startBtn"
+        )
+        .disabled =
+        false;
+
+
+    document
+        .getElementById(
+            "stopBtn"
+        )
+        .disabled =
+        true;
+
+
+    document
+        .getElementById(
+            "scanBtn"
+        )
+        .disabled =
+        true;
+
+
+    faceDetected =
+        false;
+
+
+    roiBox.style.display =
+        "none";
+
+
+    faceStatus.textContent =
+        "الكاميرا متوقفة";
+
+    faceStatus.className =
+        "faceStatus warn";
+}
+
+
+/* =========================================================
+   CLEAR SIGNAL
+========================================================= */
+
+function clearSignal(){
+
+    signalTimes = [];
+    redSignal = [];
+    greenSignal = [];
+    blueSignal = [];
+
+
+    latestLighting =
+        0;
+
+    latestFaceStability =
+        0;
+
+
+    currentBpm =
+        null;
+
+
+    latestSignalQuality =
+        0;
+
+    latestConfidence =
+        0;
+
+
+    latestAnalysis =
+        null;
+
+
+    currentFusion = {
+
+        finalBpm:null,
+
+        candidateBpm:null,
+
+        candidateSupport:0,
+
+        agreement:0,
+
+        spread:Infinity,
+
+        methodValues:[],
+
+        methodCount:0,
+
+        temporalBpm:null,
+
+        temporalSpread:Infinity,
+
+        green:null,
+        chrom:null,
+        pos:null
+    };
+
+
+    previousFaceCenter =
+        null;
+
+
+    lastAnalysisTime =
+        0;
+
+
+    analysisBusy =
+        false;
+
+
+    document
+        .getElementById(
+            "samplesCount"
+        )
+        .textContent =
+        "0";
+
+
+    document
+        .getElementById(
+            "sampleRateValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "bpmValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "greenBpm"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "chromBpm"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "posBpm"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "qualityValue"
+        )
+        .textContent =
+        "0%";
+
+
+    document
+        .getElementById(
+            "confidenceValue"
+        )
+        .textContent =
+        "0%";
+
+
+    document
+        .getElementById(
+            "confidenceLabel"
+        )
+        .textContent =
+        "LOW";
+
+
+    document
+        .getElementById(
+            "agreementValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "candidateValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "supportValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "temporalValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "faceStabilityValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "lightingValue"
+        )
+        .textContent =
+        "--";
+
+
+    document
+        .getElementById(
+            "confidenceReason"
+        )
+        .textContent =
+        "في انتظار بيانات كافية.";
+
+
+    const badge =
+        document.getElementById(
+            "measurementBadge"
+        );
+
+    badge.textContent =
+        "LOW";
+
+    badge.className =
+        "badge low";
+
+
+    document
+        .getElementById(
+            "analysisState"
+        )
+        .textContent =
+        "جاهز";
+
+
+    document
+        .getElementById(
+            "report"
+        )
+        .textContent =
+        "لم يتم إجراء قياس بعد.";
+
+
+    drawSignal();
+}
+
+
+/* =========================================================
+   15 SECOND SCAN
+========================================================= */
+
+function startScan(){
+
+    if(
+        !cameraRunning ||
+        recording
+    ){
+        return;
+    }
+
+
+    clearSignal();
+
+
+    recording =
+        true;
+
+
+    recordingStart =
+        performance.now();
+
+
+    document
+        .getElementById(
+            "recordingState"
+        )
+        .textContent =
+        "جارٍ التسجيل";
+
+
+    faceStatus.textContent =
+        "ثبت وجهك — جارٍ القياس";
+
+    faceStatus.className =
+        "faceStatus ok";
+
+
+    recordingTimer =
+        setTimeout(
+            finishScan,
+            15000
+        );
+}
+
+
+/* =========================================================
+   FINISH SCAN
+========================================================= */
+
+function finishScan(){
+
+    recording =
+        false;
+
+
+    if(recordingTimer){
+
+        clearTimeout(
+            recordingTimer
+        );
+
+        recordingTimer =
+            null;
+    }
+
+
+    document
+        .getElementById(
+            "recordingState"
+        )
+        .textContent =
+        "اكتمل التسجيل";
+
+
+    faceStatus.textContent =
+        faceDetected
+            ? "اكتمل القياس"
+            : "انتهى التسجيل";
+
+
+    faceStatus.className =
+        faceDetected
+            ? "faceStatus ok"
+            : "faceStatus warn";
+
+
+    /*
+     * Force final analysis.
+     */
+
+    if(
+        signalTimes.length>=80
+    ){
+
+        lastAnalysisTime =
+            0;
+
+        runAnalysis();
+    }
+
+
+    updateReport();
+}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updateUI(){
+
+    const a =
+        latestAnalysis;
+
+
+    if(!a){
+        return;
+    }
+
+
+    document
+        .getElementById(
+            "bpmValue"
+        )
+        .textContent =
+        Number.isFinite(a.bpm)
+            ? Math.round(a.bpm)
+            : "--";
+
+
+    document
+        .getElementById(
+            "greenBpm"
+        )
+        .textContent =
+        Number.isFinite(a.green)
+            ? Math.round(a.green)
+            : "--";
+
+
+    document
+        .getElementById(
+            "chromBpm"
+        )
+        .textContent =
+        Number.isFinite(a.chrom)
+            ? Math.round(a.chrom)
+            : "--";
+
+
+    document
+        .getElementById(
+            "posBpm"
+        )
+        .textContent =
+        Number.isFinite(a.pos)
+            ? Math.round(a.pos)
+            : "--";
+
+
+    document
+        .getElementById(
+            "qualityValue"
+        )
+        .textContent =
+        `${a.quality}%`;
+
+
+    document
+        .getElementById(
+            "confidenceValue"
+        )
+        .textContent =
+        `${a.confidence}%`;
+
+
+    document
+        .getElementById(
+            "confidenceLabel"
+        )
+        .textContent =
+        a.confidenceLabel;
+
+
+    document
+        .getElementById(
+            "agreementValue"
+        )
+        .textContent =
+        `${a.agreement}%`;
+
+
+    document
+        .getElementById(
+            "candidateValue"
+        )
+        .textContent =
+        Number.isFinite(a.candidate)
+            ? `${fmt(a.candidate,1)} BPM`
+            : "--";
+
+
+    document
+        .getElementById(
+            "supportValue"
+        )
+        .textContent =
+        `${a.support}/3 methods`;
+
+
+    document
+        .getElementById(
+            "temporalValue"
+        )
+        .textContent =
+        Number.isFinite(a.temporalSpread)
+            ? `${fmt(
+                a.temporalSpread,
+                1
+            )} BPM spread`
+            : "--";
+
+
+    document
+        .getElementById(
+            "faceStabilityValue"
+        )
+        .textContent =
+        `${a.faceStability}%`;
+
+
+    document
+        .getElementById(
+            "lightingValue"
+        )
+        .textContent =
+        Number.isFinite(a.lighting)
+            ? fmt(a.lighting,1)
+            : "--";
+
+
+    const badge =
+        document.getElementById(
+            "measurementBadge"
+        );
+
+
+    badge.textContent =
+        a.confidenceLabel;
+
+
+    badge.className =
+        "badge " +
+        (
+            a.confidenceLabel==="HIGH"
+                ? "high"
+                : a.confidenceLabel==="MEDIUM"
+                    ? "medium"
+                    : "low"
+        );
+
+
+    document
+        .getElementById(
+            "confidenceReason"
+        )
+        .textContent =
+        a.confidenceReason;
+
+
+    updateReport();
+}
+
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+function updateReport(){
+
+    const report =
+        document.getElementById(
+            "report"
+        );
+
+
+    if(!latestAnalysis){
+
+        report.textContent =
+            "لم يتم إجراء قياس بعد.";
+
+        return;
+    }
+
+
+    const a =
+        latestAnalysis;
+
+
+    const methods =
+        Array.isArray(
+            a.methodDetails
+        )
+            ? a.methodDetails
+                .map(
+                    item =>
+                        `${item.name}: ${fmt(
+                            item.bpm,
+                            1
+                        )} BPM`
+                )
+                .join("\n")
+            : "N/A";
+
+
+    report.textContent =
+`Doctor MIMO™ — Research Measurement
+
+Final MIMO BPM:
+${
+    Number.isFinite(a.bpm)
+        ? `${fmt(a.bpm,1)} BPM`
+        : "N/A"
+}
+
+Candidate:
+${
+    Number.isFinite(a.candidate)
+        ? `${fmt(a.candidate,1)} BPM`
+        : "N/A"
+}
+
+Supporting Methods:
+${methods}
+
+Candidate Support:
+${a.support}/3
+
+Method Agreement:
+${a.agreement}%
+
+Signal Quality:
+${a.quality}%
+
+Measurement Confidence:
+${a.confidence}% — ${a.confidenceLabel}
+
+Temporal Spread:
+${
+    Number.isFinite(a.temporalSpread)
+        ? `${fmt(
+            a.temporalSpread,
+            1
+        )} BPM`
+        : "N/A"
+}
+
+Face Stability:
+${a.faceStability}%
+
+Lighting:
+${fmt(a.lighting,1)}
+
+Sample Rate:
+${
+    Number.isFinite(a.sampleRate)
+        ? `${fmt(
+            a.sampleRate,
+            1
+        )} Hz`
+        : "N/A"
+}
+
+Samples:
+${a.samples}
+
+Interpretation:
+${a.confidenceReason}
+
+Research Notice:
+This is an experimental rPPG research prototype.
+Signal Quality and Measurement Confidence are
+heuristic research indicators and are not
+clinically validated diagnostic measurements.`;
+}
+
+
+/* =========================================================
+   SIGNAL GRAPH
+========================================================= */
+
+function resizeSignalCanvas(){
+
+    const rect =
+        signalCanvas.getBoundingClientRect();
+
+
+    const width =
+        Math.max(
+            1,
+            Math.round(
+                rect.width*
+                devicePixelRatio
+            )
+        );
+
+
+    const height =
+        Math.max(
+            1,
+            Math.round(
+                rect.height*
+                devicePixelRatio
+            )
+        );
+
+
+    if(
+        signalCanvas.width!==width ||
+        signalCanvas.height!==height
+    ){
+
+        signalCanvas.width =
+            width;
+
+        signalCanvas.height =
+            height;
+    }
+}
+
+
+function drawSignal(){
+
+    resizeSignalCanvas();
+
+
+    const width =
+        signalCanvas.width;
+
+    const height =
+        signalCanvas.height;
+
+
+    signalCtx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    if(greenSignal.length<3){
+        return;
+    }
+
+
+    const count =
+        Math.min(
+            300,
+            greenSignal.length
+        );
+
+
+    const source =
+        greenSignal.slice(
+            greenSignal.length-count
+        );
+
+
+    const average =
+        mean(source);
+
+
+    const centered =
+        source.map(
+            value=>
+                value-average
+        );
+
+
+    const amplitude =
+        Math.max(
+            ...centered.map(
+                Math.abs
+            ),
+            1e-9
+        );
+
+
+    signalCtx.beginPath();
+
+
+    for(
+        let i=0;
+        i<centered.length;
+        i++
+    ){
+
+        const x =
+            centered.length===1
+                ? 0
+                : i/
+                    (centered.length-1)*
+                    width;
+
+
+        const y =
+            height/2-
+            (
+                centered[i]/
+                amplitude
+            )*
+            height*.38;
+
+
+        if(i===0){
+
+            signalCtx.moveTo(
+                x,
+                y
+            );
+
+        }else{
+
+            signalCtx.lineTo(
+                x,
+                y
+            );
+        }
+    }
+
+
+    signalCtx.strokeStyle =
+        "#45d8ff";
+
+    signalCtx.lineWidth =
+        2*devicePixelRatio;
+
+    signalCtx.stroke();
+}
+
+
+/* =========================================================
+   OVERLAY RESIZE
+========================================================= */
+
+function resizeOverlay(){
+
+    const rect =
+        overlay.getBoundingClientRect();
+
+
+    const width =
+        Math.max(
+            1,
+            Math.round(
+                rect.width*
+                devicePixelRatio
+            )
+        );
+
+
+    const height =
+        Math.max(
+            1,
+            Math.round(
+                rect.height*
+                devicePixelRatio
+            )
+        );
+
+
+    if(
+        overlay.width!==width ||
+        overlay.height!==height
+    ){
+
+        overlay.width =
+            width;
+
+        overlay.height =
+            height;
+    }
+}
+
+
+/* =========================================================
+   SAVE RESEARCH SESSION
+========================================================= */
+
+function saveResearchSession(){
+
+    if(
+        !latestAnalysis ||
+        !Number.isFinite(
+            latestAnalysis.bpm
+        )
+    ){
+
+        alert(
+            "لا توجد نتيجة BPM صالحة للحفظ."
+        );
+
+        return;
+    }
+
+
+    const refBpm =
+        Number(
+            document
+                .getElementById(
+                    "refBpm"
+                )
+                .value
+        );
+
+
+    const refSys =
+        Number(
+            document
+                .getElementById(
+                    "refSys"
+                )
+                .value
+        );
+
+
+    const refDia =
+        Number(
+            document
+                .getElementById(
+                    "refDia"
+                )
+                .value
+        );
+
+
+    if(
+        !Number.isFinite(refBpm) ||
+        refBpm<30 ||
+        refBpm>220
+    ){
+
+        alert(
+            "أدخل Reference BPM صحيح من KF-65B."
+        );
+
+        return;
+    }
+
+
+    const mimo =
+        latestAnalysis.bpm;
+
+
+    const signedError =
+        mimo-refBpm;
+
+
+    const absoluteError =
+        Math.abs(
+            signedError
+        );
+
+
+    const session = {
+
+        session_id:
+            "DM-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2,7),
+
+
+        subject_id:
+            document
+                .getElementById(
+                    "subjectId"
+                )
+                .value
+                .trim() ||
+            "UNKNOWN",
+
+
+        session_label:
+            document
+                .getElementById(
+                    "sessionLabel"
+                )
+                .value
+                .trim() ||
+            "Baseline",
+
+
+        timestamp:
+            new Date().toISOString(),
+
+
+        environment:
+            document
+                .getElementById(
+                    "environment"
+                )
+                .value,
+
+
+        movement:
+            document
+                .getElementById(
+                    "movement"
+                )
+                .value,
+
+
+        mimo_bpm:
+            Number(
+                mimo.toFixed(1)
+            ),
+
+
+        reference_bpm:
+            Number(
+                refBpm
+            ),
+
+
+        reference_sys:
+            Number.isFinite(refSys) &&
+            refSys>0
+                ? refSys
+                : null,
+
+
+        reference_dia:
+            Number.isFinite(refDia) &&
+            refDia>0
+                ? refDia
+                : null,
+
+
+        signed_error:
+            Number(
+                signedError.toFixed(1)
+            ),
+
+
+        absolute_error:
+            Number(
+                absoluteError.toFixed(1)
+            ),
+
+
+        signal_quality:
+            latestAnalysis.quality,
+
+
+        measurement_confidence:
+            latestAnalysis.confidence,
+
+
+        confidence_label:
+            latestAnalysis.confidenceLabel,
+
+
+        confidence_reason:
+            latestAnalysis.confidenceReason,
+
+
+        method_agreement:
+            latestAnalysis.agreement,
+
+
+        candidate_bpm:
+            Number.isFinite(
+                latestAnalysis.candidate
+            )
+                ? Number(
+                    latestAnalysis.candidate
+                        .toFixed(1)
+                )
+                : null,
+
+
+        candidate_support:
+            latestAnalysis.support,
+
+
+        green_bpm:
+            Number.isFinite(
+                latestAnalysis.green
+            )
+                ? Number(
+                    latestAnalysis.green
+                        .toFixed(1)
+                )
+                : null,
+
+
+        chrom_bpm:
+            Number.isFinite(
+                latestAnalysis.chrom
+            )
+                ? Number(
+                    latestAnalysis.chrom
+                        .toFixed(1)
+                )
+                : null,
+
+
+        pos_bpm:
+            Number.isFinite(
+                latestAnalysis.pos
+            )
+                ? Number(
+                    latestAnalysis.pos
+                        .toFixed(1)
+                )
+                : null,
+
+
+        temporal_bpm:
+            Number.isFinite(
+                latestAnalysis.temporalBpm
+            )
+                ? Number(
+                    latestAnalysis.temporalBpm
+                        .toFixed(1)
+                )
+                : null,
+
+
+        temporal_spread:
+            Number.isFinite(
+                latestAnalysis.temporalSpread
+            )
+                ? Number(
+                    latestAnalysis.temporalSpread
+                        .toFixed(2)
+                )
+                : null,
+
+
+        lighting:
+            Number(
+                latestAnalysis.lighting
+                    .toFixed(2)
+            ),
+
+
+        face_stability:
+            latestAnalysis.faceStability,
+
+
+        sample_rate:
+            Number.isFinite(
+                latestAnalysis.sampleRate
+            )
+                ? Number(
+                    latestAnalysis.sampleRate
+                        .toFixed(3)
+                )
+                : null,
+
+
+        samples:
+            latestAnalysis.samples,
+
+
+        raw_signal:{
+
+            times:[
+                ...signalTimes
+            ],
+
+            red:[
+                ...redSignal
+            ],
+
+            green:[
+                ...greenSignal
+            ],
+
+            blue:[
+                ...blueSignal
+            ]
+        }
+    };
+
+
+    const sessions =
+        getSessions();
+
+
+    sessions.push(
+        session
+    );
+
+
+    saveSessions(
+        sessions
+    );
+
+
+    renderSessions();
+
+
+    alert(
+        "تم حفظ جلسة البحث بنجاح."
+    );
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    ).replace(
+        /[&<>"']/g,
+        char=>{
+
+            const map = {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+            };
+
+            return map[char];
+        }
+    );
+}
+
+
+/* =========================================================
+   RENDER SESSIONS
+========================================================= */
+
+function renderSessions(){
+
+    const tbody =
+        document.getElementById(
+            "sessionsTableBody"
+        );
+
+
+    const sessions =
+        getSessions();
+
+
+    tbody.innerHTML =
+        "";
+
+
+    for(
+        let i=sessions.length-1;
+        i>=0;
+        i--
+    ){
+
+        const s =
+            sessions[i];
+
+
+        const error =
+            Number(
+                s.absolute_error
+            );
+
+
+        const errorClass =
+            error<=5
+                ? "good"
+                : error<=10
+                    ? "warnText"
+                    : "badText";
+
+
+        const tr =
+            document.createElement(
+                "tr"
+            );
+
+
+        tr.innerHTML = `
+
+            <td>
+                ${escapeHtml(
+                    s.session_id
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    s.subject_id
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    s.environment
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    s.movement
+                )}
+            </td>
+
+            <td>
+                ${fmt(
+                    s.mimo_bpm,
+                    1
+                )}
+            </td>
+
+            <td>
+                ${fmt(
+                    s.reference_bpm,
+                    1
+                )}
+            </td>
+
+            <td class="${errorClass}">
+                ${fmt(
+                    s.signed_error,
+                    1
+                )}
+            </td>
+
+            <td class="${errorClass}">
+                ${fmt(
+                    s.absolute_error,
+                    1
+                )}
+            </td>
+
+            <td>
+                ${fmt(
+                    s.signal_quality,
+                    0
+                )}%
+            </td>
+
+            <td>
+                ${fmt(
+                    s.measurement_confidence,
+                    0
+                )}%
+                <br>
+                <span class="small">
+                    ${escapeHtml(
+                        s.confidence_label ||
+                        "LOW"
+                    )}
+                </span>
+            </td>
+
+            <td>
+                ${fmt(
+                    s.method_agreement,
+                    0
+                )}%
+            </td>
+
+            <td>
+                ${s.candidate_support ?? "--"}/3
+            </td>
+
+            <td>
+                ${fmt(
+                    s.green_bpm,
+                    1
+                )}
+            </td>
+
+            <td>
+                ${fmt(
+                    s.chrom_bpm,
+                    1
+                )}
+            </td>
+
+            <td>
+                ${fmt(
+                    s.pos_bpm,
+                    1
+                )}
+            </td>
+
+            <td>
+                ${s.reference_sys ?? "--"}
+            </td>
+
+            <td>
+                ${s.reference_dia ?? "--"}
+            </td>
+        `;
+
+
+        tbody.appendChild(
+            tr
+        );
+    }
+}
+
+
+/* =========================================================
+   CSV
+========================================================= */
+
+function csvEscape(
+    value
+){
+
+    if(
+        value===null ||
+        value===undefined
+    ){
+        return "";
+    }
+
+
+    const str =
+        String(value);
+
+
+    if(
+        str.includes(",") ||
+        str.includes('"') ||
+        str.includes("\n")
+    ){
+
+        return (
+            '"' +
+            str.replace(
+                /"/g,
+                '""'
+            ) +
+            '"'
+        );
+    }
+
+
+    return str;
+}
+
+
+function exportCSV(){
+
+    const sessions =
+        getSessions();
+
+
+    if(!sessions.length){
+
+        alert(
+            "لا توجد جلسات."
+        );
+
+        return;
+    }
+
+
+    const headers = [
+
+        "session_id",
+        "subject_id",
+        "session_label",
+        "timestamp",
+        "environment",
+        "movement",
+        "mimo_bpm",
+        "reference_bpm",
+        "reference_sys",
+        "reference_dia",
+        "signed_error",
+        "absolute_error",
+        "signal_quality",
+        "measurement_confidence",
+        "confidence_label",
+        "confidence_reason",
+        "method_agreement",
+        "candidate_bpm",
+        "candidate_support",
+        "green_bpm",
+        "chrom_bpm",
+        "pos_bpm",
+        "temporal_bpm",
+        "temporal_spread",
+        "lighting",
+        "face_stability",
+        "sample_rate",
+        "samples"
+    ];
+
+
+    const lines = [];
+
+
+    lines.push(
+        headers.join(",")
+    );
+
+
+    for(
+        const session
+        of sessions
+    ){
+
+        lines.push(
+            headers
+                .map(
+                    h =>
+                        csvEscape(
+                            session[h]
+                        )
+                )
+                .join(",")
+        );
+    }
+
+
+    const blob =
+        new Blob(
+            [
+                "\uFEFF"+
+                lines.join("\n")
+            ],
+            {
+                type:
+                    "text/csv;charset=utf-8"
+            }
+        );
+
+
+    downloadBlob(
+        blob,
+        "doctor-mimo-v53-sessions.csv"
+    );
+}
+
+
+/* =========================================================
+   JSON
+========================================================= */
+
+function exportJSON(){
+
+    const sessions =
+        getSessions();
+
+
+    if(!sessions.length){
+
+        alert(
+            "لا توجد جلسات."
+        );
+
+        return;
+    }
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    sessions,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:
+                    "application/json;charset=utf-8"
+            }
+        );
+
+
+    downloadBlob(
+        blob,
+        "doctor-mimo-v53-sessions.json"
+    );
+}
+
+
+/* =========================================================
+   DOWNLOAD
+========================================================= */
+
+function downloadBlob(
+    blob,
+    filename
+){
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        filename;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(
+        ()=>{
+            URL.revokeObjectURL(
+                url
+            );
+        },
+        1000
+    );
+}
+
+
+/* =========================================================
+   CLEAR SESSIONS
+========================================================= */
+
+function clearSessions(){
+
+    const sessions =
+        getSessions();
+
+
+    if(!sessions.length){
+        return;
+    }
+
+
+    if(
+        !confirm(
+            "هل تريد حذف كل جلسات البحث؟"
+        )
+    ){
+        return;
+    }
+
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+
+    renderSessions();
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+document
+    .getElementById(
+        "startBtn"
+    )
+    .addEventListener(
+        "click",
+        startCamera
+    );
+
+
+document
+    .getElementById(
+        "stopBtn"
+    )
+    .addEventListener(
+        "click",
+        stopCamera
+    );
+
+
+document
+    .getElementById(
+        "scanBtn"
+    )
+    .addEventListener(
+        "click",
+        startScan
+    );
+
+
+document
+    .getElementById(
+        "clearBtn"
+    )
+    .addEventListener(
+        "click",
+        clearSignal
+    );
+
+
+document
+    .getElementById(
+        "saveSessionBtn"
+    )
+    .addEventListener(
+        "click",
+        saveResearchSession
+    );
+
+
+document
+    .getElementById(
+        "exportCsvBtn"
+    )
+    .addEventListener(
+        "click",
+        exportCSV
+    );
+
+
+document
+    .getElementById(
+        "exportJsonBtn"
+    )
+    .addEventListener(
+        "click",
+        exportJSON
+    );
+
+
+document
+    .getElementById(
+        "clearSessionsBtn"
+    )
+    .addEventListener(
+        "click",
+        clearSessions
+    );
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    ()=>{
+        resizeOverlay();
+        resizeSignalCanvas();
+        drawSignal();
+    }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+renderSessions();
+
+resizeOverlay();
+
+resizeSignalCanvas();
+
+drawSignal();
+
+</script>
+
+</body>
+</html>
