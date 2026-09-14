@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Doctor MIMO™ — V5.3</title>
+<title>Doctor MIMO™ — V5.4</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -12,49 +12,33 @@
 <style>
 :root{
     --bg:#071019;
-    --bg2:#0b1621;
-    --card:#0e1a25;
+    --card:#0d1a26;
     --card2:#09131d;
     --border:#203444;
     --text:#edf5fa;
-    --muted:#8ea2b3;
+    --muted:#8da2b3;
     --accent:#45d8ff;
     --green:#3be58e;
     --yellow:#ffd166;
     --red:#ff6578;
-    --blue:#78a5ff;
-    --shadow:0 15px 45px rgba(0,0,0,.24);
+    --blue:#7ba6ff;
 }
 
 *{
     box-sizing:border-box;
 }
 
-html{
-    scroll-behavior:smooth;
-}
-
 body{
     margin:0;
-    min-height:100vh;
     color:var(--text);
+    background:
+        radial-gradient(circle at 85% -10%,rgba(69,216,255,.10),transparent 30%),
+        linear-gradient(180deg,#071019,#08121c);
     font-family:
         "Segoe UI",
         Tahoma,
         Arial,
         sans-serif;
-
-    background:
-        radial-gradient(
-            circle at 85% -10%,
-            rgba(69,216,255,.10),
-            transparent 30%
-        ),
-        linear-gradient(
-            180deg,
-            var(--bg) 0%,
-            #08121c 100%
-        );
 }
 
 button,
@@ -71,39 +55,26 @@ button{
     padding:11px 16px;
     cursor:pointer;
     font-weight:700;
-    transition:.18s ease;
 }
 
 button:hover{
-    transform:translateY(-1px);
     background:#183044;
-}
-
-button:active{
-    transform:translateY(0);
 }
 
 button:disabled{
     opacity:.45;
     cursor:not-allowed;
-    transform:none;
 }
 
 button.primary{
     border:none;
     color:#041018;
-    background:
-        linear-gradient(
-            135deg,
-            #34d7ff,
-            #6d96ff
-        );
+    background:linear-gradient(135deg,#34d7ff,#6d96ff);
 }
 
 button.danger{
     color:#ff9aa7;
     background:#25151b;
-    border-color:#46262f;
 }
 
 .container{
@@ -111,24 +82,22 @@ button.danger{
     margin:22px auto 50px;
 }
 
-.header{
-    padding:24px 26px;
-    margin-bottom:18px;
+.header,
+.card{
     border:1px solid var(--border);
+    background:linear-gradient(180deg,rgba(14,26,37,.98),rgba(9,19,29,.98));
+    box-shadow:0 15px 45px rgba(0,0,0,.24);
+}
+
+.header{
+    padding:24px;
     border-radius:22px;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,.035),
-            rgba(255,255,255,.012)
-        );
-    box-shadow:var(--shadow);
+    margin-bottom:18px;
 }
 
 .header h1{
     margin:0 0 7px;
     font-size:clamp(25px,3vw,40px);
-    letter-spacing:-.5px;
 }
 
 .header p{
@@ -144,16 +113,8 @@ button.danger{
 }
 
 .card{
-    border:1px solid var(--border);
-    border-radius:22px;
     padding:18px;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(14,26,37,.98),
-            rgba(9,19,29,.98)
-        );
-    box-shadow:var(--shadow);
+    border-radius:22px;
 }
 
 .card h2{
@@ -163,18 +124,18 @@ button.danger{
 
 .videoWrap{
     position:relative;
-    aspect-ratio:16/10;
     width:100%;
-    overflow:hidden;
+    aspect-ratio:16/10;
     background:#02070c;
     border:1px solid #203443;
     border-radius:18px;
+    overflow:hidden;
 }
 
 #video{
-    display:block;
     width:100%;
     height:100%;
+    display:block;
     object-fit:cover;
     transform:scaleX(-1);
 }
@@ -192,15 +153,15 @@ button.danger{
     position:absolute;
     top:13px;
     right:13px;
-    z-index:10;
+    z-index:5;
     padding:8px 13px;
     border-radius:999px;
+    color:#d9e7ef;
     background:rgba(0,0,0,.58);
-    color:#d8e6ee;
     border:1px solid rgba(255,255,255,.08);
-    backdrop-filter:blur(10px);
     font-size:12px;
     font-weight:800;
+    backdrop-filter:blur(10px);
 }
 
 .faceStatus.ok{
@@ -220,7 +181,6 @@ button.danger{
 
 .roi{
     position:absolute;
-    display:none;
     left:50%;
     top:32%;
     width:26%;
@@ -228,8 +188,8 @@ button.danger{
     transform:translate(-50%,-50%);
     border:2px solid rgba(69,216,255,.88);
     border-radius:18px;
+    display:none;
     pointer-events:none;
-    box-shadow:0 0 25px rgba(69,216,255,.12);
 }
 
 .controls{
@@ -237,39 +197,6 @@ button.danger{
     flex-wrap:wrap;
     gap:9px;
     margin-top:14px;
-}
-
-.formGrid{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:10px;
-}
-
-.field{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-label{
-    color:var(--muted);
-    font-size:12px;
-}
-
-input,
-select{
-    width:100%;
-    padding:11px 12px;
-    border-radius:11px;
-    border:1px solid #263949;
-    background:#08131d;
-    color:var(--text);
-    outline:none;
-}
-
-input:focus,
-select:focus{
-    border-color:var(--accent);
 }
 
 .metrics{
@@ -294,22 +221,21 @@ select:focus{
 .metric .value{
     font-size:26px;
     font-weight:900;
-    line-height:1;
 }
 
 .metric .sub{
-    margin-top:6px;
-    color:#72899a;
+    color:#738999;
     font-size:11px;
+    margin-top:5px;
 }
 
 .statusRow{
+    margin-top:9px;
+    padding:11px 13px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:10px;
-    padding:11px 13px;
-    margin-top:9px;
     border:1px solid #1b2e3c;
     border-radius:14px;
     background:#08131d;
@@ -367,22 +293,55 @@ select:focus{
     background:#061019;
 }
 
-.signal{
-    display:block;
+.signalCanvas{
     width:100%;
     height:180px;
+    display:block;
 }
 
 .report{
-    min-height:150px;
     margin-top:14px;
     padding:14px;
-    white-space:pre-wrap;
-    line-height:1.8;
+    min-height:150px;
     border:1px solid #1c2e3d;
     border-radius:15px;
     background:#08131d;
+    white-space:pre-wrap;
     font-size:13px;
+    line-height:1.8;
+}
+
+.formGrid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+label{
+    color:var(--muted);
+    font-size:12px;
+}
+
+input,
+select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #263949;
+    border-radius:11px;
+    background:#08131d;
+    color:var(--text);
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:var(--accent);
 }
 
 .small{
@@ -398,7 +357,7 @@ select:focus{
 
 table{
     width:100%;
-    min-width:1200px;
+    min-width:1250px;
     border-collapse:collapse;
 }
 
@@ -414,9 +373,8 @@ td{
 th{
     position:sticky;
     top:0;
-    z-index:2;
-    color:#d6e4ed;
     background:#0b1721;
+    color:#d6e4ed;
 }
 
 td{
@@ -436,14 +394,12 @@ td{
 }
 
 @media(max-width:1000px){
-
     .mainGrid{
         grid-template-columns:1fr;
     }
 }
 
 @media(max-width:620px){
-
     .container{
         width:96%;
     }
@@ -454,17 +410,13 @@ td{
         border-radius:17px;
     }
 
-    .formGrid,
-    .metrics{
+    .metrics,
+    .formGrid{
         grid-template-columns:1fr;
     }
 
     .controls button{
         width:100%;
-    }
-
-    .metric .value{
-        font-size:23px;
     }
 }
 </style>
@@ -476,24 +428,19 @@ td{
 
     <section class="header">
         <h1>Doctor MIMO™</h1>
-
         <p>
-            Robust Multi-Method rPPG & Measurement Intelligence Engine — V5.3
+            Accuracy First — Robust rPPG Research Prototype V5.4
             <br>
-            Research Prototype / Reference Validation Edition
+            Camera → Dynamic ROI → RGB → Green / CHROM / POS → Robust Fusion
         </p>
     </section>
 
 
     <div class="mainGrid">
 
-        <!-- =================================================
-             CAMERA
-        ================================================== -->
-
         <section class="card">
 
-            <h2>1. الكاميرا وتحليل الوجه</h2>
+            <h2>1. Camera & Face Tracking</h2>
 
             <div class="videoWrap">
 
@@ -565,14 +512,14 @@ td{
             </div>
 
             <div class="statusRow">
-                <span>معدل أخذ العينات</span>
+                <span>معدل العينات الفعلي</span>
                 <strong id="sampleRateValue">
                     --
                 </strong>
             </div>
 
             <div class="statusRow">
-                <span>حالة التحليل</span>
+                <span>التحليل</span>
                 <strong id="analysisState">
                     جاهز
                 </strong>
@@ -583,7 +530,7 @@ td{
 
                 <canvas
                     id="signalCanvas"
-                    class="signal">
+                    class="signalCanvas">
                 </canvas>
 
             </div>
@@ -591,14 +538,9 @@ td{
         </section>
 
 
-        <!-- =================================================
-             ANALYSIS
-        ================================================== -->
-
         <section class="card">
 
-            <h2>2. MIMO Fusion Analysis</h2>
-
+            <h2>2. MIMO Measurement</h2>
 
             <div class="metrics">
 
@@ -614,7 +556,7 @@ td{
                     </div>
 
                     <div class="sub">
-                        Robust fused estimate
+                        Final selected candidate
                     </div>
                 </div>
 
@@ -631,7 +573,7 @@ td{
                     </div>
 
                     <div class="sub">
-                        Green rPPG
+                        Green channel
                     </div>
                 </div>
 
@@ -682,14 +624,14 @@ td{
                     </div>
 
                     <div class="sub">
-                        SQI heuristic
+                        Research SQI
                     </div>
                 </div>
 
 
                 <div class="metric">
                     <div class="label">
-                        Measurement Confidence
+                        Confidence
                     </div>
 
                     <div
@@ -709,63 +651,68 @@ td{
 
 
             <div class="statusRow">
-                <span>Method Agreement</span>
-                <strong id="agreementValue">--</strong>
+                <span>Selected Candidate</span>
+                <strong id="candidateValue">
+                    --
+                </strong>
             </div>
-
 
             <div class="statusRow">
-                <span>Candidate BPM</span>
-                <strong id="candidateValue">--</strong>
+                <span>Supporting Methods</span>
+                <strong id="supportValue">
+                    --
+                </strong>
             </div>
-
 
             <div class="statusRow">
-                <span>Candidate Support</span>
-                <strong id="supportValue">--</strong>
+                <span>Method Spread</span>
+                <strong id="spreadValue">
+                    --
+                </strong>
             </div>
-
 
             <div class="statusRow">
-                <span>Temporal Stability</span>
-                <strong id="temporalValue">--</strong>
+                <span>Temporal Spread</span>
+                <strong id="temporalValue">
+                    --
+                </strong>
             </div>
-
 
             <div class="statusRow">
                 <span>Face Stability</span>
-                <strong id="faceStabilityValue">--</strong>
+                <strong id="faceStabilityValue">
+                    --
+                </strong>
             </div>
-
 
             <div class="statusRow">
                 <span>Lighting</span>
-                <strong id="lightingValue">--</strong>
+                <strong id="lightingValue">
+                    --
+                </strong>
             </div>
 
-
             <div class="statusRow">
-                <span>Overall State</span>
+                <span>State</span>
 
                 <span
                     id="measurementBadge"
                     class="badge low">
                     LOW
                 </span>
-
             </div>
 
 
             <div class="reasonBox">
 
                 <div class="reasonTitle">
-                    سبب قرار الثقة
+                    سبب القرار
                 </div>
 
                 <div
                     id="confidenceReason"
                     class="reasonText">
-                    في انتظار بيانات كافية.
+                    في انتظار البيانات.
                 </div>
 
             </div>
@@ -914,40 +861,29 @@ td{
             <button
                 id="saveSessionBtn"
                 class="primary">
-                حفظ جلسة البحث
+                حفظ الجلسة
             </button>
 
-            <button id="exportCsvBtn">
+            <button
+                id="exportCsvBtn">
                 تصدير CSV
             </button>
 
-            <button id="exportJsonBtn">
+            <button
+                id="exportJsonBtn">
                 تصدير JSON
             </button>
 
             <button
                 id="clearSessionsBtn"
                 class="danger">
-                حذف كل الجلسات
+                حذف الجلسات
             </button>
 
         </div>
 
-
-        <div
-            class="small"
-            style="margin-top:12px;">
-
-            المرجع الخارجي يستخدم بعد القياس للتحقق من الأداء.
-            لا يدخل في حساب الـMIMO BPM أو Measurement Confidence.
-        </div>
-
     </section>
 
-
-    <!-- =====================================================
-         DATABASE
-    ====================================================== -->
 
     <section
         class="card"
@@ -958,7 +894,7 @@ td{
         </h2>
 
         <div class="small">
-            يتم حفظ جلسات البحث محليًا داخل المتصفح.
+            الجلسات محفوظة محليًا في المتصفح.
         </div>
 
 
@@ -975,12 +911,12 @@ td{
                         <th>Environment</th>
                         <th>Movement</th>
                         <th>MIMO</th>
-                        <th>Reference</th>
+                        <th>REF</th>
                         <th>Error</th>
                         <th>Abs Error</th>
                         <th>Quality</th>
                         <th>Confidence</th>
-                        <th>Agreement</th>
+                        <th>Candidate</th>
                         <th>Support</th>
                         <th>Green</th>
                         <th>CHROM</th>
@@ -1034,75 +970,34 @@ const roiBox =
 
 
 /* =========================================================
-   CAMERA / FACE STATE
+   STATE
 ========================================================= */
 
 let faceMesh = null;
 let camera = null;
 
 let cameraRunning = false;
+let recording = false;
 let faceDetected = false;
 
-let previousFaceCenter = null;
-
-
-/* =========================================================
-   RECORDING STATE
-========================================================= */
-
-let recording = false;
 let recordingStart = 0;
 let recordingTimer = null;
 
-
-/* =========================================================
-   RAW SIGNAL
-========================================================= */
+let previousFaceCenter = null;
 
 let signalTimes = [];
 let redSignal = [];
 let greenSignal = [];
 let blueSignal = [];
 
-
-/* =========================================================
-   CURRENT STATE
-========================================================= */
-
 let latestLighting = 0;
 let latestFaceStability = 0;
 
 let currentBpm = null;
-
-let latestSignalQuality = 0;
+let latestQuality = 0;
 let latestConfidence = 0;
 
 let latestAnalysis = null;
-
-let currentFusion = {
-
-    finalBpm:null,
-
-    candidateBpm:null,
-
-    candidateSupport:0,
-
-    agreement:0,
-
-    spread:Infinity,
-
-    methodValues:[],
-
-    methodCount:0,
-
-    temporalBpm:null,
-
-    temporalSpread:Infinity,
-
-    green:null,
-    chrom:null,
-    pos:null
-};
 
 
 /* =========================================================
@@ -1112,8 +1007,7 @@ let currentFusion = {
 let lastAnalysisTime = 0;
 let analysisBusy = false;
 
-const ANALYSIS_INTERVAL = 500;
-
+const ANALYSIS_INTERVAL = 600;
 const MAX_RAW_SAMPLES = 700;
 
 
@@ -1122,11 +1016,11 @@ const MAX_RAW_SAMPLES = 700;
 ========================================================= */
 
 const STORAGE_KEY =
-    "doctor_mimo_v53_sessions";
+    "doctor_mimo_v54_sessions";
 
 
 /* =========================================================
-   BASIC HELPERS
+   HELPERS
 ========================================================= */
 
 function clamp(
@@ -1137,7 +1031,10 @@ function clamp(
 
     return Math.max(
         min,
-        Math.min(max,value)
+        Math.min(
+            max,
+            value
+        )
     );
 }
 
@@ -1150,7 +1047,12 @@ function mean(arr){
 
     let sum = 0;
 
-    for(let i=0;i<arr.length;i++){
+    for(
+        let i=0;
+        i<arr.length;
+        i++
+    ){
+
         sum += arr[i];
     }
 
@@ -1160,7 +1062,7 @@ function mean(arr){
 
 function std(arr){
 
-    if(arr.length < 2){
+    if(arr.length<2){
         return 0;
     }
 
@@ -1169,7 +1071,11 @@ function std(arr){
 
     let total = 0;
 
-    for(let i=0;i<arr.length;i++){
+    for(
+        let i=0;
+        i<arr.length;
+        i++
+    ){
 
         const d =
             arr[i]-m;
@@ -1199,14 +1105,12 @@ function median(arr){
             values.length/2
         );
 
-    return (
-        values.length%2
-            ? values[middle]
-            : (
-                values[middle-1]+
-                values[middle]
-            )/2
-    );
+    return values.length%2
+        ? values[middle]
+        : (
+            values[middle-1]+
+            values[middle]
+        )/2;
 }
 
 
@@ -1229,15 +1133,15 @@ function getSessions(){
 
     try{
 
-        const parsed =
+        const value =
             JSON.parse(
                 localStorage.getItem(
                     STORAGE_KEY
                 ) || "[]"
             );
 
-        return Array.isArray(parsed)
-            ? parsed
+        return Array.isArray(value)
+            ? value
             : [];
 
     }catch(error){
@@ -1259,32 +1163,29 @@ function saveSessions(
 
 
 /* =========================================================
-   SIGNAL PROCESSING
+   DETREND
 ========================================================= */
 
 function detrend(signal){
 
-    if(signal.length < 3){
+    if(signal.length<3){
         return [...signal];
     }
 
     const n =
         signal.length;
 
-    let sx = 0;
-    let sy = 0;
-    let sxy = 0;
-    let sxx = 0;
+    let sx=0;
+    let sy=0;
+    let sxy=0;
+    let sxx=0;
 
     for(let i=0;i<n;i++){
 
-        const x = i;
-        const y = signal[i];
-
-        sx += x;
-        sy += y;
-        sxy += x*y;
-        sxx += x*x;
+        sx += i;
+        sy += signal[i];
+        sxy += i*signal[i];
+        sxx += i*i;
     }
 
     const denominator =
@@ -1294,744 +1195,420 @@ function detrend(signal){
         Math.abs(denominator)<1e-12
             ? 0
             : (
-                n*sxy-sx*sy
+                n*sxy-
+                sx*sy
             )/denominator;
 
     const intercept =
         (sy-slope*sx)/n;
 
-    const result =
-        new Array(n);
-
-    for(let i=0;i<n;i++){
-
-        result[i] =
-            signal[i]-
+    return signal.map(
+        (value,index)=>
+            value-
             (
                 intercept+
-                slope*i
-            );
-    }
-
-    return result;
-}
-
-
-/*
- * First-order low-pass.
- */
-function lowPass(
-    signal,
-    cutoff,
-    fs
-){
-
-    if(
-        signal.length < 2 ||
-        cutoff <= 0 ||
-        fs <= 0
-    ){
-        return [...signal];
-    }
-
-    const dt =
-        1/fs;
-
-    const rc =
-        1/
-        (
-            2*
-            Math.PI*
-            cutoff
-        );
-
-    const alpha =
-        dt/
-        (rc+dt);
-
-    const out =
-        new Array(
-            signal.length
-        );
-
-    out[0] =
-        signal[0];
-
-    for(let i=1;i<signal.length;i++){
-
-        out[i] =
-            out[i-1]+
-            alpha*
-            (
-                signal[i]-
-                out[i-1]
-            );
-    }
-
-    return out;
-}
-
-
-/*
- * First-order high-pass.
- */
-function highPass(
-    signal,
-    cutoff,
-    fs
-){
-
-    if(
-        signal.length < 2 ||
-        cutoff <= 0 ||
-        fs <= 0
-    ){
-        return [...signal];
-    }
-
-    const dt =
-        1/fs;
-
-    const rc =
-        1/
-        (
-            2*
-            Math.PI*
-            cutoff
-        );
-
-    const alpha =
-        rc/
-        (rc+dt);
-
-    const out =
-        new Array(
-            signal.length
-        );
-
-    out[0] = 0;
-
-    for(let i=1;i<signal.length;i++){
-
-        out[i] =
-            alpha*
-            (
-                out[i-1]+
-                signal[i]-
-                signal[i-1]
-            );
-    }
-
-    return out;
-}
-
-
-/*
- * Actual lightweight band-pass:
- * 0.65–3.5 Hz.
- */
-function bandpass(
-    signal,
-    fs
-){
-
-    if(
-        signal.length <
-        Math.round(fs*3)
-    ){
-        return [...signal];
-    }
-
-    const detrended =
-        detrend(signal);
-
-    const high =
-        highPass(
-            detrended,
-            .65,
-            fs
-        );
-
-    const band =
-        lowPass(
-            high,
-            3.5,
-            fs
-        );
-
-    return band;
+                slope*index
+            )
+    );
 }
 
 
 /* =========================================================
-   INTERPOLATION / RESAMPLING
+   SIMPLE BANDPASS
+   Kept deliberately close to V5.2 path.
 ========================================================= */
 
-function resampleUniform(
-    data,
-    times,
-    targetFs=20
+function movingAverage(
+    signal,
+    windowSize
 ){
 
     if(
-        data.length < 5 ||
-        data.length !== times.length
+        signal.length===0 ||
+        windowSize<=1
     ){
 
-        return {
-            data:[],
-            times:[],
-            fs:targetFs
-        };
+        return [...signal];
     }
 
+    const out =
+        new Array(
+            signal.length
+        );
+
+    let sum = 0;
+
+    for(let i=0;i<signal.length;i++){
+
+        sum += signal[i];
+
+        if(
+            i>=windowSize
+        ){
+
+            sum -=
+                signal[
+                    i-windowSize
+                ];
+        }
+
+        out[i] =
+            sum/
+            Math.min(
+                i+1,
+                windowSize
+            );
+    }
+
+    return out;
+}
+
+
+function lightweightBandpass(
+    signal,
+    fs
+){
+
+    /*
+     * This is intentionally not the V5.3
+     * aggressive high/low-pass chain.
+     */
+
+    if(signal.length<10){
+        return [...signal];
+    }
+
+    const slow =
+        movingAverage(
+            signal,
+            Math.max(
+                2,
+                Math.round(
+                    fs/0.7
+                )
+            )
+        );
+
+    const fast =
+        movingAverage(
+            signal,
+            Math.max(
+                2,
+                Math.round(
+                    fs/3.5
+                )
+            )
+        );
+
+    const result =
+        new Array(
+            signal.length
+        );
+
+    for(
+        let i=0;
+        i<signal.length;
+        i++
+    ){
+
+        result[i] =
+            fast[i]-
+            slow[i];
+    }
+
+    return detrend(result);
+}
+
+
+/* =========================================================
+   DYNAMIC SAMPLE RATE
+========================================================= */
+
+function getActualFs(
+    times
+){
+
+    if(
+        times.length<3
+    ){
+
+        return 0;
+    }
+
+    const firstIndex =
+        Math.max(
+            0,
+            times.length-100
+        );
+
     const start =
-        times[0];
+        times[firstIndex];
 
     const end =
         times[times.length-1];
 
-    if(end<=start){
-        return {
-            data:[],
-            times:[],
-            fs:targetFs
-        };
-    }
+    const count =
+        times.length-
+        firstIndex;
 
-    const step =
-        1/targetFs;
-
-    const outputData = [];
-    const outputTimes = [];
-
-    let index = 0;
-
-    for(
-        let t=start;
-        t<=end;
-        t+=step
+    if(
+        end<=start ||
+        count<2
     ){
 
-        while(
-            index<times.length-2 &&
-            times[index+1]<t
-        ){
-
-            index++;
-        }
-
-        const t1 =
-            times[index];
-
-        const t2 =
-            times[
-                Math.min(
-                    index+1,
-                    times.length-1
-                )
-            ];
-
-        const y1 =
-            data[index];
-
-        const y2 =
-            data[
-                Math.min(
-                    index+1,
-                    data.length-1
-                )
-            ];
-
-        let value =
-            y1;
-
-        if(t2>t1){
-
-            const ratio =
-                (t-t1)/(t2-t1);
-
-            value =
-                y1+
-                (y2-y1)*ratio;
-        }
-
-        outputTimes.push(t);
-        outputData.push(value);
+        return 0;
     }
 
-    return {
-        data:outputData,
-        times:outputTimes,
-        fs:targetFs
-    };
+    return (
+        (count-1)/
+        (end-start)
+    );
 }
 
 
 /* =========================================================
-   DFT / SPECTRAL ANALYSIS
+   ACTUAL TIMELINE DFT
+   No artificial 20Hz rate.
 ========================================================= */
 
-function estimateBpmDFT(
+function estimateBpmIrregular(
     signal,
-    fs
+    times
 ){
 
     if(
-        signal.length <
-        Math.round(fs*5)
+        signal.length<60 ||
+        signal.length!==times.length
     ){
 
         return {
             bpm:null,
-            peakPower:0,
+            peak:0,
             prominence:0,
-            snr:0
+            periodicity:0
         };
     }
 
-    const x =
-        detrend(signal);
 
-    const deviation =
-        std(x);
+    const fs =
+        getActualFs(times);
 
-    if(deviation < 1e-8){
+
+    if(
+        !Number.isFinite(fs) ||
+        fs<5
+    ){
 
         return {
             bpm:null,
-            peakPower:0,
+            peak:0,
             prominence:0,
-            snr:0
+            periodicity:0
         };
     }
+
+
+    const start =
+        Math.max(
+            0,
+            signal.length-140
+        );
+
+
+    const x =
+        detrend(
+            signal.slice(start)
+        );
+
+
+    const t =
+        times.slice(start);
+
+
+    const n =
+        x.length;
+
+
+    const sd =
+        std(x);
+
+
+    if(sd<1e-8){
+
+        return {
+            bpm:null,
+            peak:0,
+            prominence:0,
+            periodicity:0
+        };
+    }
+
 
     const normalized =
         x.map(
-            v=>v/deviation
+            value=>value/sd
         );
 
+
+    /*
+     * Search 42–150 BPM.
+     *
+     * Actual timestamps are used in phase.
+     */
+
     const minHz =
-        .65;
+        42/60;
 
     const maxHz =
-        3.0;
+        150/60;
 
     const step =
-        .01;
+        0.01;
 
-    const spectrum = [];
 
-    let best =
+    let bestFreq =
         null;
 
+    let bestPower =
+        -Infinity;
+
+
+    const powers = [];
+
+
+    const t0 =
+        t[0];
+
+
     for(
-        let frequency=minHz;
-        frequency<=maxHz;
-        frequency+=step
+        let f=minHz;
+        f<=maxHz;
+        f+=step
     ){
 
-        let re = 0;
-        let im = 0;
+        let real=0;
+        let imag=0;
 
-        for(
-            let i=0;
-            i<normalized.length;
-            i++
-        ){
+        for(let i=0;i<n;i++){
+
+            const elapsed =
+                t[i]-t0;
 
             const phase =
                 2*
                 Math.PI*
-                frequency*
-                i/fs;
+                f*
+                elapsed;
 
-            re +=
+            real +=
                 normalized[i]*
                 Math.cos(phase);
 
-            im -=
+            imag -=
                 normalized[i]*
                 Math.sin(phase);
         }
 
         const power =
-            re*re+im*im;
+            real*real+
+            imag*imag;
 
-        const item = {
-            frequency,
+        powers.push({
+            f,
             power
-        };
-
-        spectrum.push(item);
+        });
 
         if(
-            !best ||
-            power>best.power
+            power>bestPower
         ){
-            best=item;
+
+            bestPower =
+                power;
+
+            bestFreq =
+                f;
         }
     }
 
-    if(!best){
+
+    if(!Number.isFinite(bestFreq)){
 
         return {
             bpm:null,
-            peakPower:0,
+            peak:0,
             prominence:0,
-            snr:0
+            periodicity:0
         };
     }
 
 
     /*
-     * Local-vs-background prominence.
+     * Local peak dominance.
      */
+
     const neighborhood =
-        spectrum.filter(
-            item =>
+        powers.filter(
+            item=>
                 Math.abs(
-                    item.frequency-
-                    best.frequency
+                    item.f-bestFreq
                 )>.08
         );
 
-    const backgroundValues =
-        neighborhood
-            .map(
-                item=>item.power
-            );
 
     const background =
-        backgroundValues.length
-            ? median(backgroundValues)
+        neighborhood.length
+            ? median(
+                neighborhood.map(
+                    item=>item.power
+                )
+            )
             : 0;
 
+
     const prominence =
-        best.power>0
+        bestPower>0
             ? clamp(
                 (
-                    best.power-
-                    background
-                )/
-                best.power,
+                    bestPower-background
+                )/bestPower,
                 0,
                 1
             )
             : 0;
+
 
     const snr =
         background>0
             ? clamp(
                 (
-                    best.power/
+                    bestPower/
                     background
-                )/10,
+                )/8,
                 0,
                 1
             )
             : 1;
 
-    return {
-        bpm:
-            best.frequency*60,
 
-        peakPower:
-            best.power,
+    return {
+
+        bpm:
+            bestFreq*60,
+
+        peak:
+            bestPower,
 
         prominence,
 
-        snr
+        snr,
+
+        fs
     };
 }
 
 
 /* =========================================================
-   AUTOCORRELATION
-========================================================= */
-
-function autocorrelationScore(
-    signal,
-    fs
-){
-
-    if(
-        signal.length <
-        fs*5
-    ){
-        return 0;
-    }
-
-    const x =
-        detrend(signal);
-
-    const minLag =
-        Math.max(
-            1,
-            Math.floor(
-                fs*(60/180)
-            )
-        );
-
-    const maxLag =
-        Math.min(
-            x.length-2,
-            Math.floor(
-                fs*(60/42)
-            )
-        );
-
-    if(maxLag<=minLag){
-        return 0;
-    }
-
-    let best = -Infinity;
-
-    for(
-        let lag=minLag;
-        lag<=maxLag;
-        lag++
-    ){
-
-        let sum = 0;
-        let count = 0;
-
-        for(
-            let i=lag;
-            i<x.length;
-            i++
-        ){
-
-            sum +=
-                x[i]*
-                x[i-lag];
-
-            count++;
-        }
-
-        if(count){
-
-            const correlation =
-                sum/count;
-
-            if(
-                correlation>best
-            ){
-                best=correlation;
-            }
-        }
-    }
-
-    return Number.isFinite(best)
-        ? clamp(
-            (best+1)/2,
-            0,
-            1
-        )
-        : 0;
-}
-
-
-/* =========================================================
-   RGB NORMALIZATION
-========================================================= */
-
-function normalizeRGB(
-    r,
-    g,
-    b
-){
-
-    const meanR =
-        mean(r);
-
-    const meanG =
-        mean(g);
-
-    const meanB =
-        mean(b);
-
-    if(
-        meanR<1e-9 ||
-        meanG<1e-9 ||
-        meanB<1e-9
-    ){
-        return null;
-    }
-
-    const rn = [];
-    const gn = [];
-    const bn = [];
-
-    for(let i=0;i<r.length;i++){
-
-        rn.push(
-            r[i]/meanR
-        );
-
-        gn.push(
-            g[i]/meanG
-        );
-
-        bn.push(
-            b[i]/meanB
-        );
-    }
-
-    return {
-        r:rn,
-        g:gn,
-        b:bn
-    };
-}
-
-
-/* =========================================================
-   CHROM-STYLE
-========================================================= */
-
-function computeChrom(
-    rgb
-){
-
-    if(
-        !rgb ||
-        rgb.r.length<10
-    ){
-        return [];
-    }
-
-    const X = [];
-    const Y = [];
-
-    for(
-        let i=0;
-        i<rgb.r.length;
-        i++
-    ){
-
-        X.push(
-            3*rgb.r[i]-
-            2*rgb.g[i]
-        );
-
-        Y.push(
-            1.5*rgb.r[i]+
-            rgb.g[i]-
-            1.5*rgb.b[i]
-        );
-    }
-
-    const sx =
-        std(X);
-
-    const sy =
-        std(Y);
-
-    if(
-        sx<1e-9 ||
-        sy<1e-9
-    ){
-        return [];
-    }
-
-    const alpha =
-        sx/sy;
-
-    const output =
-        new Array(
-            X.length
-        );
-
-    for(
-        let i=0;
-        i<X.length;
-        i++
-    ){
-
-        output[i] =
-            X[i]-
-            alpha*Y[i];
-    }
-
-    return detrend(output);
-}
-
-
-/* =========================================================
-   POS-STYLE
-========================================================= */
-
-function computePOS(
-    rgb
-){
-
-    if(
-        !rgb ||
-        rgb.r.length<10
-    ){
-        return [];
-    }
-
-    const S1 = [];
-    const S2 = [];
-
-    for(
-        let i=0;
-        i<rgb.r.length;
-        i++
-    ){
-
-        S1.push(
-            -rgb.r[i]+
-            rgb.b[i]
-        );
-
-        S2.push(
-            rgb.r[i]-
-            2*rgb.g[i]+
-            rgb.b[i]
-        );
-    }
-
-    const std1 =
-        std(S1);
-
-    const std2 =
-        std(S2);
-
-    if(
-        std1<1e-9 ||
-        std2<1e-9
-    ){
-        return [];
-    }
-
-    const alpha =
-        std1/std2;
-
-    const output =
-        new Array(
-            S1.length
-        );
-
-    for(
-        let i=0;
-        i<S1.length;
-        i++
-    ){
-
-        output[i] =
-            S1[i]-
-            alpha*S2[i];
-    }
-
-    return detrend(output);
-}
-
-
-/* =========================================================
-   WINDOW EXTRACTION
+   TEMPORAL WINDOWS
 ========================================================= */
 
 function getWindow(
@@ -2051,130 +1628,431 @@ function getWindow(
         };
     }
 
+
     const end =
         times[times.length-1];
 
     const start =
         end-seconds;
 
-    const resultData = [];
-    const resultTimes = [];
 
-    for(let i=0;i<times.length;i++){
+    const d=[];
+    const t=[];
 
-        if(times[i]>=start){
 
-            resultData.push(
+    for(
+        let i=0;
+        i<times.length;
+        i++
+    ){
+
+        if(
+            times[i]>=start
+        ){
+
+            d.push(
                 data[i]
             );
 
-            resultTimes.push(
+            t.push(
                 times[i]
             );
         }
     }
 
+
     return {
-        data:resultData,
-        times:resultTimes
+        data:d,
+        times:t
     };
 }
 
 
 /* =========================================================
-   ESTIMATE ONE CHANNEL
+   GREEN
 ========================================================= */
 
-function estimateChannel(
-    data,
-    times,
-    seconds=10
-){
+function estimateGreen(){
 
     const window =
         getWindow(
-            data,
-            times,
-            seconds
+            greenSignal,
+            signalTimes,
+            10
         );
 
     if(
-        window.data.length<50
+        window.data.length<60
     ){
 
         return {
             bpm:null,
-            quality:0,
-            temporalValues:[]
+            quality:0
         };
     }
 
-    const uniform =
-        resampleUniform(
-            window.data,
-            window.times,
-            20
-        );
-
-    if(
-        uniform.data.length<80
-    ){
-
-        return {
-            bpm:null,
-            quality:0,
-            temporalValues:[]
-        };
-    }
 
     const filtered =
-        bandpass(
-            uniform.data,
-            20
+        lightweightBandpass(
+            window.data,
+            getActualFs(
+                window.times
+            )
         );
+
 
     const spectral =
-        estimateBpmDFT(
+        estimateBpmIrregular(
             filtered,
-            20
+            window.times
         );
 
-    const periodicity =
-        autocorrelationScore(
-            filtered,
-            20
-        );
 
     const quality =
         Math.round(
             clamp(
-                spectral.prominence*.50+
-                spectral.snr*.20+
-                periodicity*.30,
+                spectral.prominence*.60+
+                (spectral.snr||0)*.15+
+                spectral.periodicity*.25,
                 0,
                 1
             )*100
         );
 
+
     return {
-        bpm:spectral.bpm,
+
+        bpm:
+            spectral.bpm,
+
         quality,
-        spectral,
-        periodicity
+
+        spectral
     };
 }
 
 
 /* =========================================================
-   TEMPORAL GREEN CONSISTENCY
+   CHROM
 ========================================================= */
 
-function temporalGreenAnalysis(){
+function computeChrom(
+    r,
+    g,
+    b
+){
+
+    const mr =
+        mean(r);
+
+    const mg =
+        mean(g);
+
+    const mb =
+        mean(b);
+
+
+    if(
+        mr<1e-9 ||
+        mg<1e-9 ||
+        mb<1e-9
+    ){
+
+        return [];
+    }
+
+
+    const X=[];
+    const Y=[];
+
+
+    for(
+        let i=0;
+        i<r.length;
+        i++
+    ){
+
+        const rn =
+            r[i]/mr;
+
+        const gn =
+            g[i]/mg;
+
+        const bn =
+            b[i]/mb;
+
+
+        X.push(
+            3*rn-
+            2*gn
+        );
+
+
+        Y.push(
+            1.5*rn+
+            gn-
+            1.5*bn
+        );
+    }
+
+
+    const sx =
+        std(X);
+
+    const sy =
+        std(Y);
+
+
+    if(
+        sx<1e-9 ||
+        sy<1e-9
+    ){
+
+        return [];
+    }
+
+
+    const alpha =
+        sx/sy;
+
+
+    const output =
+        new Array(
+            X.length
+        );
+
+
+    for(
+        let i=0;
+        i<X.length;
+        i++
+    ){
+
+        output[i] =
+            X[i]-
+            alpha*Y[i];
+    }
+
+
+    return detrend(output);
+}
+
+
+/* =========================================================
+   POS
+========================================================= */
+
+function computePOS(
+    r,
+    g,
+    b
+){
+
+    const mr =
+        mean(r);
+
+    const mg =
+        mean(g);
+
+    const mb =
+        mean(b);
+
+
+    if(
+        mr<1e-9 ||
+        mg<1e-9 ||
+        mb<1e-9
+    ){
+
+        return [];
+    }
+
+
+    const S1=[];
+    const S2=[];
+
+
+    for(
+        let i=0;
+        i<r.length;
+        i++
+    ){
+
+        const rn =
+            r[i]/mr;
+
+        const gn =
+            g[i]/mg;
+
+        const bn =
+            b[i]/mb;
+
+
+        S1.push(
+            -rn+
+            bn
+        );
+
+
+        S2.push(
+            rn-
+            2*gn+
+            bn
+        );
+    }
+
+
+    const s1 =
+        std(S1);
+
+    const s2 =
+        std(S2);
+
+
+    if(
+        s1<1e-9 ||
+        s2<1e-9
+    ){
+
+        return [];
+    }
+
+
+    const alpha =
+        s1/s2;
+
+
+    const output =
+        new Array(
+            S1.length
+        );
+
+
+    for(
+        let i=0;
+        i<S1.length;
+        i++
+    ){
+
+        output[i] =
+            S1[i]-
+            alpha*S2[i];
+    }
+
+
+    return detrend(output);
+}
+
+
+/* =========================================================
+   PROCESSED METHOD
+========================================================= */
+
+function estimateProcessed(
+    signal,
+    times
+){
+
+    if(
+        !signal ||
+        signal.length<60 ||
+        signal.length!==times.length
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const window =
+        getWindow(
+            signal,
+            times,
+            10
+        );
+
+
+    if(
+        window.data.length<60
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const actualFs =
+        getActualFs(
+            window.times
+        );
+
+
+    if(actualFs<5){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    /*
+     * Keep CHROM/POS closer to the previously
+     * successful processing path.
+     */
+    const filtered =
+        lightweightBandpass(
+            window.data,
+            actualFs
+        );
+
+
+    const spectral =
+        estimateBpmIrregular(
+            filtered,
+            window.times
+        );
+
+
+    const quality =
+        Math.round(
+            clamp(
+                spectral.prominence*.65+
+                (spectral.snr||0)*.15+
+                spectral.periodicity*.20,
+                0,
+                1
+            )*100
+        );
+
+
+    return {
+
+        bpm:
+            spectral.bpm,
+
+        quality,
+
+        spectral
+    };
+}
+
+
+/* =========================================================
+   TEMPORAL GREEN
+========================================================= */
+
+function temporalGreen(){
 
     const windows =
-        [5,7,10,12];
+        [5,8,10,12];
 
-    const values = [];
+    const values=[];
+
 
     for(
         let i=0;
@@ -2182,264 +2060,303 @@ function temporalGreenAnalysis(){
         i++
     ){
 
-        const estimate =
-            estimateChannel(
+        const w =
+            getWindow(
                 greenSignal,
                 signalTimes,
                 windows[i]
             );
 
+
+        if(
+            w.data.length<50
+        ){
+            continue;
+        }
+
+
+        const fs =
+            getActualFs(
+                w.times
+            );
+
+
+        if(fs<5){
+            continue;
+        }
+
+
+        const filtered =
+            lightweightBandpass(
+                w.data,
+                fs
+            );
+
+
+        const result =
+            estimateBpmIrregular(
+                filtered,
+                w.times
+            );
+
+
         if(
             Number.isFinite(
-                estimate.bpm
+                result.bpm
             )
         ){
 
             values.push(
-                estimate.bpm
+                result.bpm
             );
         }
     }
+
 
     if(!values.length){
 
         return {
             bpm:null,
-            values:[],
-            spread:Infinity
+            spread:Infinity,
+            values:[]
         };
     }
 
+
     return {
-        bpm:median(values),
-        values,
+
+        bpm:
+            median(values),
+
         spread:
             values.length>1
                 ? std(values)
-                : 0
+                : 0,
+
+        values
     };
 }
 
 
 /* =========================================================
-   METHOD CANDIDATE CLUSTERING
+   CANDIDATE CLUSTERS
 ========================================================= */
 
-function buildCandidates(
+function buildClusters(
     estimates
 ){
 
-    const methods = [];
-
-    const addMethod =
-        (
-            name,
-            estimate,
-            weight
-        )=>{
-
-            if(
-                estimate &&
-                Number.isFinite(
-                    estimate.bpm
-                )
-            ){
-
-                methods.push({
-
-                    name,
-
-                    bpm:estimate.bpm,
-
-                    quality:
-                        estimate.quality ?? 0,
-
-                    weight
-                });
-            }
-        };
+    const methods=[];
 
 
-    addMethod(
-        "Green",
-        estimates.green,
-        .90
-    );
+    if(
+        Number.isFinite(
+            estimates.green.bpm
+        )
+    ){
 
-    addMethod(
-        "CHROM",
-        estimates.chrom,
-        1.10
-    );
+        methods.push({
 
-    addMethod(
-        "POS",
-        estimates.pos,
-        1.15
-    );
+            name:"Green",
 
+            bpm:
+                estimates.green.bpm,
 
-    if(!methods.length){
+            quality:
+                estimates.green.quality,
 
-        return {
-            candidates:[],
-            best:null
-        };
+            weight:.85
+        });
     }
 
 
-    /*
-     * Cluster width = 10 BPM.
-     *
-     * Values inside 10 BPM are considered
-     * the same candidate family.
-     */
-
-    const clusters = [];
-
-    for(
-        let i=0;
-        i<methods.length;
-        i++
+    if(
+        Number.isFinite(
+            estimates.chrom.bpm
+        )
     ){
 
-        const method =
-            methods[i];
+        methods.push({
 
-        let bestCluster =
-            null;
+            name:"CHROM",
 
-        let smallestDistance =
-            Infinity;
+            bpm:
+                estimates.chrom.bpm,
+
+            quality:
+                estimates.chrom.quality,
+
+            weight:1.20
+        });
+    }
+
+
+    if(
+        Number.isFinite(
+            estimates.pos.bpm
+        )
+    ){
+
+        methods.push({
+
+            name:"POS",
+
+            bpm:
+                estimates.pos.bpm,
+
+            quality:
+                estimates.pos.quality,
+
+            weight:1.25
+        });
+    }
+
+
+    const clusters=[];
+
+
+    for(
+        const method
+        of methods
+    ){
+
+        let selected=null;
+
 
         for(
-            let c=0;
-            c<clusters.length;
-            c++
+            const cluster
+            of clusters
         ){
 
-            const cluster =
-                clusters[c];
-
-            const distance =
+            if(
                 Math.abs(
                     method.bpm-
                     cluster.center
-                );
-
-            if(
-                distance<=10 &&
-                distance<smallestDistance
+                )<=8
             ){
 
-                smallestDistance =
-                    distance;
-
-                bestCluster =
+                selected=
                     cluster;
+
+                break;
             }
         }
 
 
-        if(!bestCluster){
+        if(!selected){
 
             clusters.push({
 
-                center:method.bpm,
+                center:
+                    method.bpm,
 
                 methods:[
                     method
                 ]
-
             });
 
         }else{
 
-            bestCluster.methods.push(
+            selected.methods.push(
                 method
             );
 
-            bestCluster.center =
+            selected.center =
                 median(
-                    bestCluster.methods
-                        .map(
-                            item=>item.bpm
-                        )
+                    selected.methods.map(
+                        item=>item.bpm
+                    )
                 );
         }
     }
 
 
     /*
-     * Score each candidate.
+     * Score candidates.
      *
-     * More methods agreeing = stronger.
-     * Higher method quality = stronger.
-     * Lower internal spread = stronger.
+     * CHROM/POS get slightly more weight.
      */
-
     for(
-        let c=0;
-        c<clusters.length;
-        c++
+        const cluster
+        of clusters
     ){
 
-        const cluster =
-            clusters[c];
-
         const values =
-            cluster.methods
-                .map(
-                    item=>item.bpm
-                );
+            cluster.methods.map(
+                item=>item.bpm
+            );
 
         const spread =
             values.length>1
                 ? std(values)
-                : 12;
+                : 99;
 
-        const methodSupport =
-            clamp(
-                cluster.methods.length/3,
-                0,
-                1
+        const avgQuality =
+            mean(
+                cluster.methods.map(
+                    item=>item.quality
+                )
             );
 
-        const averageQuality =
-            mean(
-                cluster.methods
-                    .map(
-                        item =>
-                            item.quality
-                    )
-            )/100;
+        let score =
+            0;
 
-        const spreadScore =
+
+        if(
+            cluster.methods.length===3
+        ){
+
+            score += 60;
+
+        }else if(
+            cluster.methods.length===2
+        ){
+
+            score += 90;
+
+        }else{
+
+            score += 25;
+        }
+
+
+        score +=
+            avgQuality*.15;
+
+
+        score +=
             clamp(
-                1-spread/10,
+                15-
+                spread,
                 0,
-                1
+                15
             );
 
-        const methodWeight =
-            mean(
-                cluster.methods
-                    .map(
-                        item=>item.weight
-                    )
-            )/1.15;
+
+        /*
+         * Explicit preference for clusters
+         * supported by CHROM + POS.
+         */
+        const names =
+            cluster.methods.map(
+                item=>item.name
+            );
+
+
+        if(
+            names.includes("CHROM") &&
+            names.includes("POS")
+        ){
+
+            score += 35;
+        }
+
 
         cluster.spread =
             spread;
 
-        cluster.support =
-            cluster.methods.length;
-
         cluster.score =
-            methodSupport*.50+
-            averageQuality*.20+
-            spreadScore*.20+
-            methodWeight*.10;
+            score;
     }
 
 
@@ -2449,261 +2366,234 @@ function buildCandidates(
     );
 
 
-    const best =
-        clusters[0];
-
-
     return {
-        candidates:clusters,
-        best
+        methods,
+        clusters,
+        best:
+            clusters[0] || null
     };
 }
 
 
 /* =========================================================
-   ROBUST FUSION
+   FINAL FUSION
 ========================================================= */
 
-function robustFusion(
+function fuse(
     estimates,
     temporal
 ){
 
-    const candidateData =
-        buildCandidates(
+    const result =
+        buildClusters(
             estimates
         );
 
+
     const best =
-        candidateData.best;
+        result.best;
 
 
     if(!best){
 
         return {
 
-            finalBpm:null,
-
-            candidateBpm:null,
-
-            candidateSupport:0,
-
-            agreement:0,
-
+            bpm:null,
+            candidate:null,
+            support:0,
             spread:Infinity,
-
+            agreement:0,
             methods:[],
-
-            temporalBpm:
-                temporal.bpm,
-
-            temporalSpread:
-                temporal.spread,
-
-            candidates:[]
+            reason:
+                "لا توجد طرق صالحة."
         };
     }
 
 
-    const methodValues =
+    const names =
         best.methods.map(
-            item=>item.bpm
+            item=>item.name
         );
 
-
-    /*
-     * Agreement calculation.
-     *
-     * Two methods near each other:
-     * 100% before quality weighting.
-     *
-     * One lonely method:
-     * maximum 35%.
-     */
-
-    let baseAgreement;
-
-    if(best.support>=3){
-
-        baseAgreement =
-            clamp(
-                1-best.spread/10,
-                0,
-                1
-            )*100;
-
-    }else if(best.support===2){
-
-        baseAgreement =
-            55+
-            clamp(
-                1-best.spread/10,
-                0,
-                1
-            )*45;
-
-    }else{
-
-        baseAgreement =
-            35;
-    }
-
-
-    const averageQuality =
-        mean(
-            best.methods.map(
-                item=>item.quality
-            )
-        );
-
-
-    const agreement =
-        Math.round(
-            baseAgreement*
-            (
-                .55+
-                .45*
-                averageQuality/
-                100
-            )
-        );
-
-
-    /*
-     * If temporal Green is consistent with the
-     * candidate, we reward it slightly.
-     *
-     * It never overrides multi-method consensus.
-     */
 
     let finalBpm =
         best.center;
 
+
+    /*
+     * If CHROM + POS agree,
+     * trust their common candidate.
+     *
+     * Green is used only as a supporting signal.
+     */
+    if(
+        names.includes("CHROM") &&
+        names.includes("POS")
+    ){
+
+        finalBpm =
+            (
+                best.methods
+                    .filter(
+                        item =>
+                            item.name===
+                            "CHROM" ||
+                            item.name===
+                            "POS"
+                    )
+                    .map(
+                        item=>item.bpm
+                    )
+            )
+            .reduce(
+                (a,b)=>
+                    a+b,
+                0
+            )/
+            2;
+    }
+
+
+    /*
+     * Temporal Green can influence only when
+     * it agrees with the selected candidate.
+     */
     if(
         Number.isFinite(
             temporal.bpm
-        )
+        ) &&
+        Math.abs(
+            temporal.bpm-
+            finalBpm
+        )<=6
     ){
 
-        const temporalDistance =
-            Math.abs(
-                temporal.bpm-
-                best.center
+        finalBpm =
+            finalBpm*.85+
+            temporal.bpm*.15;
+    }
+
+
+    let agreement=35;
+
+
+    if(
+        best.support===2
+    ){
+
+        agreement =
+            75-
+            clamp(
+                best.spread*3,
+                0,
+                35
             );
 
-        if(
-            temporalDistance<=5
-        ){
+    }else if(
+        best.support===3
+    ){
 
-            finalBpm =
-                (
-                    best.center*.75+
-                    temporal.bpm*.25
-                );
-        }
+        agreement =
+            70+
+            clamp(
+                30-
+                best.spread*3,
+                0,
+                30
+            );
     }
 
 
     return {
 
-        finalBpm,
+        bpm:
+            finalBpm,
 
-        candidateBpm:
+        candidate:
             best.center,
 
-        candidateSupport:
-            best.support,
-
-        agreement,
+        support:
+            best.methods.length,
 
         spread:
             best.spread,
 
-        methods:
-            methodValues,
+        agreement:
+            Math.round(
+                clamp(
+                    agreement,
+                    0,
+                    100
+                )
+            ),
 
-        methodDetails:
+        methods:
             best.methods,
 
-        temporalBpm:
-            temporal.bpm,
+        allMethods:
+            result.methods,
 
-        temporalSpread:
-            temporal.spread,
-
-        candidates:
-            candidateData.candidates
+        reason:
+            (
+                names.includes("CHROM") &&
+                names.includes("POS")
+            )
+                ? "CHROM وPOS متقاربان؛ تم اختيار المرشح المشترك."
+                : "تم اختيار أفضل مرشح متاح."
     };
 }
 
 
 /* =========================================================
-   OVERALL SIGNAL QUALITY
+   QUALITY
 ========================================================= */
 
-function calculateOverallQuality(
+function calculateQuality(
     estimates,
     fusion
 ){
 
-    const qualities = [];
+    const q=[];
 
-    if(
-        Number.isFinite(
-            estimates.green?.bpm
-        )
+
+    for(
+        const name
+        of ["green","chrom","pos"]
     ){
 
-        qualities.push(
-            estimates.green.quality
-        );
-    }
+        if(
+            Number.isFinite(
+                estimates[name].bpm
+            )
+        ){
 
-    if(
-        Number.isFinite(
-            estimates.chrom?.bpm
-        )
-    ){
-
-        qualities.push(
-            estimates.chrom.quality
-        );
-    }
-
-    if(
-        Number.isFinite(
-            estimates.pos?.bpm
-        )
-    ){
-
-        qualities.push(
-            estimates.pos.quality
-        );
+            q.push(
+                estimates[name].quality
+            );
+        }
     }
 
 
-    if(!qualities.length){
+    if(!q.length){
         return 0;
     }
 
 
-    const qualityMean =
-        mean(qualities);
+    const base =
+        mean(q);
 
 
-    const agreementFactor =
-        fusion.candidateSupport>=2
-            ? fusion.agreement
-            : Math.min(
-                fusion.agreement,
-                55
-            );
+    const supportFactor =
+        fusion.support>=2
+            ? 1
+            : .65;
 
 
     return Math.round(
         clamp(
-            qualityMean*.65+
-            agreementFactor*.35,
+            base*
+            supportFactor+
+            fusion.agreement*.20,
             0,
             100
         )
@@ -2717,12 +2607,12 @@ function calculateOverallQuality(
 
 function calculateConfidence(
     fusion,
-    quality
+    temporal
 ){
 
     if(
         !Number.isFinite(
-            fusion.finalBpm
+            fusion.bpm
         )
     ){
 
@@ -2733,118 +2623,82 @@ function calculateConfidence(
             label:"LOW",
 
             reason:
-                "لا توجد قمة نبض موثوقة حتى الآن."
+                "لا توجد قراءة BPM موثوقة."
         };
     }
 
 
-    const qualityScore =
-        clamp(
-            quality/100,
-            0,
-            1
-        );
-
-
-    const agreementScore =
-        clamp(
-            fusion.agreement/100,
-            0,
-            1
-        );
-
-
-    const methodScore =
-        fusion.candidateSupport>=3
-            ? 1
-            : fusion.candidateSupport===2
-                ? .72
-                : .30;
-
-
-    const temporalScore =
-        Number.isFinite(
-            fusion.temporalSpread
-        )
-            ? clamp(
-                1-
-                fusion.temporalSpread/12,
-                0,
-                1
-            )
-            : .35;
-
-
-    const faceScore =
-        clamp(
-            latestFaceStability/100,
-            0,
-            1
-        );
-
-
-    const lightingScore =
-        latestLighting>0
-            ? clamp(
-                1-
-                Math.abs(
-                    latestLighting-120
-                )/180,
-                0,
-                1
-            )
-            : .5;
+    const support =
+        fusion.support;
 
 
     let score =
-        (
-            qualityScore*.30+
-            agreementScore*.30+
-            methodScore*.20+
-            temporalScore*.10+
-            faceScore*.08+
-            lightingScore*.02
-        )*100;
+        30;
+
+
+    if(support===2){
+        score += 28;
+    }
+
+
+    if(support===3){
+        score += 35;
+    }
+
+
+    if(
+        fusion.spread<=3
+    ){
+
+        score += 18;
+
+    }else if(
+        fusion.spread<=6
+    ){
+
+        score += 10;
+    }
+
+
+    if(
+        temporal.spread<=4
+    ){
+
+        score += 10;
+
+    }else if(
+        temporal.spread<=8
+    ){
+
+        score += 5;
+    }
+
+
+    score +=
+        latestFaceStability*.07;
 
 
     /*
-     * Hard reliability gates.
+     * Confidence must never be HIGH
+     * simply because all three methods agree.
+     *
+     * But with strong CHROM+POS agreement
+     * it can be HIGH if temporal support is good.
      */
 
     if(
-        fusion.candidateSupport===1
+        support>=2 &&
+        fusion.spread<=4 &&
+        Number.isFinite(
+            temporal.bpm
+        ) &&
+        Math.abs(
+            temporal.bpm-
+            fusion.bpm
+        )<=8
     ){
 
-        score =
-            Math.min(
-                score,
-                44
-            );
-    }
-
-
-    if(
-        fusion.candidateSupport>=2 &&
-        fusion.spread>7
-    ){
-
-        score =
-            Math.min(
-                score,
-                58
-            );
-    }
-
-
-    if(
-        fusion.agreement<40
-    ){
-
-        score =
-            Math.min(
-                score,
-                42
-            );
+        score += 8;
     }
 
 
@@ -2862,60 +2716,52 @@ function calculateConfidence(
         "LOW";
 
 
-    if(score>=78){
+    if(score>=82){
 
         label =
             "HIGH";
 
-    }else if(score>=58){
+    }else if(score>=60){
 
         label =
             "MEDIUM";
     }
 
 
-    let reason =
-        "";
+    let reason;
 
 
     if(
-        fusion.candidateSupport>=2 &&
-        fusion.spread<=5
+        support>=2 &&
+        fusion.spread<=4
     ){
 
         reason =
-            "عدة طرق مستقلة تدعم نفس المرشح مع تشتت منخفض.";
+            "يوجد توافق قوي بين أكثر من estimator.";
 
     }else if(
-        fusion.candidateSupport>=2
+        support>=2
     ){
 
         reason =
-            "يوجد دعم من طريقتين أو أكثر، لكن يوجد بعض الاختلاف بين التقديرات.";
+            "يوجد توافق جزئي بين الطرق.";
 
     }else{
 
         reason =
-            "يوجد تقدير واحد فقط ضمن المرشح الحالي؛ لذلك تم تقييد الثقة.";
-
+            "القراءة مدعومة بطريقة واحدة فقط.";
     }
 
 
     if(
-        fusion.temporalSpread>10
+        Number.isFinite(
+            temporal.spread
+        ) &&
+        temporal.spread>8
     ){
 
         reason +=
-            " الاستقرار الزمني ضعيف.";
-    }
-
-
-    if(
-        latestFaceStability<60
-    ){
-
-        reason +=
-            " حركة الوجه تؤثر في الثقة.";
+            " الاستقرار الزمني يحتاج إلى تحسين.";
     }
 
 
@@ -2928,15 +2774,16 @@ function calculateConfidence(
 
 
 /* =========================================================
-   FULL ANALYSIS
+   ANALYSIS LOOP
 ========================================================= */
 
 async function runAnalysis(){
 
     if(
         analysisBusy ||
-        signalTimes.length<80
+        signalTimes.length<60
     ){
+
         return;
     }
 
@@ -2964,141 +2811,87 @@ async function runAnalysis(){
     try{
 
         /*
-         * Analyze latest 12–15 seconds.
+         * Use the recent full timeline.
+         * No fake 20Hz resampling.
          */
 
         const sampleCount =
             Math.min(
-                300,
+                280,
                 signalTimes.length
             );
+
 
         const start =
             signalTimes.length-
             sampleCount;
 
 
-        const rawR =
-            redSignal.slice(start);
-
-        const rawG =
-            greenSignal.slice(start);
-
-        const rawB =
-            blueSignal.slice(start);
-
-        const rawT =
-            signalTimes.slice(start);
-
-
-        /*
-         * Resample common timeline.
-         */
+        const times =
+            signalTimes.slice(
+                start
+            );
 
         const r =
-            resampleUniform(
-                rawR,
-                rawT,
-                20
+            redSignal.slice(
+                start
             );
 
         const g =
-            resampleUniform(
-                rawG,
-                rawT,
-                20
+            greenSignal.slice(
+                start
             );
 
         const b =
-            resampleUniform(
-                rawB,
-                rawT,
-                20
+            blueSignal.slice(
+                start
             );
-
-
-        if(
-            g.data.length<80
-        ){
-
-            return;
-        }
-
-
-        const normalized =
-            normalizeRGB(
-                r.data,
-                g.data,
-                b.data
-            );
-
-
-        if(!normalized){
-
-            return;
-        }
 
 
         /*
-         * Green estimate.
+         * CHROM/POS from the same raw timeline.
          */
+
+        const chromSignal =
+            computeChrom(
+                r,
+                g,
+                b
+            );
+
+
+        const posSignal =
+            computePOS(
+                r,
+                g,
+                b
+            );
+
 
         const green =
-            estimateChannel(
-                g.data,
-                g.times,
-                10
-            );
-
-
-        /*
-         * CHROM.
-         */
-
-        const chromRaw =
-            computeChrom(
-                normalized
-            );
+            estimateGreen();
 
 
         const chrom =
-            estimateProcessedChannel(
-                chromRaw,
-                g.times
-            );
-
-
-        /*
-         * POS.
-         */
-
-        const posRaw =
-            computePOS(
-                normalized
+            estimateProcessed(
+                chromSignal,
+                times
             );
 
 
         const pos =
-            estimateProcessedChannel(
-                posRaw,
-                g.times
+            estimateProcessed(
+                posSignal,
+                times
             );
 
 
-        /*
-         * Temporal Green.
-         */
-
         const temporal =
-            temporalGreenAnalysis();
+            temporalGreen();
 
-
-        /*
-         * Robust fusion.
-         */
 
         const fusion =
-            robustFusion(
+            fuse(
                 {
                     green,
                     chrom,
@@ -3108,12 +2901,8 @@ async function runAnalysis(){
             );
 
 
-        /*
-         * Overall SQI.
-         */
-
-        latestSignalQuality =
-            calculateOverallQuality(
+        const quality =
+            calculateQuality(
                 {
                     green,
                     chrom,
@@ -3123,44 +2912,29 @@ async function runAnalysis(){
             );
 
 
-        /*
-         * Confidence.
-         */
-
         const confidence =
             calculateConfidence(
                 fusion,
-                latestSignalQuality
+                temporal
             );
+
+
+        currentBpm =
+            fusion.bpm;
+
+
+        latestQuality =
+            quality;
 
 
         latestConfidence =
             confidence.score;
 
 
-        currentBpm =
-            fusion.finalBpm;
-
-
-        currentFusion = {
-
-            ...fusion,
-
-            green:
-                green.bpm,
-
-            chrom:
-                chrom.bpm,
-
-            pos:
-                pos.bpm
-        };
-
-
         latestAnalysis = {
 
             bpm:
-                currentBpm,
+                fusion.bpm,
 
             green:
                 green.bpm,
@@ -3171,11 +2945,10 @@ async function runAnalysis(){
             pos:
                 pos.bpm,
 
-            quality:
-                latestSignalQuality,
+            quality,
 
             confidence:
-                latestConfidence,
+                confidence.score,
 
             confidenceLabel:
                 confidence.label,
@@ -3183,17 +2956,17 @@ async function runAnalysis(){
             confidenceReason:
                 confidence.reason,
 
-            agreement:
-                fusion.agreement,
-
             candidate:
-                fusion.candidateBpm,
+                fusion.candidate,
 
             support:
-                fusion.candidateSupport,
+                fusion.support,
 
-            methodSpread:
+            spread:
                 fusion.spread,
+
+            agreement:
+                fusion.agreement,
 
             temporalBpm:
                 temporal.bpm,
@@ -3207,27 +2980,26 @@ async function runAnalysis(){
             faceStability:
                 latestFaceStability,
 
+            sampleRate:
+                getActualFs(
+                    signalTimes
+                ),
+
             samples:
                 signalTimes.length,
 
-            sampleRate:
-                estimateSampleRate(),
-
             methodDetails:
-                fusion.methodDetails ||
-                []
+                fusion.methods
         };
 
 
         updateUI();
 
-        drawSignal();
-
 
     }catch(error){
 
         console.error(
-            "V5.3 analysis error:",
+            "V5.4 analysis error:",
             error
         );
 
@@ -3236,12 +3008,14 @@ async function runAnalysis(){
                 "analysisState"
             )
             .textContent =
-            "خطأ في التحليل";
+            "خطأ";
+
 
     }finally{
 
         analysisBusy =
             false;
+
 
         if(
             recording
@@ -3259,159 +3033,7 @@ async function runAnalysis(){
 
 
 /* =========================================================
-   PROCESSED CHANNEL ESTIMATOR
-========================================================= */
-
-function estimateProcessedChannel(
-    data,
-    times
-){
-
-    if(
-        !data ||
-        data.length<50 ||
-        data.length!==times.length
-    ){
-
-        return {
-            bpm:null,
-            quality:0
-        };
-    }
-
-
-    const window =
-        getWindow(
-            data,
-            times,
-            10
-        );
-
-
-    if(
-        window.data.length<50
-    ){
-
-        return {
-            bpm:null,
-            quality:0
-        };
-    }
-
-
-    const uniform =
-        resampleUniform(
-            window.data,
-            window.times,
-            20
-        );
-
-
-    if(
-        uniform.data.length<80
-    ){
-
-        return {
-            bpm:null,
-            quality:0
-        };
-    }
-
-
-    const filtered =
-        bandpass(
-            uniform.data,
-            20
-        );
-
-
-    const spectral =
-        estimateBpmDFT(
-            filtered,
-            20
-        );
-
-
-    const periodicity =
-        autocorrelationScore(
-            filtered,
-            20
-        );
-
-
-    const quality =
-        Math.round(
-            clamp(
-                spectral.prominence*.50+
-                spectral.snr*.20+
-                periodicity*.30,
-                0,
-                1
-            )*100
-        );
-
-
-    return {
-        bpm:spectral.bpm,
-        quality,
-        spectral,
-        periodicity
-    };
-}
-
-
-/* =========================================================
-   SAMPLE RATE
-========================================================= */
-
-function estimateSampleRate(){
-
-    if(
-        signalTimes.length<3
-    ){
-        return null;
-    }
-
-
-    const start =
-        signalTimes[
-            Math.max(
-                0,
-                signalTimes.length-50
-            )
-        ];
-
-    const end =
-        signalTimes[
-            signalTimes.length-1
-        ];
-
-    const count =
-        signalTimes.length-
-        Math.max(
-            0,
-            signalTimes.length-50
-        );
-
-
-    if(
-        end<=start ||
-        count<=1
-    ){
-
-        return null;
-    }
-
-
-    return (
-        (count-1)/
-        (end-start)
-    );
-}
-
-
-/* =========================================================
-   ANALYSIS SCHEDULER
+   SCHEDULER
 ========================================================= */
 
 function requestAnalysis(){
@@ -3425,6 +3047,7 @@ function requestAnalysis(){
         now-lastAnalysisTime<
         ANALYSIS_INTERVAL
     ){
+
         return;
     }
 
@@ -3448,11 +3071,10 @@ function updateFaceStability(
 
     if(!previousFaceCenter){
 
-        previousFaceCenter =
-            {
-                x,
-                y
-            };
+        previousFaceCenter = {
+            x,
+            y
+        };
 
         latestFaceStability =
             100;
@@ -3477,14 +3099,13 @@ function updateFaceStability(
         );
 
 
-    previousFaceCenter =
-        {
-            x,
-            y
-        };
+    previousFaceCenter = {
+        x,
+        y
+    };
 
 
-    const instantScore =
+    const instant =
         clamp(
             1-
             movement/.022,
@@ -3495,8 +3116,8 @@ function updateFaceStability(
 
     latestFaceStability =
         Math.round(
-            latestFaceStability*.80+
-            instantScore*100*.20
+            latestFaceStability*.8+
+            instant*100*.2
         );
 }
 
@@ -3526,7 +3147,7 @@ const sampleCtx =
 
 
 /* =========================================================
-   RGB SAMPLING
+   SAMPLE ROI
 ========================================================= */
 
 function sampleROI(
@@ -3534,9 +3155,8 @@ function sampleROI(
 ){
 
     if(
-        !box ||
-        video.videoWidth<10 ||
-        video.videoHeight<10
+        !video.videoWidth ||
+        !video.videoHeight
     ){
 
         return null;
@@ -3629,13 +3249,11 @@ function sampleROI(
     }
 
 
-    let r = 0;
-    let g = 0;
-    let b = 0;
-
-    let brightness = 0;
-
-    let count = 0;
+    let r=0;
+    let g=0;
+    let b=0;
+    let brightness=0;
+    let count=0;
 
 
     for(
@@ -3654,23 +3272,19 @@ function sampleROI(
             pixels[i+2];
 
 
-        const luminance =
+        const lum =
             .2126*rr+
             .7152*gg+
             .0722*bb;
 
 
         brightness +=
-            luminance;
+            lum;
 
-
-        /*
-         * Remove strongly clipped/dark pixels.
-         */
 
         if(
-            luminance>18 &&
-            luminance<248
+            lum>18 &&
+            lum<248
         ){
 
             r += rr;
@@ -3705,7 +3319,7 @@ function sampleROI(
 
 
 /* =========================================================
-   FACEMESH
+   FACE MESH
 ========================================================= */
 
 function setupFaceMesh(){
@@ -3829,7 +3443,9 @@ function handleFaceResults(
 
     const centerY =
         top.y+
-        (lower.y-top.y)*.27;
+        (
+            lower.y-top.y
+        )*.27;
 
 
     const roiW =
@@ -3890,13 +3506,8 @@ function handleFaceResults(
         )}%`;
 
 
-    /*
-     * Draw ROI.
-     */
-
     overlayCtx.strokeStyle =
         "rgba(69,216,255,.88)";
-
 
     overlayCtx.lineWidth =
         2*devicePixelRatio;
@@ -3910,14 +3521,10 @@ function handleFaceResults(
     );
 
 
-    /*
-     * Continuous acquisition.
-     */
-
     if(recording){
 
         faceStatus.textContent =
-            "الوجه مكتشف — جارٍ جمع الإشارة";
+            "الوجه مكتشف — جارٍ القياس";
 
         faceStatus.className =
             "faceStatus ok";
@@ -3927,11 +3534,9 @@ function handleFaceResults(
             sampleROI({
 
                 x:roiX,
-
                 y:roiY,
 
                 w:roiW,
-
                 h:roiH
             });
 
@@ -3989,8 +3594,10 @@ function handleFaceResults(
                 signalTimes.length;
 
 
-            const rate =
-                estimateSampleRate();
+            const fs =
+                getActualFs(
+                    signalTimes
+                );
 
 
             document
@@ -3998,8 +3605,8 @@ function handleFaceResults(
                     "sampleRateValue"
                 )
                 .textContent =
-                Number.isFinite(rate)
-                    ? `${rate.toFixed(1)} Hz`
+                Number.isFinite(fs)
+                    ? `${fs.toFixed(1)} Hz`
                     : "--";
         }
 
@@ -4018,7 +3625,7 @@ function handleFaceResults(
 
 
 /* =========================================================
-   CAMERA
+   CAMERA START
 ========================================================= */
 
 async function startCamera(){
@@ -4130,11 +3737,7 @@ async function startCamera(){
 
     }catch(error){
 
-        console.error(
-            "Camera error:",
-            error
-        );
-
+        console.error(error);
 
         faceStatus.textContent =
             "تعذر تشغيل الكاميرا";
@@ -4144,14 +3747,14 @@ async function startCamera(){
 
 
         alert(
-            "تعذر الوصول إلى الكاميرا. تأكد من صلاحية Camera."
+            "تعذر الوصول إلى الكاميرا."
         );
     }
 }
 
 
 /* =========================================================
-   STOP CAMERA
+   STOP
 ========================================================= */
 
 function stopCamera(){
@@ -4223,10 +3826,6 @@ function stopCamera(){
         true;
 
 
-    faceDetected =
-        false;
-
-
     roiBox.style.display =
         "none";
 
@@ -4240,203 +3839,126 @@ function stopCamera(){
 
 
 /* =========================================================
-   CLEAR SIGNAL
+   CLEAR
 ========================================================= */
 
 function clearSignal(){
 
-    signalTimes = [];
-    redSignal = [];
-    greenSignal = [];
-    blueSignal = [];
+    signalTimes=[];
+    redSignal=[];
+    greenSignal=[];
+    blueSignal=[];
 
 
-    latestLighting =
-        0;
-
-    latestFaceStability =
-        0;
+    latestLighting=0;
+    latestFaceStability=0;
 
 
-    currentBpm =
-        null;
+    currentBpm=null;
+    latestQuality=0;
+    latestConfidence=0;
 
 
-    latestSignalQuality =
-        0;
-
-    latestConfidence =
-        0;
+    latestAnalysis=null;
 
 
-    latestAnalysis =
-        null;
+    previousFaceCenter=null;
 
 
-    currentFusion = {
-
-        finalBpm:null,
-
-        candidateBpm:null,
-
-        candidateSupport:0,
-
-        agreement:0,
-
-        spread:Infinity,
-
-        methodValues:[],
-
-        methodCount:0,
-
-        temporalBpm:null,
-
-        temporalSpread:Infinity,
-
-        green:null,
-        chrom:null,
-        pos:null
-    };
+    lastAnalysisTime=0;
+    analysisBusy=false;
 
 
-    previousFaceCenter =
-        null;
+    document.getElementById(
+        "samplesCount"
+    ).textContent="0";
 
 
-    lastAnalysisTime =
-        0;
+    document.getElementById(
+        "sampleRateValue"
+    ).textContent="--";
 
 
-    analysisBusy =
-        false;
+    document.getElementById(
+        "bpmValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "samplesCount"
-        )
-        .textContent =
-        "0";
+    document.getElementById(
+        "greenBpm"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "sampleRateValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "chromBpm"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "bpmValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "posBpm"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "greenBpm"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "qualityValue"
+    ).textContent="0%";
 
 
-    document
-        .getElementById(
-            "chromBpm"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "confidenceValue"
+    ).textContent="0%";
 
 
-    document
-        .getElementById(
-            "posBpm"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "confidenceLabel"
+    ).textContent="LOW";
 
 
-    document
-        .getElementById(
-            "qualityValue"
-        )
-        .textContent =
-        "0%";
+    document.getElementById(
+        "candidateValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "confidenceValue"
-        )
-        .textContent =
-        "0%";
+    document.getElementById(
+        "supportValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "confidenceLabel"
-        )
-        .textContent =
-        "LOW";
+    document.getElementById(
+        "spreadValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "agreementValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "temporalValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "candidateValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "faceStabilityValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "supportValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "lightingValue"
+    ).textContent="--";
 
 
-    document
-        .getElementById(
-            "temporalValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "confidenceReason"
+    ).textContent=
+        "في انتظار البيانات.";
 
 
-    document
-        .getElementById(
-            "faceStabilityValue"
-        )
-        .textContent =
-        "--";
+    document.getElementById(
+        "analysisState"
+    ).textContent="جاهز";
 
 
-    document
-        .getElementById(
-            "lightingValue"
-        )
-        .textContent =
-        "--";
-
-
-    document
-        .getElementById(
-            "confidenceReason"
-        )
-        .textContent =
-        "في انتظار بيانات كافية.";
+    document.getElementById(
+        "report"
+    ).textContent=
+        "لم يتم إجراء قياس بعد.";
 
 
     const badge =
@@ -4444,27 +3966,9 @@ function clearSignal(){
             "measurementBadge"
         );
 
-    badge.textContent =
-        "LOW";
 
-    badge.className =
-        "badge low";
-
-
-    document
-        .getElementById(
-            "analysisState"
-        )
-        .textContent =
-        "جاهز";
-
-
-    document
-        .getElementById(
-            "report"
-        )
-        .textContent =
-        "لم يتم إجراء قياس بعد.";
+    badge.textContent="LOW";
+    badge.className="badge low";
 
 
     drawSignal();
@@ -4472,7 +3976,7 @@ function clearSignal(){
 
 
 /* =========================================================
-   15 SECOND SCAN
+   SCAN
 ========================================================= */
 
 function startScan(){
@@ -4481,6 +3985,7 @@ function startScan(){
         !cameraRunning ||
         recording
     ){
+
         return;
     }
 
@@ -4496,16 +4001,15 @@ function startScan(){
         performance.now();
 
 
-    document
-        .getElementById(
-            "recordingState"
-        )
-        .textContent =
+    document.getElementById(
+        "recordingState"
+    ).textContent=
         "جارٍ التسجيل";
 
 
     faceStatus.textContent =
         "ثبت وجهك — جارٍ القياس";
+
 
     faceStatus.className =
         "faceStatus ok";
@@ -4520,7 +4024,7 @@ function startScan(){
 
 
 /* =========================================================
-   FINISH SCAN
+   FINISH
 ========================================================= */
 
 function finishScan(){
@@ -4535,16 +4039,13 @@ function finishScan(){
             recordingTimer
         );
 
-        recordingTimer =
-            null;
+        recordingTimer=null;
     }
 
 
-    document
-        .getElementById(
-            "recordingState"
-        )
-        .textContent =
+    document.getElementById(
+        "recordingState"
+    ).textContent=
         "اكتمل التسجيل";
 
 
@@ -4560,16 +4061,11 @@ function finishScan(){
             : "faceStatus warn";
 
 
-    /*
-     * Force final analysis.
-     */
-
     if(
-        signalTimes.length>=80
+        signalTimes.length>=60
     ){
 
-        lastAnalysisTime =
-            0;
+        lastAnalysisTime=0;
 
         runAnalysis();
     }
@@ -4585,134 +4081,105 @@ function finishScan(){
 
 function updateUI(){
 
-    const a =
-        latestAnalysis;
-
-
-    if(!a){
+    if(!latestAnalysis){
         return;
     }
 
 
-    document
-        .getElementById(
-            "bpmValue"
-        )
-        .textContent =
+    const a =
+        latestAnalysis;
+
+
+    document.getElementById(
+        "bpmValue"
+    ).textContent =
         Number.isFinite(a.bpm)
             ? Math.round(a.bpm)
             : "--";
 
 
-    document
-        .getElementById(
-            "greenBpm"
-        )
-        .textContent =
+    document.getElementById(
+        "greenBpm"
+    ).textContent =
         Number.isFinite(a.green)
             ? Math.round(a.green)
             : "--";
 
 
-    document
-        .getElementById(
-            "chromBpm"
-        )
-        .textContent =
+    document.getElementById(
+        "chromBpm"
+    ).textContent =
         Number.isFinite(a.chrom)
             ? Math.round(a.chrom)
             : "--";
 
 
-    document
-        .getElementById(
-            "posBpm"
-        )
-        .textContent =
+    document.getElementById(
+        "posBpm"
+    ).textContent =
         Number.isFinite(a.pos)
             ? Math.round(a.pos)
             : "--";
 
 
-    document
-        .getElementById(
-            "qualityValue"
-        )
-        .textContent =
+    document.getElementById(
+        "qualityValue"
+    ).textContent =
         `${a.quality}%`;
 
 
-    document
-        .getElementById(
-            "confidenceValue"
-        )
-        .textContent =
+    document.getElementById(
+        "confidenceValue"
+    ).textContent =
         `${a.confidence}%`;
 
 
-    document
-        .getElementById(
-            "confidenceLabel"
-        )
-        .textContent =
+    document.getElementById(
+        "confidenceLabel"
+    ).textContent =
         a.confidenceLabel;
 
 
-    document
-        .getElementById(
-            "agreementValue"
-        )
-        .textContent =
-        `${a.agreement}%`;
-
-
-    document
-        .getElementById(
-            "candidateValue"
-        )
-        .textContent =
+    document.getElementById(
+        "candidateValue"
+    ).textContent =
         Number.isFinite(a.candidate)
             ? `${fmt(a.candidate,1)} BPM`
             : "--";
 
 
-    document
-        .getElementById(
-            "supportValue"
-        )
-        .textContent =
-        `${a.support}/3 methods`;
+    document.getElementById(
+        "supportValue"
+    ).textContent =
+        `${a.support}/3`;
 
 
-    document
-        .getElementById(
-            "temporalValue"
-        )
-        .textContent =
-        Number.isFinite(a.temporalSpread)
-            ? `${fmt(
-                a.temporalSpread,
-                1
-            )} BPM spread`
+    document.getElementById(
+        "spreadValue"
+    ).textContent =
+        Number.isFinite(a.spread)
+            ? `${fmt(a.spread,1)} BPM`
             : "--";
 
 
-    document
-        .getElementById(
-            "faceStabilityValue"
-        )
-        .textContent =
+    document.getElementById(
+        "temporalValue"
+    ).textContent =
+        Number.isFinite(a.temporalSpread)
+            ? `${fmt(a.temporalSpread,1)} BPM`
+            : "--";
+
+
+    document.getElementById(
+        "faceStabilityValue"
+    ).textContent =
         `${a.faceStability}%`;
 
 
-    document
-        .getElementById(
-            "lightingValue"
-        )
-        .textContent =
-        Number.isFinite(a.lighting)
-            ? fmt(a.lighting,1)
-            : "--";
+    document.getElementById(
+        "lightingValue"
+    ).textContent =
+        fmt(a.lighting,1);
 
 
     const badge =
@@ -4726,7 +4193,7 @@ function updateUI(){
 
 
     badge.className =
-        "badge " +
+        "badge "+
         (
             a.confidenceLabel==="HIGH"
                 ? "high"
@@ -4736,11 +4203,9 @@ function updateUI(){
         );
 
 
-    document
-        .getElementById(
-            "confidenceReason"
-        )
-        .textContent =
+    document.getElementById(
+        "confidenceReason"
+    ).textContent =
         a.confidenceReason;
 
 
@@ -4790,30 +4255,25 @@ function updateReport(){
 
 
     report.textContent =
-`Doctor MIMO™ — Research Measurement
+`Doctor MIMO™ — V5.4 Research Measurement
 
-Final MIMO BPM:
-${
-    Number.isFinite(a.bpm)
-        ? `${fmt(a.bpm,1)} BPM`
-        : "N/A"
-}
+FINAL BPM:
+${fmt(a.bpm,1)} BPM
 
 Candidate:
-${
-    Number.isFinite(a.candidate)
-        ? `${fmt(a.candidate,1)} BPM`
-        : "N/A"
-}
+${fmt(a.candidate,1)} BPM
 
-Supporting Methods:
+Methods:
 ${methods}
 
-Candidate Support:
+Method Support:
 ${a.support}/3
 
-Method Agreement:
-${a.agreement}%
+Method Spread:
+${fmt(a.spread,1)} BPM
+
+Green Temporal Spread:
+${fmt(a.temporalSpread,1)} BPM
 
 Signal Quality:
 ${a.quality}%
@@ -4821,48 +4281,27 @@ ${a.quality}%
 Measurement Confidence:
 ${a.confidence}% — ${a.confidenceLabel}
 
-Temporal Spread:
-${
-    Number.isFinite(a.temporalSpread)
-        ? `${fmt(
-            a.temporalSpread,
-            1
-        )} BPM`
-        : "N/A"
-}
-
 Face Stability:
 ${a.faceStability}%
 
-Lighting:
-${fmt(a.lighting,1)}
-
-Sample Rate:
-${
-    Number.isFinite(a.sampleRate)
-        ? `${fmt(
-            a.sampleRate,
-            1
-        )} Hz`
-        : "N/A"
-}
+Actual Sample Rate:
+${fmt(a.sampleRate,1)} Hz
 
 Samples:
 ${a.samples}
 
-Interpretation:
+Decision:
 ${a.confidenceReason}
 
 Research Notice:
-This is an experimental rPPG research prototype.
-Signal Quality and Measurement Confidence are
-heuristic research indicators and are not
-clinically validated diagnostic measurements.`;
+Experimental rPPG prototype.
+The displayed confidence is a research indicator,
+not a clinically validated diagnostic score.`;
 }
 
 
 /* =========================================================
-   SIGNAL GRAPH
+   SIGNAL
 ========================================================= */
 
 function resizeSignalCanvas(){
@@ -4937,24 +4376,24 @@ function drawSignal(){
         );
 
 
-    const source =
+    const data =
         greenSignal.slice(
             greenSignal.length-count
         );
 
 
-    const average =
-        mean(source);
+    const avg =
+        mean(data);
 
 
     const centered =
-        source.map(
+        data.map(
             value=>
-                value-average
+                value-avg
         );
 
 
-    const amplitude =
+    const amp =
         Math.max(
             ...centered.map(
                 Math.abs
@@ -4982,10 +4421,7 @@ function drawSignal(){
 
         const y =
             height/2-
-            (
-                centered[i]/
-                amplitude
-            )*
+            centered[i]/amp*
             height*.38;
 
 
@@ -5009,15 +4445,17 @@ function drawSignal(){
     signalCtx.strokeStyle =
         "#45d8ff";
 
+
     signalCtx.lineWidth =
         2*devicePixelRatio;
+
 
     signalCtx.stroke();
 }
 
 
 /* =========================================================
-   OVERLAY RESIZE
+   OVERLAY
 ========================================================= */
 
 function resizeOverlay(){
@@ -5061,7 +4499,7 @@ function resizeOverlay(){
 
 
 /* =========================================================
-   SAVE RESEARCH SESSION
+   SAVE SESSION
 ========================================================= */
 
 function saveResearchSession(){
@@ -5074,7 +4512,7 @@ function saveResearchSession(){
     ){
 
         alert(
-            "لا توجد نتيجة BPM صالحة للحفظ."
+            "لا توجد نتيجة BPM صالحة."
         );
 
         return;
@@ -5083,31 +4521,25 @@ function saveResearchSession(){
 
     const refBpm =
         Number(
-            document
-                .getElementById(
-                    "refBpm"
-                )
-                .value
+            document.getElementById(
+                "refBpm"
+            ).value
         );
 
 
     const refSys =
         Number(
-            document
-                .getElementById(
-                    "refSys"
-                )
-                .value
+            document.getElementById(
+                "refSys"
+            ).value
         );
 
 
     const refDia =
         Number(
-            document
-                .getElementById(
-                    "refDia"
-                )
-                .value
+            document.getElementById(
+                "refDia"
+            ).value
         );
 
 
@@ -5118,19 +4550,19 @@ function saveResearchSession(){
     ){
 
         alert(
-            "أدخل Reference BPM صحيح من KF-65B."
+            "أدخل Reference BPM صحيح."
         );
 
         return;
     }
 
 
-    const mimo =
+    const bpm =
         latestAnalysis.bpm;
 
 
     const signedError =
-        mimo-refBpm;
+        bpm-refBpm;
 
 
     const absoluteError =
@@ -5139,34 +4571,26 @@ function saveResearchSession(){
         );
 
 
-    const session = {
+    const session={
 
         session_id:
-            "DM-" +
-            Date.now() +
-            "-" +
+            "DM-"+Date.now()+"-"+
             Math.random()
                 .toString(36)
                 .slice(2,7),
 
 
         subject_id:
-            document
-                .getElementById(
-                    "subjectId"
-                )
-                .value
-                .trim() ||
+            document.getElementById(
+                "subjectId"
+            ).value.trim() ||
             "UNKNOWN",
 
 
         session_label:
-            document
-                .getElementById(
-                    "sessionLabel"
-                )
-                .value
-                .trim() ||
+            document.getElementById(
+                "sessionLabel"
+            ).value.trim() ||
             "Baseline",
 
 
@@ -5175,31 +4599,25 @@ function saveResearchSession(){
 
 
         environment:
-            document
-                .getElementById(
-                    "environment"
-                )
-                .value,
+            document.getElementById(
+                "environment"
+            ).value,
 
 
         movement:
-            document
-                .getElementById(
-                    "movement"
-                )
-                .value,
+            document.getElementById(
+                "movement"
+            ).value,
 
 
         mimo_bpm:
             Number(
-                mimo.toFixed(1)
+                bpm.toFixed(1)
             ),
 
 
         reference_bpm:
-            Number(
-                refBpm
-            ),
+            refBpm,
 
 
         reference_sys:
@@ -5244,17 +4662,12 @@ function saveResearchSession(){
             latestAnalysis.confidenceReason,
 
 
-        method_agreement:
-            latestAnalysis.agreement,
-
-
         candidate_bpm:
             Number.isFinite(
                 latestAnalysis.candidate
             )
                 ? Number(
-                    latestAnalysis.candidate
-                        .toFixed(1)
+                    latestAnalysis.candidate.toFixed(1)
                 )
                 : null,
 
@@ -5263,13 +4676,22 @@ function saveResearchSession(){
             latestAnalysis.support,
 
 
+        method_spread:
+            Number.isFinite(
+                latestAnalysis.spread
+            )
+                ? Number(
+                    latestAnalysis.spread.toFixed(2)
+                )
+                : null,
+
+
         green_bpm:
             Number.isFinite(
                 latestAnalysis.green
             )
                 ? Number(
-                    latestAnalysis.green
-                        .toFixed(1)
+                    latestAnalysis.green.toFixed(1)
                 )
                 : null,
 
@@ -5279,8 +4701,7 @@ function saveResearchSession(){
                 latestAnalysis.chrom
             )
                 ? Number(
-                    latestAnalysis.chrom
-                        .toFixed(1)
+                    latestAnalysis.chrom.toFixed(1)
                 )
                 : null,
 
@@ -5290,8 +4711,7 @@ function saveResearchSession(){
                 latestAnalysis.pos
             )
                 ? Number(
-                    latestAnalysis.pos
-                        .toFixed(1)
+                    latestAnalysis.pos.toFixed(1)
                 )
                 : null,
 
@@ -5301,8 +4721,7 @@ function saveResearchSession(){
                 latestAnalysis.temporalBpm
             )
                 ? Number(
-                    latestAnalysis.temporalBpm
-                        .toFixed(1)
+                    latestAnalysis.temporalBpm.toFixed(1)
                 )
                 : null,
 
@@ -5312,16 +4731,14 @@ function saveResearchSession(){
                 latestAnalysis.temporalSpread
             )
                 ? Number(
-                    latestAnalysis.temporalSpread
-                        .toFixed(2)
+                    latestAnalysis.temporalSpread.toFixed(2)
                 )
                 : null,
 
 
         lighting:
             Number(
-                latestAnalysis.lighting
-                    .toFixed(2)
+                latestAnalysis.lighting.toFixed(2)
             ),
 
 
@@ -5334,8 +4751,7 @@ function saveResearchSession(){
                 latestAnalysis.sampleRate
             )
                 ? Number(
-                    latestAnalysis.sampleRate
-                        .toFixed(3)
+                    latestAnalysis.sampleRate.toFixed(3)
                 )
                 : null,
 
@@ -5383,13 +4799,13 @@ function saveResearchSession(){
 
 
     alert(
-        "تم حفظ جلسة البحث بنجاح."
+        "تم حفظ الجلسة."
     );
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   HTML ESCAPE
 ========================================================= */
 
 function escapeHtml(
@@ -5397,12 +4813,12 @@ function escapeHtml(
 ){
 
     return String(
-        value ?? ""
+        value??""
     ).replace(
         /[&<>"']/g,
         char=>{
 
-            const map = {
+            const map={
 
                 "&":"&amp;",
                 "<":"&lt;",
@@ -5418,7 +4834,7 @@ function escapeHtml(
 
 
 /* =========================================================
-   RENDER SESSIONS
+   TABLE
 ========================================================= */
 
 function renderSessions(){
@@ -5433,8 +4849,7 @@ function renderSessions(){
         getSessions();
 
 
-    tbody.innerHTML =
-        "";
+    tbody.innerHTML="";
 
 
     for(
@@ -5453,7 +4868,7 @@ function renderSessions(){
             );
 
 
-        const errorClass =
+        const cls =
             error<=5
                 ? "good"
                 : error<=10
@@ -5467,7 +4882,7 @@ function renderSessions(){
             );
 
 
-        tr.innerHTML = `
+        tr.innerHTML=`
 
             <td>
                 ${escapeHtml(
@@ -5507,14 +4922,14 @@ function renderSessions(){
                 )}
             </td>
 
-            <td class="${errorClass}">
+            <td class="${cls}">
                 ${fmt(
                     s.signed_error,
                     1
                 )}
             </td>
 
-            <td class="${errorClass}">
+            <td class="${cls}">
                 ${fmt(
                     s.absolute_error,
                     1
@@ -5544,9 +4959,9 @@ function renderSessions(){
 
             <td>
                 ${fmt(
-                    s.method_agreement,
-                    0
-                )}%
+                    s.candidate_bpm,
+                    1
+                )}
             </td>
 
             <td>
@@ -5603,6 +5018,7 @@ function csvEscape(
         value===null ||
         value===undefined
     ){
+
         return "";
     }
 
@@ -5618,11 +5034,11 @@ function csvEscape(
     ){
 
         return (
-            '"' +
+            '"'+
             str.replace(
                 /"/g,
                 '""'
-            ) +
+            )+
             '"'
         );
     }
@@ -5648,7 +5064,7 @@ function exportCSV(){
     }
 
 
-    const headers = [
+    const headers=[
 
         "session_id",
         "subject_id",
@@ -5666,9 +5082,9 @@ function exportCSV(){
         "measurement_confidence",
         "confidence_label",
         "confidence_reason",
-        "method_agreement",
         "candidate_bpm",
         "candidate_support",
+        "method_spread",
         "green_bpm",
         "chrom_bpm",
         "pos_bpm",
@@ -5681,7 +5097,7 @@ function exportCSV(){
     ];
 
 
-    const lines = [];
+    const lines=[];
 
 
     lines.push(
@@ -5690,16 +5106,16 @@ function exportCSV(){
 
 
     for(
-        const session
+        const s
         of sessions
     ){
 
         lines.push(
             headers
                 .map(
-                    h =>
+                    h=>
                         csvEscape(
-                            session[h]
+                            s[h]
                         )
                 )
                 .join(",")
@@ -5722,7 +5138,7 @@ function exportCSV(){
 
     downloadBlob(
         blob,
-        "doctor-mimo-v53-sessions.csv"
+        "doctor-mimo-v54-sessions.csv"
     );
 }
 
@@ -5765,7 +5181,7 @@ function exportJSON(){
 
     downloadBlob(
         blob,
-        "doctor-mimo-v53-sessions.json"
+        "doctor-mimo-v54-sessions.json"
     );
 }
 
@@ -5794,7 +5210,6 @@ function downloadBlob(
     link.href =
         url;
 
-
     link.download =
         filename;
 
@@ -5822,25 +5237,25 @@ function downloadBlob(
 
 
 /* =========================================================
-   CLEAR SESSIONS
+   DELETE
 ========================================================= */
 
 function clearSessions(){
 
-    const sessions =
-        getSessions();
+    if(
+        !getSessions().length
+    ){
 
-
-    if(!sessions.length){
         return;
     }
 
 
     if(
         !confirm(
-            "هل تريد حذف كل جلسات البحث؟"
+            "هل تريد حذف كل الجلسات؟"
         )
     ){
+
         return;
     }
 
@@ -5937,10 +5352,6 @@ document
         clearSessions
     );
 
-
-/* =========================================================
-   RESIZE
-========================================================= */
 
 window.addEventListener(
     "resize",
