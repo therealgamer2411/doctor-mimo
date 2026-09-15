@@ -2,5996 +2,6768 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07111b">
-<title>Doctor MIMO™ V5.1 — Multi-Method rPPG</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js"></script>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<meta name="theme-color"
+      content="#0b6f91">
+
+<title>Doctor MIMO™</title>
+
+<!-- =========================================================
+     MEDIAPIPE
+========================================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
 
 <style>
+
 :root{
-  --bg:#07111b;
-  --panel:#0c1825;
-  --panel2:#101f2e;
-  --line:#203247;
-  --text:#eef7ff;
-  --muted:#93a8bb;
-  --accent:#39e6ca;
-  --accent2:#6eafff;
-  --good:#65e58c;
-  --warn:#ffd166;
-  --bad:#ff6d87;
-  --shadow:0 24px 70px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  min-height:100%;
-  font-family:"Segoe UI",Tahoma,Arial,sans-serif;
-  background:
-    radial-gradient(circle at 12% 0%,rgba(57,230,202,.10),transparent 28%),
-    radial-gradient(circle at 100% 18%,rgba(110,175,255,.10),transparent 30%),
-    var(--bg);
-  color:var(--text);
-}
-body{padding:18px}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.wrap{max-width:1500px;margin:auto}
+    --bg:#f4f8fb;
+    --surface:#ffffff;
+    --surface-soft:#f7fafc;
+    --line:#dce6ee;
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  margin-bottom:16px;
+    --text:#162232;
+    --muted:#718096;
+
+    --primary:#087ea4;
+    --primary-dark:#06657f;
+    --primary-soft:#e8f6fa;
+
+    --green:#15966a;
+    --green-soft:#eefaf5;
+
+    --yellow:#b67800;
+    --yellow-soft:#fff8e9;
+
+    --red:#c63c50;
+    --red-soft:#fff3f5;
+
+    --shadow:
+        0 18px 60px rgba(30,55,80,.09);
+
+    --radius:22px;
 }
-.brand{display:flex;align-items:center;gap:12px}
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:
+        Arial,
+        "Segoe UI",
+        Tahoma,
+        sans-serif;
+}
+
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    width:min(1380px,95%);
+    margin:auto;
+    padding:18px 0 40px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================== */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+
+    background:var(--surface);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+
+    padding:17px 19px;
+    border-radius:var(--radius);
+
+    margin-bottom:16px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
 .logo{
-  width:50px;
-  height:50px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#061016;
-  font-size:21px;
-  font-weight:1000;
-}
-.brand h1{margin:0;font-size:23px}
-.brand p{margin:3px 0 0;color:var(--muted);font-size:10px}
-.status{
-  padding:9px 13px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:rgba(255,255,255,.025);
-  color:var(--muted);
-  font-size:10px;
-}
-.dot{
-  display:inline-block;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  margin-left:7px;
-  background:var(--warn);
-}
-.dot.live{background:var(--good);box-shadow:0 0 13px rgba(101,229,140,.45)}
-.dot.bad{background:var(--bad);box-shadow:0 0 13px rgba(255,109,135,.45)}
+    width:50px;
+    height:50px;
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
+    border-radius:15px;
+
+    display:grid;
+    place-items:center;
+
+    color:var(--primary);
+    background:var(--primary-soft);
+
+    border:1px solid #c4e7ef;
+
+    font-size:20px;
+    font-weight:900;
 }
-@media(max-width:1100px){
-  .grid{grid-template-columns:1fr}
+
+.brand h1{
+    margin:0;
+    font-size:21px;
+}
+
+.brand p{
+    margin:5px 0 0;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.headerBadge{
+    font-size:10px;
+    color:var(--muted);
+    padding:8px 11px;
+    border-radius:999px;
+    background:var(--surface-soft);
+    border:1px solid var(--line);
+}
+
+
+/* =========================================================
+   MAIN
+========================================================== */
+
+.mainGrid{
+    display:grid;
+
+    grid-template-columns:
+        minmax(0,1.03fr)
+        minmax(400px,.97fr);
+
+    gap:16px;
 }
 
 .card{
-  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012));
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:16px;
-  box-shadow:var(--shadow);
-}
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-  padding-bottom:12px;
-  margin-bottom:14px;
-  border-bottom:1px solid rgba(255,255,255,.065);
-}
-.header h2{margin:0;color:var(--accent2);font-size:14px}
-.header p{margin:4px 0 0;color:var(--muted);font-size:9px}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:9px;
-  font-weight:900;
-  white-space:nowrap;
-}
-.badge.good{
-  color:var(--good);
-  border:1px solid rgba(101,229,140,.28);
-  background:rgba(101,229,140,.08);
-}
-.badge.warn{
-  color:var(--warn);
-  border:1px solid rgba(255,209,102,.28);
-  background:rgba(255,209,102,.08);
-}
-.badge.bad{
-  color:var(--bad);
-  border:1px solid rgba(255,109,135,.28);
-  background:rgba(255,109,135,.08);
-}
-.badge.neutral{
-  color:#bdccda;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.03);
-}
-
-.form{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-}
-@media(max-width:680px){
-  .form{grid-template-columns:1fr}
-}
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.full{grid-column:1/-1}
-label{font-size:10px;color:var(--muted)}
-
-input,select,textarea{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px 11px;
-  color:var(--text);
-  background:rgba(255,255,255,.035);
-  outline:none;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:rgba(57,230,202,.6);
-  box-shadow:0 0 0 3px rgba(57,230,202,.06);
-}
-textarea{
-  min-height:85px;
-  resize:vertical;
-}
-
-.chips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-}
-.chip{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.02);
-  color:#c9d7e4;
-  font-size:9px;
-}
-.chip input{
-  width:auto;
-  margin:0;
-  accent-color:var(--accent);
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-bottom:11px;
-}
-@media(max-width:700px){
-  .stats{grid-template-columns:1fr 1fr}
-}
-.stat{
-  min-height:82px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-}
-.statLabel{font-size:9px;color:var(--muted)}
-.statValue{
-  margin-top:4px;
-  font-size:23px;
-  font-weight:950;
-  color:var(--accent);
-}
-.statUnit{font-size:8px;color:var(--muted)}
-
-.camera{
-  position:relative;
-  aspect-ratio:4/3;
-  overflow:hidden;
-  border-radius:18px;
-  background:#010405;
-  border:1px solid var(--line);
-}
-#video,#overlay{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  transform:scaleX(-1);
-}
-#overlay{pointer-events:none}
-
-.cameraMessage{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  color:#91a6b9;
-  font-size:11px;
-  padding:25px;
-  pointer-events:none;
-}
-.cameraMessage.hidden{display:none}
-
-.controls{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-  margin-top:11px;
-}
-button{
-  min-height:40px;
-  border-radius:11px;
-  padding:9px 14px;
-  border:0;
-  font-weight:850;
-}
-.primary{
-  background:linear-gradient(135deg,var(--accent),#a6fff3);
-  color:#061016;
-}
-.secondary{
-  background:#152638;
-  color:#dce9f6;
-  border:1px solid var(--line);
-}
-.danger{
-  background:linear-gradient(135deg,#ff6d87,#ffb36c);
-  color:#19070b;
-}
-.warning{
-  background:linear-gradient(135deg,#ffd166,#ffb46f);
-  color:#1b1303;
-}
-button:disabled{opacity:.4;cursor:not-allowed}
-
-.progressGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:11px;
-}
-@media(max-width:700px){
-  .progressGrid{grid-template-columns:1fr}
-}
-.metric{
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:rgba(255,255,255,.02);
-}
-.metricTop{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:7px;
-}
-.metricTop span{font-size:9px;color:var(--muted)}
-.progress{
-  height:8px;
-  background:#0e1a26;
-  border-radius:999px;
-  overflow:hidden;
-}
-.progress i{
-  display:block;
-  width:0;
-  height:100%;
-  background:linear-gradient(90deg,var(--bad),var(--warn),var(--good));
-  transition:.25s;
-}
-
-.aiBox{
-  margin-top:11px;
-  padding:13px;
-  border-radius:16px;
-  border:1px solid rgba(57,230,202,.15);
-  background:rgba(57,230,202,.03);
-}
-.aiTitle{
-  font-size:11px;
-  font-weight:900;
-  color:var(--accent);
-  margin-bottom:6px;
-}
-.aiText{
-  color:#d4e2ef;
-  font-size:10px;
-  line-height:1.85;
-}
-
-.engineGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-top:10px;
-}
-@media(max-width:800px){
-  .engineGrid{grid-template-columns:1fr 1fr}
-}
-.engine{
-  padding:9px;
-  border-radius:13px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.02);
-}
-.engineTitle{color:var(--muted);font-size:8px}
-.engineValue{
-  margin-top:4px;
-  color:var(--accent2);
-  font-size:10px;
-  font-weight:900;
-}
-
-.signalCard{margin-top:14px}
-
-#signalCanvas{
-  display:block;
-  width:100%;
-  height:190px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:#03080d;
-}
-
-.signalMeta{
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:7px;
-  color:var(--muted);
-  font-size:8px;
-}
-
-.windows{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-top:9px;
-}
-@media(max-width:700px){
-  .windows{grid-template-columns:1fr 1fr}
-}
-.window{
-  padding:9px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:rgba(255,255,255,.02);
-}
-.windowTitle{font-size:8px;color:var(--muted)}
-.windowValue{
-  margin-top:4px;
-  font-size:18px;
-  font-weight:950;
-  color:var(--accent2);
-}
-.windowSub{font-size:8px;color:var(--muted)}
-
-.methodGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:10px;
-}
-@media(max-width:700px){
-  .methodGrid{grid-template-columns:1fr}
-}
-.method{
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  background:rgba(255,255,255,.02);
-}
-.methodName{
-  font-size:9px;
-  color:var(--muted);
-}
-.methodValue{
-  margin-top:4px;
-  color:var(--accent2);
-  font-size:17px;
-  font-weight:950;
-}
-.methodMeta{
-  margin-top:3px;
-  color:var(--muted);
-  font-size:8px;
-}
-
-.confidencePanel{
-  margin-top:12px;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:rgba(255,255,255,.018);
-}
-.confTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-.confTitle{
-  color:var(--accent2);
-  font-size:11px;
-  font-weight:900;
-}
-.confValue{
-  font-size:21px;
-  font-weight:950;
-  color:var(--accent);
-}
-.confReason{
-  margin-top:7px;
-  color:var(--muted);
-  font-size:9px;
-  line-height:1.7;
-}
-
-.lab{
-  margin-top:14px;
-}
-.sessionGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:9px;
-}
-@media(max-width:850px){
-  .sessionGrid{grid-template-columns:1fr}
-}
-.labBox{
-  padding:11px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.018);
-}
-.labBox h3{
-  margin:0 0 8px;
-  color:var(--accent2);
-  font-size:11px;
-}
-.smallHint{
-  color:var(--muted);
-  font-size:8px;
-  line-height:1.7;
-}
-.referenceRow{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:7px;
-}
-.labStatus{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:9px;
-}
-
-.tableWrap{
-  overflow:auto;
-  margin-top:10px;
-  border:1px solid var(--line);
-  border-radius:14px;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:1050px;
-}
-th,td{
-  padding:8px;
-  text-align:right;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  font-size:8px;
-}
-th{
-  color:var(--muted);
-  background:#0d1b28;
-}
-td{color:#d0dce8}
-tr:last-child td{border-bottom:0}
-.miniAction{
-  min-height:30px;
-  padding:6px 8px;
-  font-size:8px;
-}
-
-/* REPORT */
-.overlayPanel{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  display:none;
-  overflow:auto;
-  padding:20px;
-  background:rgba(0,4,8,.91);
-  backdrop-filter:blur(9px);
-}
-.overlayPanel.open{display:block}
-.report{
-  max-width:1050px;
-  margin:auto;
-  padding:20px;
-  border-radius:24px;
-  border:1px solid var(--line);
-  background:#0c1723;
-  box-shadow:0 35px 100px rgba(0,0,0,.5);
-}
-.reportHeader{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  padding-bottom:12px;
-  border-bottom:1px solid var(--line);
-}
-.reportHeader h2{margin:0;font-size:20px}
-.reportHeader p{margin:4px 0 0;color:var(--muted);font-size:8px}
-.reportSection{
-  margin-top:12px;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:rgba(255,255,255,.018);
-}
-.reportSection h3{
-  margin:0 0 8px;
-  color:var(--accent2);
-  font-size:11px;
-}
-.reportStats{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:8px;
-}
-@media(max-width:850px){
-  .reportStats{grid-template-columns:1fr 1fr}
-}
-.reportStat{
-  padding:9px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:rgba(255,255,255,.02);
-}
-.reportStat b{
-  display:block;
-  font-size:18px;
-  color:var(--accent);
-}
-.reportStat span{font-size:8px;color:var(--muted)}
-.reportText{
-  font-size:9px;
-  line-height:1.85;
-  color:#d4e2ef;
-}
-.reportList{
-  padding-right:17px;
-  margin:0;
-}
-.reportList li{
-  margin:4px 0;
-  color:#d0deeb;
-  font-size:8px;
-}
-.footer{
-  margin-top:12px;
-  text-align:center;
-  color:#71879b;
-  font-size:8px;
-}
-
-@media print{
-  body{padding:0;background:#fff;color:#111}
-  .topbar,.grid,.signalCard,.lab,.footer,
-  .overlayPanel .controls{display:none!important}
-  .overlayPanel{
-    position:static;
-    display:block!important;
-    background:#fff;
-    padding:0;
-  }
-  .report{
-    max-width:none;
-    box-shadow:none;
-    border:0;
-    color:#111;
-    background:#fff;
-  }
-  .reportSection,.reportStat{
-    background:#fff;
-    border-color:#ccc;
-  }
-  .reportHeader h2,
-  .reportSection h3,
-  .reportStat b,
-  .reportText,
-  .reportList li{
-    color:#111;
-  }
-  .reportHeader p,
-  .reportStat span{
-    color:#555;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<div class="wrap">
-
-<header class="topbar">
-
-  <div class="brand">
-    <div class="logo">M</div>
-    <div>
-      <h1>Doctor MIMO™ V5.1</h1>
-      <p>Multi-Method rPPG • Signal Quality • Measurement Confidence</p>
-    </div>
-  </div>
-
-  <div class="status">
-    <span id="statusDot" class="dot"></span>
-    <span id="statusText">جاهز</span>
-  </div>
-
-</header>
-
-
-<div class="grid">
-
-<!-- =====================================================
-     PATIENT CONTEXT
-===================================================== -->
-
-<section class="card">
-
-  <div class="header">
-
-    <div>
-      <h2>Patient Context + MIMO Intelligence</h2>
-      <p>Many Inputs → Evidence Fusion → Many Outputs</p>
-    </div>
-
-    <span id="riskBadge" class="badge neutral">
-      بانتظار الفحص
-    </span>
-
-  </div>
-
-
-  <div class="form">
-
-    <div class="field">
-      <label>اسم المريض / Subject ID</label>
-      <input id="pName" placeholder="Subject 001">
-    </div>
-
-    <div class="field">
-      <label>العمر</label>
-      <input id="pAge" type="number" min="1" max="120" placeholder="30">
-    </div>
-
-    <div class="field">
-      <label>الجنس</label>
-      <select id="pSex">
-        <option value="">غير محدد</option>
-        <option value="male">ذكر</option>
-        <option value="female">أنثى</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>مدة الأعراض</label>
-      <select id="duration">
-        <option value="">غير محددة</option>
-        <option>أقل من ساعة</option>
-        <option>1–6 ساعات</option>
-        <option>6–24 ساعة</option>
-        <option>أكثر من 24 ساعة</option>
-      </select>
-    </div>
-
-    <div class="field full">
-      <label>الشكوى / وصف الحالة</label>
-      <textarea id="pNotes"
-        placeholder="اكتب وصف الحالة أو سبب إجراء الفحص..."></textarea>
-    </div>
-
-    <div class="field full">
-
-      <label>أعراض إنذار</label>
-
-      <div class="chips">
-
-        <label class="chip">
-          <input type="checkbox" value="chest">
-          ألم الصدر
-        </label>
-
-        <label class="chip">
-          <input type="checkbox" value="breath">
-          ضيق التنفس
-        </label>
-
-        <label class="chip">
-          <input type="checkbox" value="faint">
-          إغماء
-        </label>
-
-        <label class="chip">
-          <input type="checkbox" value="neuro">
-          أعراض عصبية مفاجئة
-        </label>
-
-        <label class="chip">
-          <input type="checkbox" value="bleed">
-          نزيف شديد
-        </label>
-
-        <label class="chip">
-          <input type="checkbox" value="fever">
-          حرارة
-        </label>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="aiBox">
-
-    <div class="aiTitle">
-      Doctor MIMO — Clinical Intelligence
-    </div>
-
-    <div id="aiText" class="aiText">
-      أدخل بيانات الحالة ثم شغّل الفحص.
-      سيجمع MIMO سياق الحالة مع القياسات الحيوية
-      وجودة الإشارة واتفاق خوارزميات التقدير.
-    </div>
-
-  </div>
-
-
-  <div class="engineGrid">
-
-    <div class="engine">
-      <div class="engineTitle">Green rPPG</div>
-      <div id="greenState" class="engineValue">Waiting</div>
-    </div>
-
-    <div class="engine">
-      <div class="engineTitle">CHROM</div>
-      <div id="chromState" class="engineValue">Waiting</div>
-    </div>
-
-    <div class="engine">
-      <div class="engineTitle">POS</div>
-      <div id="posState" class="engineValue">Waiting</div>
-    </div>
-
-    <div class="engine">
-      <div class="engineTitle">Fusion</div>
-      <div id="fusionState" class="engineValue">Waiting</div>
-    </div>
-
-  </div>
-
-
-  <div class="notice">
-    هذا نموذج بحثي للفحص غير التلامسي.
-    لا يقدم تشخيصًا نهائيًا ولا يُعد جهازًا طبيًا معتمدًا.
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     CAMERA
-===================================================== -->
-
-<section class="card">
-
-  <div class="header">
-
-    <div>
-      <h2>Edge Vision + Multi-Method rPPG</h2>
-      <p>Face Mesh → Dynamic ROI → RGB → Green / CHROM / POS</p>
-    </div>
-
-    <span id="scanBadge" class="badge warn">
-      غير نشط
-    </span>
-
-  </div>
-
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="statLabel">BPM</div>
-      <div id="bpmValue" class="statValue">--</div>
-      <div class="statUnit">fused estimate</div>
-    </div>
-
-    <div class="stat">
-      <div class="statLabel">Signal Quality</div>
-      <div id="qualityValue" class="statValue">--</div>
-      <div class="statUnit">0–100</div>
-    </div>
-
-    <div class="stat">
-      <div class="statLabel">Confidence</div>
-      <div id="confidenceValue" class="statValue">--</div>
-      <div class="statUnit">measurement</div>
-    </div>
-
-    <div class="stat">
-      <div class="statLabel">Samples</div>
-      <div id="sampleValue" class="statValue">0</div>
-      <div class="statUnit">samples</div>
-    </div>
-
-  </div>
-
-
-  <div class="camera">
-
-    <video id="video" playsinline muted></video>
-
-    <canvas id="overlay"></canvas>
-
-    <div id="cameraMessage" class="cameraMessage">
-      شغّل الكاميرا ثم اجعل الوجه واضحًا داخل الإطار.
-      <br>
-      اجلس ثابتًا أمام إضاءة مستقرة.
-    </div>
-
-  </div>
-
-
-  <div class="controls">
-
-    <button id="startBtn" class="primary">
-      تشغيل الكاميرا
-    </button>
-
-    <button id="stopBtn" class="secondary" disabled>
-      إيقاف
-    </button>
-
-    <button id="scanBtn" class="danger" disabled>
-      فحص 15 ثانية
-    </button>
-
-    <button id="reportBtn" class="secondary" disabled>
-      التقرير
-    </button>
-
-  </div>
-
-
-  <div class="progressGrid">
-
-    <div class="metric">
-
-      <div class="metricTop">
-        <span>Face Stability</span>
-        <span id="faceScoreText">0%</span>
-      </div>
-
-      <div class="progress">
-        <i id="faceProgress"></i>
-      </div>
-
-    </div>
-
-
-    <div class="metric">
-
-      <div class="metricTop">
-        <span>Measurement Confidence</span>
-        <span id="confidenceScoreText">0%</span>
-      </div>
-
-      <div class="progress">
-        <i id="confidenceProgress"></i>
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="confidencePanel">
-
-    <div class="confTop">
-
-      <div class="confTitle">
-        Measurement Confidence
-      </div>
-
-      <div id="confidenceLarge" class="confValue">
-        --
-      </div>
-
-    </div>
-
-    <div id="confidenceReason" class="confReason">
-      لا توجد نتيجة حتى الآن.
-    </div>
-
-  </div>
-
-</section>
-
-</div>
-
-
-<!-- =====================================================
-     SIGNAL
-===================================================== -->
-
-<section class="card signalCard">
-
-  <div class="header">
-
-    <div>
-      <h2>rPPG Signal Intelligence</h2>
-      <p>Multi-method + multi-window agreement</p>
-    </div>
-
-    <span id="scanTimer" class="badge neutral">
-      0.0 ثانية
-    </span>
-
-  </div>
-
-
-  <canvas id="signalCanvas"></canvas>
-
-
-  <div class="signalMeta">
-
-    <span id="signalMetaLeft">
-      بانتظار الإشارة...
-    </span>
-
-    <span>
-      Green + CHROM + POS
-    </span>
-
-  </div>
-
-
-  <div class="methodGrid">
-
-    <div class="method">
-
-      <div class="methodName">
-        Green Normalized
-      </div>
-
-      <div id="greenBpm" class="methodValue">
-        --
-      </div>
-
-      <div id="greenQuality" class="methodMeta">
-        Quality: --
-      </div>
-
-    </div>
-
-
-    <div class="method">
-
-      <div class="methodName">
-        CHROM
-      </div>
-
-      <div id="chromBpm" class="methodValue">
-        --
-      </div>
-
-      <div id="chromQuality" class="methodMeta">
-        Quality: --
-      </div>
-
-    </div>
-
-
-    <div class="method">
-
-      <div class="methodName">
-        POS
-      </div>
-
-      <div id="posBpm" class="methodValue">
-        --
-      </div>
-
-      <div id="posQuality" class="methodMeta">
-        Quality: --
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="windows">
-
-    <div class="window">
-      <div class="windowTitle">5s</div>
-      <div id="window5" class="windowValue">--</div>
-      <div id="window5q" class="windowSub">--</div>
-    </div>
-
-    <div class="window">
-      <div class="windowTitle">8s</div>
-      <div id="window8" class="windowValue">--</div>
-      <div id="window8q" class="windowSub">--</div>
-    </div>
-
-    <div class="window">
-      <div class="windowTitle">10s</div>
-      <div id="window10" class="windowValue">--</div>
-      <div id="window10q" class="windowSub">--</div>
-    </div>
-
-    <div class="window">
-      <div class="windowTitle">12s</div>
-      <div id="window12" class="windowValue">--</div>
-      <div id="window12q" class="windowSub">--</div>
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     RESEARCH LAB
-===================================================== -->
-
-<section class="card lab">
-
-  <div class="header">
-
-    <div>
-      <h2>Research Recording Lab</h2>
-      <p>Reference validation with Cofoe KF-65B</p>
-    </div>
-
-    <span id="recordStatus" class="badge neutral">
-      جاهز
-    </span>
-
-  </div>
-
-
-  <div class="sessionGrid">
-
-
-    <div class="labBox">
-
-      <h3>Session Information</h3>
-
-      <div class="form">
-
-        <div class="field">
-
-          <label>Subject ID</label>
-
-          <input
-            id="subjectId"
-            placeholder="S001">
-
-        </div>
-
-        <div class="field">
-
-          <label>Session Label</label>
-
-          <input
-            id="sessionLabel"
-            placeholder="Resting 01">
-
-        </div>
-
-        <div class="field">
-
-          <label>Environment</label>
-
-          <select id="environment">
-
-            <option>Indoor</option>
-            <option>Natural Light</option>
-            <option>Bright Light</option>
-            <option>Low Light</option>
-            <option>Mixed Light</option>
-
-          </select>
-
-        </div>
-
-        <div class="field">
-
-          <label>Movement</label>
-
-          <select id="movement">
-
-            <option>Still</option>
-            <option>Low Movement</option>
-            <option>Moderate Movement</option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="labBox">
-
-      <h3>Cofoe KF-65B Reference</h3>
-
-      <div class="referenceRow">
-
-        <input
-          id="refBpm"
-          type="number"
-          min="30"
-          max="220"
-          placeholder="BPM">
-
-        <input
-          id="refSys"
-          type="number"
-          min="50"
-          max="250"
-          placeholder="SYS">
-
-        <input
-          id="refDia"
-          type="number"
-          min="30"
-          max="150"
-          placeholder="DIA">
-
-      </div>
-
-      <div class="smallHint">
-        أدخل القيم يدويًا من KF-65B بعد/حول جلسة التسجيل.
-      </div>
-
-    </div>
-
-
-    <div class="labBox">
-
-      <h3>Recording Control</h3>
-
-      <div class="controls" style="margin-top:0">
-
-        <button
-          id="recordStart"
-          class="primary"
-          disabled>
-          تسجيل 15 ثانية
-        </button>
-
-        <button
-          id="recordSave"
-          class="secondary"
-          disabled>
-          حفظ Session
-        </button>
-
-      </div>
-
-      <div id="recordTimer" class="labStatus">
-        لا توجد جلسة تسجيل.
-      </div>
-
-      <div id="recordComparison" class="labStatus">
-        MIMO: -- • Reference: -- • Error: --
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="controls">
-
-    <button
-      id="exportCSV"
-      class="secondary">
-      تصدير CSV
-    </button>
-
-    <button
-      id="exportJSON"
-      class="secondary">
-      تصدير JSON
-    </button>
-
-    <button
-      id="clearSessions"
-      class="secondary">
-      حذف Sessions
-    </button>
-
-  </div>
-
-
-  <div class="tableWrap">
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          <th>Session</th>
-          <th>Subject</th>
-          <th>Environment</th>
-          <th>Movement</th>
-          <th>MIMO BPM</th>
-          <th>Reference BPM</th>
-          <th>Error</th>
-          <th>Quality</th>
-          <th>Confidence</th>
-          <th>Samples</th>
-          <th>Action</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody id="sessionTableBody"></tbody>
-
-    </table>
-
-  </div>
-
-
-  <div class="notice">
-    الجلسات تحفظ محليًا في المتصفح. استخدم معرفات بحثية غير كاشفة قدر الإمكان.
-    هذه البيانات مخصصة للبحث والتحقق، وليست قاعدة ملفات مرضى سريرية.
-  </div>
-
-</section>
-
-
-<footer class="footer">
-  Doctor MIMO™ V5.1 • Multi-Method rPPG Research Foundation
-</footer>
-
-</div>
-
-
-<!-- =====================================================
-     REPORT
-===================================================== -->
-
-<div id="reportOverlay" class="overlayPanel">
-
-  <div class="report">
-
-    <div class="reportHeader">
-
-      <div>
-
-        <h2>
-          Doctor MIMO™ — Digital Screening Report
-        </h2>
-
-        <p id="reportMeta"></p>
-
-      </div>
-
-      <span
-        id="reportRisk"
-        class="badge neutral">
-        —
-      </span>
-
-    </div>
-
-
-    <div class="reportSection">
-
-      <h3>بيانات الحالة</h3>
-
-      <div
-        id="reportPatient"
-        class="reportText">
-      </div>
-
-    </div>
-
-
-    <div class="reportSection">
-
-      <h3>النتيجة الحيوية</h3>
-
-      <div class="reportStats">
-
-        <div class="reportStat">
-          <b id="rBpm">--</b>
-          <span>Fused BPM</span>
-        </div>
-
-        <div class="reportStat">
-          <b id="rQuality">--</b>
-          <span>Signal Quality</span>
-        </div>
-
-        <div class="reportStat">
-          <b id="rConfidence">--</b>
-          <span>Confidence</span>
-        </div>
-
-        <div class="reportStat">
-          <b id="rGreen">--</b>
-          <span>Green BPM</span>
-        </div>
-
-        <div class="reportStat">
-          <b id="rChrom">--</b>
-          <span>CHROM BPM</span>
-        </div>
-
-        <div class="reportStat">
-          <b id="rPos">--</b>
-          <span>POS BPM</span>
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="reportSection">
-
-      <h3>تحليل الثقة</h3>
-
-      <div
-        id="rConfidenceReason"
-        class="reportText">
-      </div>
-
-    </div>
-
-
-    <div class="reportSection">
-
-      <h3>مسار النظام</h3>
-
-      <div
-        class="reportText">
-
-        Face Mesh → Dynamic ROI →
-        RGB Acquisition →
-        Green / CHROM / POS →
-        Signal Quality →
-        Multi-window Agreement →
-        Measurement Confidence →
-        MIMO Context Fusion
-
-      </div>
-
-    </div>
-
-
-    <div class="reportSection">
-
-      <h3>ملاحظات السلامة</h3>
-
-      <ul
-        id="rSafety"
-        class="reportList">
-      </ul>
-
-    </div>
-
-
-    <div class="controls">
-
-      <button
-        class="primary"
-        onclick="window.print()">
-        طباعة / PDF
-      </button>
-
-      <button
-        class="secondary"
-        onclick="closeReport()">
-        إغلاق
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<script>
-"use strict";
-
-/* =========================================================
-   DOCTOR MIMO V5.1
-========================================================= */
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const video =
-  document.getElementById("video");
-
-const overlay =
-  document.getElementById("overlay");
-
-const overlayCtx =
-  overlay.getContext("2d");
-
-const sampleCanvas =
-  document.createElement("canvas");
-
-sampleCanvas.width=128;
-sampleCanvas.height=72;
-
-const sampleCtx =
-  sampleCanvas.getContext(
-    "2d",
-    {willReadFrequently:true}
-  );
-
-const signalCanvas =
-  document.getElementById("signalCanvas");
-
-const signalCtx =
-  signalCanvas.getContext("2d");
-
-
-const statusDot =
-  document.getElementById("statusDot");
-
-const statusText =
-  document.getElementById("statusText");
-
-const scanBadge =
-  document.getElementById("scanBadge");
-
-const riskBadge =
-  document.getElementById("riskBadge");
-
-const cameraMessage =
-  document.getElementById("cameraMessage");
-
-const bpmValue =
-  document.getElementById("bpmValue");
-
-const qualityValue =
-  document.getElementById("qualityValue");
-
-const confidenceValue =
-  document.getElementById("confidenceValue");
-
-const sampleValue =
-  document.getElementById("sampleValue");
-
-const faceProgress =
-  document.getElementById("faceProgress");
-
-const confidenceProgress =
-  document.getElementById("confidenceProgress");
-
-const faceScoreText =
-  document.getElementById("faceScoreText");
-
-const confidenceScoreText =
-  document.getElementById("confidenceScoreText");
-
-const confidenceLarge =
-  document.getElementById("confidenceLarge");
-
-const confidenceReason =
-  document.getElementById("confidenceReason");
-
-const scanTimer =
-  document.getElementById("scanTimer");
-
-const signalMetaLeft =
-  document.getElementById("signalMetaLeft");
-
-const aiText =
-  document.getElementById("aiText");
-
-const greenState =
-  document.getElementById("greenState");
-
-const chromState =
-  document.getElementById("chromState");
-
-const posState =
-  document.getElementById("posState");
-
-const fusionState =
-  document.getElementById("fusionState");
-
-const startBtn =
-  document.getElementById("startBtn");
-
-const stopBtn =
-  document.getElementById("stopBtn");
-
-const scanBtn =
-  document.getElementById("scanBtn");
-
-const reportBtn =
-  document.getElementById("reportBtn");
-
-const recordStart =
-  document.getElementById("recordStart");
-
-const recordSave =
-  document.getElementById("recordSave");
-
-const recordStatus =
-  document.getElementById("recordStatus");
-
-const recordTimer =
-  document.getElementById("recordTimer");
-
-const recordComparison =
-  document.getElementById("recordComparison");
-
-const sessionTableBody =
-  document.getElementById(
-    "sessionTableBody"
-  );
-
-
-/* =========================================================
-   SIGNAL STATE
-========================================================= */
-
-const channels = {
-
-  r:[],
-
-  g:[],
-
-  b:[],
-
-  green:[],
-
-  chrom:[],
-
-  pos:[]
-
-};
-
-
-const signalTimes=[];
-
-
-/* =========================================================
-   GLOBAL STATE
-========================================================= */
-
-let faceMesh=null;
-let stream=null;
-
-let running=false;
-let scanning=false;
-let recordingActive=false;
-
-let busy=false;
-
-let animationFrame=null;
-
-let lastProcessTime=0;
-
-let scanStart=0;
-
-let recordingStartedAt=0;
-
-let currentFaceScore=0;
-let currentLighting=0;
-
-let currentBpm=null;
-let currentQuality=0;
-let currentConfidence=0;
-
-let currentMethods={
-  green:null,
-  chrom:null,
-  pos:null
-};
-
-let lastFaceCenter=null;
-
-let currentRecording=null;
-
-let reportData=null;
-
-
-/* =========================================================
-   UTILITIES
-========================================================= */
-
-function clamp(
-  x,
-  min,
-  max
-){
-
-  return Math.max(
-    min,
-    Math.min(
-      max,
-      x
-    )
-  );
-}
-
-
-function mean(arr){
-
-  if(!arr.length){
-    return 0;
-  }
-
-  let sum=0;
-
-  for(const x of arr){
-    sum+=x;
-  }
-
-  return sum/arr.length;
-}
-
-
-function std(arr){
-
-  if(arr.length<2){
-    return 0;
-  }
-
-  const m=mean(arr);
-
-  let sum=0;
-
-  for(const x of arr){
-
-    const d=x-m;
-
-    sum+=d*d;
-  }
-
-  return Math.sqrt(
-    sum/arr.length
-  );
-}
-
-
-function median(arr){
-
-  if(!arr.length){
-    return null;
-  }
-
-  const s=
-    [...arr].sort(
-      (a,b)=>a-b
-    );
-
-  const middle=
-    Math.floor(
-      s.length/2
-    );
-
-  return s.length%2
-    ? s[middle]
-    : (
-      s[middle-1]+
-      s[middle]
-    )/2;
-}
-
-
-function escapeHtml(value){
-
-  return String(
-    value??""
-  ).replace(
-    /[&<>"']/g,
-    char=>({
-
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-
-    })[char]
-  );
-}
-
-
-function uid(){
-
-  return (
-    "DM-" +
-    Date.now().toString(36) +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2,7)
-      .toUpperCase()
-  );
-}
-
-
-function setStatus(
-  text,
-  type="idle"
-){
-
-  statusText.textContent=text;
-
-  statusDot.classList.remove(
-    "live",
-    "bad"
-  );
-
-  if(type==="live"){
-    statusDot.classList.add(
-      "live"
-    );
-  }
-
-  if(type==="bad"){
-    statusDot.classList.add(
-      "bad"
-    );
-  }
-}
-
-
-function setBadge(
-  el,
-  text,
-  type
-){
-
-  el.textContent=text;
-
-  el.className=
-    "badge "+type;
-}
-
-
-/* =========================================================
-   FACE MESH
-========================================================= */
-
-async function initFaceMesh(){
-
-  if(faceMesh){
-    return;
-  }
-
-
-  faceMesh=
-    new FaceMesh({
-
-      locateFile:file=>
-        "https://cdn.jsdelivr.net/npm/" +
-        "@mediapipe/face_mesh@0.4.1633559619/" +
-        file
-    });
-
-
-  faceMesh.setOptions({
-
-    maxNumFaces:1,
-
-    refineLandmarks:true,
-
-    minDetectionConfidence:.60,
-
-    minTrackingConfidence:.60
-
-  });
-
-
-  faceMesh.onResults(
-    onFaceResults
-  );
-}
-
-
-/* =========================================================
-   FACE METRICS
-========================================================= */
-
-function getFaceMetrics(
-  landmarks,
-  W,
-  H
-){
-
-  const ids=[
-    10,
-    151,
-    234,
-    454,
-    50,
-    280
-  ];
-
-
-  const xs=
-    ids.map(
-      i=>landmarks[i].x*W
-    );
-
-
-  const ys=
-    ids.map(
-      i=>landmarks[i].y*H
-    );
-
-
-  const minX=Math.min(...xs);
-  const maxX=Math.max(...xs);
-
-  const minY=Math.min(...ys);
-  const maxY=Math.max(...ys);
-
-
-  const width=maxX-minX;
-  const height=maxY-minY;
-
-
-  const centerX=
-    (minX+maxX)/2;
-
-  const centerY=
-    (minY+maxY)/2;
-
-
-  let motion=0;
-
-
-  if(lastFaceCenter){
-
-    motion=
-      Math.hypot(
-        centerX-lastFaceCenter.x,
-        centerY-lastFaceCenter.y
-      )/
-      Math.max(
-        1,
-        Math.min(W,H)
-      );
-  }
-
-
-  lastFaceCenter={
-    x:centerX,
-    y:centerY
-  };
-
-
-  const areaRatio=
-    width*height/
-    (W*H);
-
-
-  const centerScore=
-    clamp(
-      1-
-      Math.abs(
-        centerX/W-.5
-      )*3.5,
-      0,
-      1
-    );
-
-
-  const sizeScore=
-    clamp(
-      (areaRatio-.035)/.18,
-      0,
-      1
-    );
-
-
-  const motionScore=
-    clamp(
-      1-motion*60,
-      0,
-      1
-    );
-
-
-  const faceScore=
-    100*(
-      .42*centerScore+
-      .33*sizeScore+
-      .25*motionScore
-    );
-
-
-  const roiWidth=
-    clamp(
-      width*.48,
-      45,
-      W*.50
-    );
-
-
-  const roiHeight=
-    clamp(
-      height*.17,
-      18,
-      H*.18
-    );
-
-
-  const roiX=
-    clamp(
-      centerX-roiWidth/2,
-      0,
-      W-roiWidth
-    );
-
-
-  const roiY=
-    clamp(
-      minY+
-      height*.10,
-      0,
-      H-roiHeight
-    );
-
-
-  return {
-
-    minX,
-    minY,
-    maxX,
-    maxY,
-
-    centerX,
-    centerY,
-
-    score:faceScore,
-
-    roiX,
-    roiY,
-    roiWidth,
-    roiHeight
-  };
-}
-
-
-/* =========================================================
-   ROI SAMPLING
-========================================================= */
-
-function sampleRGB(
-  face
-){
-
-  const x=
-    Math.round(face.roiX);
-
-  const y=
-    Math.round(face.roiY);
-
-  const w=
-    Math.max(
-      10,
-      Math.round(face.roiWidth)
-    );
-
-  const h=
-    Math.max(
-      10,
-      Math.round(face.roiHeight)
-    );
-
-
-  try{
-
-    sampleCtx.drawImage(
-      video,
-      x,
-      y,
-      w,
-      h,
-      0,
-      0,
-      128,
-      72
-    );
-
-
-    const image=
-      sampleCtx.getImageData(
-        0,
-        0,
-        128,
-        72
-      );
-
-
-    const data=image.data;
-
-
-    let R=0;
-    let G=0;
-    let B=0;
-    let L=0;
-
-    let count=0;
-
-
-    for(
-      let i=0;
-      i<data.length;
-      i+=16
-    ){
-
-      const r=data[i];
-      const g=data[i+1];
-      const b=data[i+2];
-
-
-      const mx=
-        Math.max(
-          r,g,b
-        );
-
-      const mn=
-        Math.min(
-          r,g,b
-        );
-
-
-      if(mx<25){
-        continue;
-      }
-
-      if(mn>247){
-        continue;
-      }
-
-
-      R+=r;
-      G+=g;
-      B+=b;
-
-
-      L+=
-        .2126*r+
-        .7152*g+
-        .0722*b;
-
-
-      count++;
-    }
-
-
-    if(!count){
-      return null;
-    }
-
-
-    R/=count;
-    G/=count;
-    B/=count;
-    L/=count;
-
-
-    /*
-      Green normalized by total RGB.
-    */
-    const green=
-      G/
-      (
-        R+G+B+1
-      );
-
-
-    return {
-
-      r:R,
-      g:G,
-      b:B,
-
-      luma:L,
-
-      green
-    };
-
-
-  }catch(error){
-
-    console.warn(
-      "sampleRGB:",
-      error
-    );
-
-    return null;
-  }
-}
-
-
-/* =========================================================
-   CHROM
-========================================================= */
-
-/*
-  CHROM implementation follows
-  the conceptual normalized chrominance
-  approach.
-
-  Inputs:
-  temporally normalized RGB traces.
-*/
-
-function computeCHROM(
-  R,
-  G,
-  B
-){
-
-  if(
-    R.length<40 ||
-    G.length<40 ||
-    B.length<40
-  ){
-    return null;
-  }
-
-
-  const meanR=mean(R)||1;
-  const meanG=mean(G)||1;
-  const meanB=mean(B)||1;
-
-
-  const X=[];
-  const Y=[];
-
-
-  for(let i=0;i<R.length;i++){
-
-    const rn=R[i]/meanR;
-    const gn=G[i]/meanG;
-    const bn=B[i]/meanB;
-
-
-    X.push(
-      3*rn-2*gn
-    );
-
-    Y.push(
-      1.5*rn+
-      gn-
-      1.5*bn
-    );
-  }
-
-
-  const alpha=
-    std(Y)/
-    (
-      std(X)+1e-9
-    );
-
-
-  return X.map(
-    (x,i)=>
-      x-
-      alpha*Y[i]
-  );
-}
-
-
-/* =========================================================
-   POS
-========================================================= */
-
-/*
-  POS-style projection.
-
-  This is a browser research implementation,
-  intentionally kept transparent rather than
-  pretending to be a trained deep model.
-*/
-
-function computePOS(
-  R,
-  G,
-  B
-){
-
-  if(
-    R.length<40 ||
-    G.length<40 ||
-    B.length<40
-  ){
-    return null;
-  }
-
-
-  const meanR=mean(R)||1;
-  const meanG=mean(G)||1;
-  const meanB=mean(B)||1;
-
-
-  const X=[];
-  const Y=[];
-
-
-  for(let i=0;i<R.length;i++){
-
-    const rn=R[i]/meanR;
-    const gn=G[i]/meanG;
-    const bn=B[i]/meanB;
-
-
-    X.push(
-      2*gn-rn-bn
-    );
-
-    Y.push(
-      1.5*gn-
-      0.5*rn-
-      0.5*bn
-    );
-  }
-
-
-  const beta=
-    std(X)/
-    (
-      std(Y)+1e-9
-    );
-
-
-  return X.map(
-    (x,i)=>
-      x+
-      beta*Y[i]
-  );
-}
-
-
-/* =========================================================
-   SIGNAL HELPERS
-========================================================= */
-
-function detrend(
-  arr
-){
-
-  if(arr.length<5){
-    return [...arr];
-  }
-
-
-  const baseline=
-    movingAverage(
-      arr,
-      Math.max(
-        5,
-        Math.floor(
-          arr.length*.08
-        )
-      )
-    );
-
-
-  const result=
-    arr.map(
-      (x,i)=>
-        x-baseline[i]
-    );
-
-
-  const s=
-    std(result)||1;
-
-
-  return result.map(
-    x=>x/s
-  );
-}
-
-
-function movingAverage(
-  arr,
-  size
-){
-
-  if(size<=1){
-    return [...arr];
-  }
-
-
-  const result=
-    new Array(arr.length);
-
-  const queue=[];
-  let sum=0;
-
-
-  for(
-    let i=0;
-    i<arr.length;
-    i++
-  ){
-
-    sum+=arr[i];
-
-    queue.push(
-      arr[i]
-    );
-
-
-    if(queue.length>size){
-      sum-=queue.shift();
-    }
-
-
-    result[i]=
-      sum/
-      queue.length;
-  }
-
-
-  return result;
-}
-
-
-function smooth(
-  arr,
-  radius=2
-){
-
-  if(arr.length<3){
-    return [...arr];
-  }
-
-
-  const result=
-    new Array(arr.length);
-
-
-  for(
-    let i=0;
-    i<arr.length;
-    i++
-  ){
-
-    let sum=0;
-    let count=0;
-
-
-    for(
-      let j=
-        Math.max(0,i-radius);
-
-      j<=
-        Math.min(
-          arr.length-1,
-          i+radius
-        );
-
-      j++
-    ){
-
-      sum+=arr[j];
-      count++;
-    }
-
-
-    result[i]=
-      sum/count;
-  }
-
-
-  return result;
-}
-
-
-function resampleUniform(
-  signal,
-  times,
-  targetN
-){
-
-  if(
-    signal.length<2 ||
-    times.length<2
-  ){
-    return [];
-  }
-
-
-  const start=times[0];
-
-  const end=
-    times[
-      times.length-1
-    ];
-
-
-  if(end<=start){
-    return [];
-  }
-
-
-  const output=[];
-
-  let j=0;
-
-
-  for(
-    let k=0;
-    k<targetN;
-    k++
-  ){
-
-    const t=
-      start+
-      (end-start)*
-      k/
-      (targetN-1);
-
-
-    while(
-      j<times.length-2 &&
-      times[j+1]<t
-    ){
-      j++;
-    }
-
-
-    const t1=times[j];
-    const t2=times[j+1];
-
-    const y1=signal[j];
-    const y2=signal[j+1];
-
-
-    const ratio=
-      (t-t1)/
-      ((t2-t1)||1);
-
-
-    output.push(
-      y1+
-      (y2-y1)*ratio
-    );
-  }
-
-
-  return output;
-}
-
-
-/* =========================================================
-   SPECTRAL BPM
-========================================================= */
-
-function dftPower(
-  signal,
-  fs,
-  frequency
-){
-
-  let re=0;
-  let im=0;
-
-
-  const omega=
-    2*
-    Math.PI*
-    frequency/
-    fs;
-
-
-  for(
-    let n=0;
-    n<signal.length;
-    n++
-  ){
-
-    re +=
-      signal[n]*
-      Math.cos(
-        omega*n
-      );
-
-
-    im -=
-      signal[n]*
-      Math.sin(
-        omega*n
-      );
-  }
-
-
-  return re*re+im*im;
-}
-
-
-function autocorrelationScore(
-  signal,
-  fs,
-  bpm
-){
-
-  if(
-    signal.length<20 ||
-    !bpm
-  ){
-    return 0;
-  }
-
-
-  const freq=
-    bpm/60;
-
-
-  const lag=
-    Math.round(
-      fs/freq
-    );
-
-
-  if(
-    lag<=0 ||
-    lag>=signal.length-3
-  ){
-    return 0;
-  }
-
-
-  let numerator=0;
-  let d1=0;
-  let d2=0;
-
-
-  for(
-    let i=lag;
-    i<signal.length;
-    i++
-  ){
-
-    numerator +=
-      signal[i]*
-      signal[i-lag];
-
-    d1 +=
-      signal[i]*
-      signal[i];
-
-    d2 +=
-      signal[i-lag]*
-      signal[i-lag];
-  }
-
-
-  return clamp(
-    numerator/
-    (
-      Math.sqrt(d1*d2)+
-      1e-9
-    ),
-    -1,
-    1
-  );
-}
-
-
-function estimateSignal(
-  signal,
-  times
-){
-
-  if(signal.length<70){
-    return null;
-  }
-
-
-  const duration=
-    (
-      times[
-        times.length-1
-      ]-
-      times[0]
-    )/1000;
-
-
-  if(duration<3.5){
-    return null;
-  }
-
-
-  const uniform=
-    resampleUniform(
-      signal,
-      times,
-      320
-    );
-
-
-  if(uniform.length<100){
-    return null;
-  }
-
-
-  const processed=
-    smooth(
-      detrend(uniform),
-      2
-    );
-
-
-  const fs=
-    (
-      processed.length-1
-    )/
-    Math.max(
-      .001,
-      duration
-    );
-
-
-  let bestFrequency=0;
-  let bestPower=-Infinity;
-  let secondPower=-Infinity;
-
-
-  for(
-    let f=.70;
-    f<=3.00;
-    f+=.01
-  ){
-
-    const power=
-      dftPower(
-        processed,
-        fs,
-        f
-      );
-
-
-    if(power>bestPower){
-
-      secondPower=
-        bestPower;
-
-      bestPower=
-        power;
-
-      bestFrequency=
-        f;
-
-    }else if(
-      power>secondPower
-    ){
-
-      secondPower=
-        power;
-    }
-  }
-
-
-  const bpm=
-    bestFrequency*60;
-
-
-  if(
-    !Number.isFinite(bpm) ||
-    bpm<42 ||
-    bpm>180
-  ){
-    return null;
-  }
-
-
-  const peakRatio=
-    bestPower/
-    (
-      secondPower+
-      1e-9
-    );
-
-
-  const periodicity=
-    autocorrelationScore(
-      processed,
-      fs,
-      bpm
-    );
-
-
-  const peakScore=
-    clamp(
-      (peakRatio-1)/1.8,
-      0,
-      1
-    );
-
-
-  const periodicityScore=
-    clamp(
-      (periodicity+1)/2,
-      0,
-      1
-    );
-
-
-  const amplitudeScore=
-    clamp(
-      (std(processed)-.45)/1.1,
-      0,
-      1
-    );
-
-
-  const lightingScore=
-    clamp(
-      1-
-      Math.abs(
-        currentLighting-115
-      )/115,
-      0,
-      1
-    );
-
-
-  const faceScore=
-    clamp(
-      currentFaceScore/100,
-      0,
-      1
-    );
-
-
-  /*
-    Signal Quality only.
-    No reference BPM is used here.
-  */
-  const quality=
-    100*
-    clamp(
-      .43*peakScore+
-      .27*periodicityScore+
-      .15*amplitudeScore+
-      .08*lightingScore+
-      .07*faceScore,
-      0,
-      1
-    );
-
-
-  return {
-
-    bpm,
-
-    quality:
-      Math.round(
-        quality
-      ),
-
-    periodicity,
-
-    peakRatio,
-
-    fs
-  };
-}
-
-
-/* =========================================================
-   WINDOWS
-========================================================= */
-
-function getWindowData(
-  channel,
-  seconds
-){
-
-  if(signalTimes.length<2){
-    return {
-      signal:[],
-      times:[]
-    };
-  }
-
-
-  const end=
-    signalTimes[
-      signalTimes.length-1
-    ];
-
-
-  const cutoff=
-    end-
-    seconds*1000;
-
-
-  let index=0;
-
-
-  while(
-    index<signalTimes.length &&
-    signalTimes[index]<cutoff
-  ){
-
-    index++;
-  }
-
-
-  return {
-
-    signal:
-      channel.slice(index),
-
-    times:
-      signalTimes.slice(index)
-  };
-}
-
-
-/* =========================================================
-   METHOD ESTIMATION
-========================================================= */
-
-function estimateMethod(
-  method,
-  seconds
-){
-
-  let signal=[];
-
-
-  if(method==="green"){
-
-    signal=
-      channels.green;
-
-  }else if(method==="chrom"){
-
-    signal=
-      channels.chrom;
-
-  }else if(method==="pos"){
-
-    signal=
-      channels.pos;
-  }
-
-
-  if(
-    !signal ||
-    signal.length<65
-  ){
-    return null;
-  }
-
-
-  const data=
-    getWindowData(
-      signal,
-      seconds
-    );
-
-
-  if(
-    data.signal.length<60
-  ){
-    return null;
-  }
-
-
-  return estimateSignal(
-    data.signal,
-    data.times
-  );
-}
-
-
-/* =========================================================
-   MULTI-METHOD FUSION
-========================================================= */
-
-function updateMethodModels(){
-
-  /*
-    Build CHROM and POS
-    from the raw RGB buffers.
-  */
-
-  if(channels.r.length<40){
-    return;
-  }
-
-
-  const chrom=
-    computeCHROM(
-      channels.r,
-      channels.g,
-      channels.b
-    );
-
-
-  const pos=
-    computePOS(
-      channels.r,
-      channels.g,
-      channels.b
-    );
-
-
-  if(chrom){
-
-    channels.chrom.length=0;
-
-    for(
-      const value
-      of
-      chrom
-    ){
-
-      channels.chrom.push(
-        value
-      );
-    }
-  }
-
-
-  if(pos){
-
-    channels.pos.length=0;
-
-    for(
-      const value
-      of
-      pos
-    ){
-
-      channels.pos.push(
-        value
-      );
-    }
-  }
-}
-
-
-function calculateMethodConsensus(){
-
-  const methods=[];
-
-
-  const eGreen=
-    estimateMethod(
-      "green",
-      10
-    );
-
-
-  const eChrom=
-    estimateMethod(
-      "chrom",
-      10
-    );
-
-
-  const ePos=
-    estimateMethod(
-      "pos",
-      10
-    );
-
-
-  if(eGreen){
-    methods.push({
-      name:"green",
-      ...eGreen
-    });
-  }
-
-
-  if(eChrom){
-    methods.push({
-      name:"chrom",
-      ...eChrom
-    });
-  }
-
-
-  if(ePos){
-    methods.push({
-      name:"pos",
-      ...ePos
-    });
-  }
-
-
-  if(!methods.length){
-    return null;
-  }
-
-
-  /*
-    Higher-quality methods receive
-    more weight, but no method is
-    allowed to dominate excessively.
-  */
-
-  const weighted=
-    methods.map(
-      method=>({
-
-        ...method,
-
-        weight:
-          clamp(
-            method.quality,
-            20,
-            100
-          )
-      })
-    );
-
-
-  let weightSum=0;
-  let bpmSum=0;
-
-
-  for(
-    const method
-    of
-    weighted
-  ){
-
-    weightSum +=
-      method.weight;
-
-    bpmSum +=
-      method.bpm*
-      method.weight;
-  }
-
-
-  const bpm=
-    bpmSum/
-    Math.max(
-      1,
-      weightSum
-    );
+    background:var(--surface);
 
+    border:1px solid var(--line);
+    border-radius:var(--radius);
 
-  /*
-    Agreement:
-    robust spread of method outputs.
-  */
+    box-shadow:var(--shadow);
 
-  const values=
-    methods.map(
-      method=>method.bpm
-    );
-
-
-  const med=
-    median(values)||bpm;
-
-
-  const meanDistance=
-    mean(
-      values.map(
-        value=>
-          Math.abs(
-            value-med
-          )
-      )
-    );
-
-
-  /*
-    0 BPM spread = strong agreement.
-  */
-  const agreement=
-    clamp(
-      1-
-      meanDistance/18,
-      0,
-      1
-    );
-
-
-  return {
-
-    bpm:
-
-      Math.round(bpm),
-
-    agreement:
-
-      Math.round(
-        agreement*100
-      ),
-
-    spread:
-
-      Math.round(
-        meanDistance*10
-      )/10,
-
-    methods
-  };
-}
-
-
-/* =========================================================
-   TEMPORAL CONSENSUS
-========================================================= */
-
-function temporalConsensus(){
-
-  const values=[];
-
-
-  for(
-    const seconds
-    of
-    [5,8,10,12]
-  ){
-
-    const e=
-      estimateMethod(
-        "green",
-        seconds
-      );
-
-
-    if(e){
-      values.push(e);
-    }
-  }
-
-
-  if(!values.length){
-    return null;
-  }
-
-
-  const bpms=
-    values.map(
-      e=>e.bpm
-    );
-
-
-  const med=
-    median(bpms);
-
-
-  const spread=
-    mean(
-      bpms.map(
-        bpm=>Math.abs(bpm-med)
-      )
-    );
-
-
-  return {
-
-    bpm:
-      med,
-
-    spread,
-
-    agreement:
-      Math.round(
-        clamp(
-          1-
-          spread/16,
-          0,
-          1
-        )*100
-      ),
-
-    values
-  };
-}
-
-
-/* =========================================================
-   MEASUREMENT CONFIDENCE
-========================================================= */
-
-function calculateConfidence(){
-
-  if(
-    !currentBpm ||
-    !currentMethods
-  ){
-
-    return {
-      score:0,
-      level:"LOW",
-      reason:
-        "لا توجد أدلة كافية."
-    };
-  }
-
-
-  const methodAgreement=
-    currentMethods.agreement/100;
-
-
-  const temporal=
-    temporalConsensus();
-
-
-  const temporalAgreement=
-    temporal
-      ? temporal.agreement/100
-      : 0;
-
-
-  const quality=
-    currentQuality/100;
-
-
-  const face=
-    currentFaceScore/100;
-
-
-  const lighting=
-    clamp(
-      1-
-      Math.abs(
-        currentLighting-115
-      )/115,
-      0,
-      1
-    );
-
-
-  /*
-    Confidence is intentionally separate
-    from Signal Quality.
-  */
-
-  const score=
-    100*
-    clamp(
-
-      .34*quality+
-
-      .26*methodAgreement+
-
-      .18*temporalAgreement+
-
-      .12*face+
-
-      .10*lighting,
-
-      0,
-      1
-    );
-
-
-  let level="LOW";
-
-
-  if(score>=75){
-
-    level="HIGH";
-
-  }else if(score>=55){
-
-    level="MEDIUM";
-  }
-
-
-  let reason="";
-
-
-  if(
-    currentMethods.spread>8
-  ){
-
-    reason +=
-      "تباين مرتفع بين خوارزميات rPPG. ";
-
-  }else{
-
-    reason +=
-      "الخوارزميات متقاربة نسبيًا. ";
-  }
-
-
-  if(
-    temporal &&
-    temporal.spread<=6
-  ){
-
-    reason +=
-      "التقديرات الزمنية مستقرة. ";
-
-  }else{
-
-    reason +=
-      "يوجد تباين زمني ملحوظ. ";
-  }
-
-
-  if(currentQuality<45){
-
-    reason +=
-      "جودة الإشارة منخفضة.";
-  }
-
-
-  return {
-
-    score:
-      Math.round(score),
-
-    level,
-
-    reason
-  };
-}
-
-
-/* =========================================================
-   UI
-========================================================= */
-
-function updateConfidenceUI(){
-
-  const result=
-    calculateConfidence();
-
-
-  currentConfidence=
-    result.score;
-
-
-  confidenceValue.textContent=
-    currentConfidence;
-
-
-  confidenceLarge.textContent=
-    currentConfidence+"%";
-
-
-  confidenceProgress.style.width=
-    currentConfidence+"%";
-
-
-  confidenceScoreText.textContent=
-    currentConfidence+"%";
-
-
-  confidenceReason.textContent=
-    result.level+
-    " — "+
-    result.reason;
-
-
-  if(result.level==="HIGH"){
-
-    setBadge(
-      riskBadge,
-      "ثقة مرتفعة",
-      "good"
-    );
-
-  }else if(
-    result.level==="MEDIUM"
-  ){
-
-    setBadge(
-      riskBadge,
-      "ثقة متوسطة",
-      "warn"
-    );
-
-  }else{
-
-    setBadge(
-      riskBadge,
-      "ثقة منخفضة",
-      "bad"
-    );
-  }
-
-
-  aiText.innerHTML=
-    `
-    <b style="color:${
-      result.level==="HIGH"
-        ? "var(--good)"
-        : result.level==="MEDIUM"
-          ? "var(--warn)"
-          : "var(--bad)"
-    }">
-      Measurement Confidence:
-      ${result.level}
-    </b>
-    <br><br>
-    BPM:
-    <b>${currentBpm||"--"}</b>
-    • Signal Quality:
-    <b>${currentQuality}%</b>
-    • Confidence:
-    <b>${currentConfidence}%</b>
-    <br><br>
-    <span style="color:#91a7bb;font-size:9px">
-      ${escapeHtml(result.reason)}
-    </span>
-    `;
+    overflow:hidden;
 }
-
-
-function updateMethodUI(){
-
-  const methods=
-    currentMethods?.methods||[];
-
-
-  const find=
-    name =>
-      methods.find(
-        method=>method.name===name
-      );
-
-
-  const green=find("green");
-  const chrom=find("chrom");
-  const pos=find("pos");
-
-
-  document.getElementById(
-    "greenBpm"
-  ).textContent=
-    green
-      ? Math.round(green.bpm)
-      : "--";
 
-
-  document.getElementById(
-    "greenQuality"
-  ).textContent=
-    green
-      ? "Quality: "+green.quality+"%"
-      : "Quality: --";
-
-
-  document.getElementById(
-    "chromBpm"
-  ).textContent=
-    chrom
-      ? Math.round(chrom.bpm)
-      : "--";
-
-
-  document.getElementById(
-    "chromQuality"
-  ).textContent=
-    chrom
-      ? "Quality: "+chrom.quality+"%"
-      : "Quality: --";
-
-
-  document.getElementById(
-    "posBpm"
-  ).textContent=
-    pos
-      ? Math.round(pos.bpm)
-      : "--";
-
-
-  document.getElementById(
-    "posQuality"
-  ).textContent=
-    pos
-      ? "Quality: "+pos.quality+"%"
-      : "Quality: --";
-
-
-  greenState.textContent=
-    green
-      ? Math.round(green.bpm)+" BPM"
-      : "Waiting";
-
-
-  chromState.textContent=
-    chrom
-      ? Math.round(chrom.bpm)+" BPM"
-      : "Waiting";
-
-
-  posState.textContent=
-    pos
-      ? Math.round(pos.bpm)+" BPM"
-      : "Waiting";
+.cardHead{
+    padding:18px 19px 12px;
 }
-
-
-/* =========================================================
-   ESTIMATE UPDATE
-========================================================= */
-
-function updateEstimates(){
-
-  updateMethodModels();
-
-
-  const methods=
-    calculateMethodConsensus();
-
-
-  if(!methods){
-    return;
-  }
-
-
-  currentMethods=
-    methods;
-
-
-  currentBpm=
-    methods.bpm;
-
-
-  /*
-    Signal Quality is based on
-    the best/current method set,
-    not reference BPM.
-  */
-
-  currentQuality=
-    Math.round(
-      mean(
-        methods.methods.map(
-          m=>m.quality
-        )
-      )
-    );
-
-
-  bpmValue.textContent=
-    currentBpm;
 
-
-  qualityValue.textContent=
-    currentQuality;
-
-
-  fusionState.textContent=
-    methods.methods.length+
-    " methods";
-
-
-  fusionState.style.color=
-    "var(--good)";
-
-
-  /*
-    Multi-window green baseline.
-  */
-
-  const windows={};
-
-
-  for(
-    const seconds
-    of
-    [5,8,10,12]
-  ){
-
-    const e=
-      estimateMethod(
-        "green",
-        seconds
-      );
-
-
-    windows[seconds]=e;
-
-
-    document.getElementById(
-      "window"+seconds
-    ).textContent=
-      e
-        ? Math.round(e.bpm)
-        : "--";
-
-
-    document.getElementById(
-      "window"+seconds+"q"
-    ).textContent=
-      e
-        ? "Q "+e.quality+"%"
-        : "--";
-  }
-
-
-  updateMethodUI();
-
-  updateConfidenceUI();
-
-  drawSignal();
-
-  runMIMOFusion();
+.cardHead h2{
+    margin:0;
+    font-size:15px;
 }
-
-
-/* =========================================================
-   FACE RESULTS
-========================================================= */
-
-function onFaceResults(
-  results
-){
-
-  if(
-    !video.videoWidth ||
-    !video.videoHeight
-  ){
-    return;
-  }
-
-
-  const W=
-    video.videoWidth;
-
-  const H=
-    video.videoHeight;
-
-
-  if(
-    overlay.width!==W ||
-    overlay.height!==H
-  ){
-
-    overlay.width=W;
-    overlay.height=H;
-  }
-
-
-  overlayCtx.clearRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  if(
-    !results.multiFaceLandmarks ||
-    !results.multiFaceLandmarks.length
-  ){
-
-    currentFaceScore=0;
-
-    faceProgress.style.width=
-      "0%";
-
-    faceScoreText.textContent=
-      "0%";
-
-
-    cameraMessage.innerHTML=
-      "لم يتم اكتشاف الوجه.<br>" +
-      "ضع الوجه داخل الإطار.";
-
-
-    cameraMessage.classList.remove(
-      "hidden"
-    );
-
-
-    return;
-  }
-
-
-  cameraMessage.classList.add(
-    "hidden"
-  );
-
-
-  const face=
-    getFaceMetrics(
-      results.multiFaceLandmarks[0],
-      W,
-      H
-    );
-
-
-  currentFaceScore=
-    Math.round(
-      clamp(
-        face.score,
-        0,
-        100
-      )
-    );
-
-
-  faceProgress.style.width=
-    currentFaceScore+
-    "%";
-
-
-  faceScoreText.textContent=
-    currentFaceScore+
-    "%";
-
-
-  overlayCtx.lineWidth=2;
-
-  overlayCtx.strokeStyle=
-    "rgba(57,230,202,.90)";
-
-
-  overlayCtx.strokeRect(
-    face.minX,
-    face.minY,
-    face.maxX-face.minX,
-    face.maxY-face.minY
-  );
-
-
-  overlayCtx.setLineDash(
-    [7,5]
-  );
-
-
-  overlayCtx.strokeStyle=
-    "rgba(110,175,255,.95)";
-
-
-  overlayCtx.strokeRect(
-    face.roiX,
-    face.roiY,
-    face.roiWidth,
-    face.roiHeight
-  );
-
-
-  overlayCtx.setLineDash([]);
-
-
-  if(
-    scanning &&
-    currentFaceScore>=48
-  ){
-
-    const sample=
-      sampleRGB(face);
-
-
-    if(sample){
-
-      channels.r.push(
-        sample.r
-      );
-
-      channels.g.push(
-        sample.g
-      );
-
-      channels.b.push(
-        sample.b
-      );
-
-      channels.green.push(
-        sample.green
-      );
-
-
-      signalTimes.push(
-        performance.now()
-      );
-
-
-      currentLighting=
-        sample.luma;
-
-
-      lightValue.textContent=
-        Math.round(
-          currentLighting
-        );
-
-
-      sampleValue.textContent=
-        channels.green.length;
-
-
-      if(
-        channels.green.length>700
-      ){
-
-        channels.r.shift();
-        channels.g.shift();
-        channels.b.shift();
-        channels.green.shift();
-        signalTimes.shift();
-      }
-
-
-      updateEstimates();
-    }
-  }
-
-
-  if(scanning){
-
-    const seconds=
-      (
-        performance.now()-
-        scanStart
-      )/1000;
-
-
-    scanTimer.textContent=
-      seconds.toFixed(1)+
-      " ثانية";
-  }
-
-
-  if(recordingActive){
 
-    updateRecordingUI();
-  }
+.cardHead p{
+    margin:5px 0 0;
+    color:var(--muted);
+    font-size:10px;
 }
 
 
 /* =========================================================
    CAMERA
-========================================================= */
+========================================================== */
 
-async function startCamera(){
+.cameraShell{
+    margin:0 13px 13px;
 
-  try{
+    position:relative;
 
-    setStatus(
-      "جارٍ تشغيل Edge Vision...",
-      "idle"
+    aspect-ratio:4/3;
+
+    overflow:hidden;
+
+    background:#06101a;
+
+    border-radius:18px;
+}
+
+#video{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    display:block;
+
+    object-fit:cover;
+
+    transform:scaleX(-1);
+
+    background:#000;
+}
+
+#faceGuideCanvas{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    display:block;
+
+    pointer-events:none;
+
+    transform:scaleX(-1);
+}
+
+
+/* Technical canvas is deliberately hidden */
+#analysisCanvas{
+    display:none;
+}
+
+
+.cameraTopLabel{
+    position:absolute;
+
+    right:12px;
+    top:12px;
+
+    z-index:5;
+
+    color:#dff7fc;
+
+    background:rgba(0,0,0,.40);
+
+    padding:8px 11px;
+
+    border-radius:999px;
+
+    font-size:9px;
+
+    backdrop-filter:blur(8px);
+
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.cameraInstruction{
+    position:absolute;
+
+    left:50%;
+    bottom:13px;
+
+    transform:translateX(-50%);
+
+    z-index:5;
+
+    width:calc(100% - 26px);
+
+    text-align:center;
+
+    color:#fff;
+
+    background:rgba(0,0,0,.55);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:14px;
+
+    padding:10px 12px;
+
+    font-size:11px;
+
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================== */
+
+.scanStatus{
+    margin:0 13px 12px;
+
+    padding:11px 13px;
+
+    border:1px solid var(--line);
+    border-radius:13px;
+
+    background:var(--surface-soft);
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    line-height:1.6;
+}
+
+.scanStatus.ready{
+    color:var(--green);
+
+    border-color:#c8e8da;
+
+    background:var(--green-soft);
+}
+
+.scanStatus.warning{
+    color:var(--yellow);
+
+    border-color:#efdfb0;
+
+    background:var(--yellow-soft);
+}
+
+.scanStatus.error{
+    color:var(--red);
+
+    border-color:#efc7cf;
+
+    background:var(--red-soft);
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================== */
+
+.actions{
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    padding:0 13px 14px;
+}
+
+.btn{
+    min-height:43px;
+
+    padding:0 15px;
+
+    border:1px solid var(--line);
+
+    background:#fff;
+
+    color:var(--text);
+
+    border-radius:11px;
+}
+
+.btnPrimary{
+    color:#fff;
+    background:var(--primary);
+    border-color:var(--primary);
+}
+
+.btnPrimary:hover:not(:disabled){
+    background:var(--primary-dark);
+}
+
+.btnGreen{
+    color:var(--green);
+    background:var(--green-soft);
+    border-color:#c3e5d7;
+}
+
+.btnDanger{
+    color:var(--red);
+    background:var(--red-soft);
+    border-color:#edc8cf;
+}
+
+.btn:disabled{
+    opacity:.42;
+    cursor:not-allowed;
+}
+
+
+/* =========================================================
+   VITALS
+========================================================== */
+
+.vitals{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:8px;
+
+    padding:0 13px 13px;
+}
+
+.vital{
+    min-width:0;
+
+    padding:13px;
+
+    border:1px solid var(--line);
+
+    border-radius:14px;
+
+    background:var(--surface-soft);
+}
+
+.vitalLabel{
+    color:var(--muted);
+
+    font-size:9px;
+
+    margin-bottom:7px;
+}
+
+.vitalValue{
+    font-size:28px;
+
+    line-height:1;
+
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+.vitalSmall{
+    margin-top:5px;
+
+    color:var(--muted);
+
+    font-size:8px;
+}
+
+.bpCard{
+    grid-column:span 2;
+}
+
+.bpValue{
+    font-size:37px;
+}
+
+
+/* =========================================================
+   PATIENT
+========================================================== */
+
+.section{
+    padding:16px 18px;
+
+    border-top:1px solid var(--line);
+}
+
+.sectionTitle{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:10px;
+}
+
+.sectionTitle strong{
+    font-size:12px;
+}
+
+.sectionTitle span{
+    color:var(--muted);
+    font-size:9px;
+}
+
+.formGrid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:9px;
+}
+
+.field{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+.field label{
+    font-size:9px;
+    color:var(--muted);
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+
+    border:1px solid var(--line);
+
+    background:#fff;
+
+    border-radius:10px;
+
+    color:var(--text);
+
+    outline:none;
+
+    padding:0 10px;
+
+    min-height:41px;
+}
+
+.field textarea{
+    padding-top:10px;
+    min-height:75px;
+    resize:vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:#92cfe0;
+}
+
+
+/* =========================================================
+   AI RESULT
+========================================================== */
+
+.resultBox{
+    border:1px solid var(--line);
+
+    background:var(--surface-soft);
+
+    border-radius:14px;
+
+    padding:13px;
+}
+
+.resultBlock{
+    margin-bottom:12px;
+}
+
+.resultBlock:last-child{
+    margin-bottom:0;
+}
+
+.resultBlock h4{
+    margin:0 0 5px;
+    font-size:10px;
+}
+
+.resultBlock p{
+    margin:0;
+
+    color:#415269;
+
+    font-size:10px;
+
+    line-height:1.75;
+}
+
+.riskBadge{
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:6px 9px;
+
+    border-radius:999px;
+
+    font-size:9px;
+
+    margin-bottom:9px;
+}
+
+.riskLow{
+    color:var(--green);
+    background:var(--green-soft);
+}
+
+.riskAttention{
+    color:var(--yellow);
+    background:var(--yellow-soft);
+}
+
+.riskUrgent{
+    color:var(--red);
+    background:var(--red-soft);
+}
+
+
+/* =========================================================
+   CONFIDENCE
+========================================================== */
+
+.confidenceRow{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:8px;
+
+    font-size:9px;
+}
+
+.confidenceRow span:first-child{
+    color:var(--muted);
+}
+
+.progress{
+    width:100%;
+    height:7px;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    background:#e9eef3;
+}
+
+.progressBar{
+    width:0;
+    height:100%;
+
+    background:var(--primary);
+
+    transition:.25s ease;
+}
+
+
+/* =========================================================
+   MODEL
+========================================================== */
+
+.modelBox{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:8px;
+}
+
+.modelItem{
+    border:1px solid var(--line);
+
+    background:var(--surface-soft);
+
+    border-radius:12px;
+
+    padding:11px;
+}
+
+.modelItem span{
+    display:block;
+
+    color:var(--muted);
+
+    font-size:8px;
+
+    margin-bottom:6px;
+}
+
+.modelItem strong{
+    font-size:17px;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================== */
+
+.tableWrap{
+    overflow:auto;
+
+    border:1px solid var(--line);
+
+    border-radius:11px;
+}
+
+table{
+    width:100%;
+
+    min-width:700px;
+
+    border-collapse:collapse;
+
+    font-size:9px;
+}
+
+th,
+td{
+    padding:8px 6px;
+
+    border-bottom:1px solid var(--line);
+
+    text-align:center;
+
+    white-space:nowrap;
+}
+
+th{
+    color:var(--muted);
+}
+
+td{
+    color:#415269;
+}
+
+tr:last-child td{
+    border-bottom:0;
+}
+
+
+/* =========================================================
+   RESEARCH MODE
+========================================================== */
+
+.researchToggle{
+    margin-top:10px;
+
+    padding:9px 11px;
+
+    border-radius:10px;
+
+    border:1px dashed var(--line);
+
+    color:var(--muted);
+
+    background:transparent;
+
+    font-size:9px;
+}
+
+#researchPanel{
+    display:none;
+}
+
+#researchPanel.open{
+    display:block;
+}
+
+.researchTextarea{
+    width:100%;
+
+    min-height:150px;
+
+    border:1px solid var(--line);
+
+    border-radius:11px;
+
+    padding:10px;
+
+    font-family:monospace;
+
+    font-size:9px;
+
+    direction:ltr;
+
+    resize:vertical;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================== */
+
+.footer{
+    text-align:center;
+
+    color:#8391a2;
+
+    font-size:9px;
+
+    margin-top:15px;
+}
+
+
+@media(max-width:980px){
+
+    .mainGrid{
+        grid-template-columns:1fr;
+    }
+}
+
+
+@media(max-width:650px){
+
+    .app{
+        width:94%;
+        padding-top:10px;
+    }
+
+    .headerBadge{
+        display:none;
+    }
+
+    .vitals{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .bpCard{
+        grid-column:span 2;
+    }
+
+    .formGrid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .modelBox{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+<!-- =========================================================
+     HEADER
+========================================================== -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="logo">
+            M
+        </div>
+
+        <div>
+
+            <h1>
+                Doctor MIMO™
+            </h1>
+
+            <p>
+                Medical Intelligence Platform
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="headerBadge">
+        AI Medical Assessment
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN GRID
+========================================================== -->
+
+<main class="mainGrid">
+
+
+<!-- =========================================================
+     CAMERA / VITALS
+========================================================== -->
+
+<section class="card">
+
+    <div class="cardHead">
+
+        <h2>
+            الفحص الذكي
+        </h2>
+
+        <p>
+            ضع وجهك داخل الإطار واترك Doctor MIMO يقوم بالباقي.
+        </p>
+
+    </div>
+
+
+    <div class="cameraShell">
+
+        <video id="video"
+               playsinline
+               muted></video>
+
+
+        <!--
+            USER GUIDANCE CANVAS
+
+            هذا Canvas إرشادي للمستخدم فقط.
+            لا يمثل ROI التقنية.
+        -->
+        <canvas id="faceGuideCanvas"></canvas>
+
+
+        <!-- Hidden technical canvas -->
+        <canvas id="analysisCanvas"></canvas>
+
+
+        <div class="cameraTopLabel">
+            DOCTOR MIMO AI SCAN
+        </div>
+
+
+        <div id="cameraInstruction"
+             class="cameraInstruction">
+
+            اضغط "تشغيل الكاميرا" ثم ضع وجهك داخل الشكل
+
+        </div>
+
+    </div>
+
+
+    <div id="scanStatus"
+         class="scanStatus">
+
+        الكاميرا متوقفة
+
+    </div>
+
+
+    <div class="actions">
+
+        <button id="startBtn"
+                class="btn btnPrimary">
+
+            تشغيل الكاميرا
+
+        </button>
+
+
+        <button id="assessBtn"
+                class="btn btnGreen"
+                disabled>
+
+            بدء الفحص الذكي
+
+        </button>
+
+
+        <button id="stopBtn"
+                class="btn btnDanger"
+                disabled>
+
+            إيقاف
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         VITAL CARDS
+    ====================================================== -->
+
+    <div class="vitals">
+
+
+        <div class="vital">
+
+            <div class="vitalLabel">
+                معدل ضربات القلب
+            </div>
+
+            <div id="bpm"
+                 class="vitalValue">
+
+                --
+
+            </div>
+
+            <div class="vitalSmall">
+                BPM
+            </div>
+
+        </div>
+
+
+        <div class="vital">
+
+            <div class="vitalLabel">
+                جودة الإشارة
+            </div>
+
+            <div id="quality"
+                 class="vitalValue">
+
+                --
+
+            </div>
+
+            <div class="vitalSmall">
+                %
+
+            </div>
+
+        </div>
+
+
+        <div class="vital">
+
+            <div class="vitalLabel">
+                ثقة القياس
+            </div>
+
+            <div id="confidence"
+                 class="vitalValue">
+
+                --
+
+            </div>
+
+            <div class="vitalSmall">
+                %
+
+            </div>
+
+        </div>
+
+
+        <div class="vital bpCard">
+
+            <div class="vitalLabel">
+                ضغط الدم التقديري
+            </div>
+
+            <div id="bp"
+                 class="vitalValue bpValue">
+
+                --
+
+            </div>
+
+            <div id="bpSub"
+                 class="vitalSmall">
+
+                يحتاج نموذج معايرة صالح
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     PATIENT / MIMO
+========================================================== -->
+
+<section class="card">
+
+    <div class="cardHead">
+
+        <h2>
+            Patient Assessment
+        </h2>
+
+        <p>
+            MIMO Medical Intelligence Layer
+        </p>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="formGrid">
+
+
+            <div class="field">
+
+                <label>
+                    اسم المريض
+                </label>
+
+                <input id="patientName"
+                       type="text"
+                       placeholder="Patient Name">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Patient ID
+                </label>
+
+                <input id="patientId"
+                       type="text"
+                       placeholder="P-001">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    العمر
+                </label>
+
+                <input id="age"
+                       type="number"
+                       min="1"
+                       max="120">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    الجنس
+                </label>
+
+                <select id="sex">
+
+                    <option value="">
+                        اختر
+                    </option>
+
+                    <option value="Male">
+                        ذكر
+                    </option>
+
+                    <option value="Female">
+                        أنثى
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    الشكوى الرئيسية
+                </label>
+
+                <textarea id="symptoms"
+                          placeholder="اكتب الأعراض أو الشكوى الرئيسية..."></textarea>
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    التاريخ المرضي / الأدوية / الحساسية
+                </label>
+
+                <textarea id="history"
+                          placeholder="أدخل المعلومات الطبية المهمة..."></textarea>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         AI ASSESSMENT
+    ====================================================== -->
+
+    <div class="section">
+
+        <div class="sectionTitle">
+
+            <strong>
+                MIMO Clinical Assessment
+            </strong>
+
+            <span id="analysisStatus">
+                في انتظار الفحص
+            </span>
+
+        </div>
+
+
+        <div id="riskBadge"
+             class="riskBadge riskLow">
+
+            في انتظار البيانات
+
+        </div>
+
+
+        <div class="resultBox">
+
+
+            <div class="resultBlock">
+
+                <h4>
+                    الملاحظات المقاسة
+                </h4>
+
+                <p id="findings">
+
+                    ابدأ الفحص لإجراء التحليل.
+
+                </p>
+
+            </div>
+
+
+            <div class="resultBlock">
+
+                <h4>
+                    Clinical Considerations
+                </h4>
+
+                <p id="considerations">
+
+                    --
+
+                </p>
+
+            </div>
+
+
+            <div class="resultBlock">
+
+                <h4>
+                    Recommended Next Step
+                </h4>
+
+                <p id="recommendation">
+
+                    --
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONFIDENCE
+    ====================================================== -->
+
+    <div class="section">
+
+        <div class="sectionTitle">
+
+            <strong>
+                جودة الفحص
+            </strong>
+
+            <span id="confidenceLabel">
+                --
+
+            </span>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div id="confidenceBar"
+                 class="progressBar">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MEDICAL DISCLAIMER
+    ====================================================== -->
+
+    <div class="section">
+
+        <div class="scanStatus">
+
+            Doctor MIMO نموذج أولي للبحث والتطوير ودعم القرار
+            الطبي. النتائج التجريبية لا تستبدل أجهزة القياس
+            الطبية المعتمدة أو تقييم الطبيب.
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+
+<!-- =========================================================
+     BP CALIBRATION
+========================================================== -->
+
+<section class="card"
+         style="margin-top:16px;">
+
+    <div class="cardHead">
+
+        <h2>
+            Blood Pressure Intelligence
+        </h2>
+
+        <p>
+            Research calibration engine
+        </p>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="modelBox">
+
+
+            <div class="modelItem">
+
+                <span>
+                    Calibration Sessions
+                </span>
+
+                <strong id="calibrationCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="modelItem">
+
+                <span>
+                    Model Status
+                </span>
+
+                <strong id="modelState">
+                    Not Ready
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="actions"
+             style="padding:11px 0 0;">
+
+            <button id="trainModelBtn"
+                    class="btn btnPrimary">
+
+                Build BP Model
+
+            </button>
+
+
+            <button id="exportModelBtn"
+                    class="btn">
+
+                Export Model
+
+            </button>
+
+
+            <button id="resetModelBtn"
+                    class="btn btnDanger">
+
+                Reset Model
+
+            </button>
+
+        </div>
+
+
+        <div id="modelMessage"
+             class="scanStatus warning"
+             style="margin:0;">
+
+            النموذج غير معاير حاليًا.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     HISTORY
+========================================================== -->
+
+<section class="card"
+         style="margin-top:16px;">
+
+    <div class="cardHead">
+
+        <h2>
+            Patient History
+        </h2>
+
+        <p>
+            سجلات الفحوصات المحفوظة محليًا
+        </p>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="tableWrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            التاريخ
+                        </th>
+
+                        <th>
+                            Patient
+                        </th>
+
+                        <th>
+                            BPM
+                        </th>
+
+                        <th>
+                            BP
+                        </th>
+
+                        <th>
+                            Quality
+                        </th>
+
+                        <th>
+                            Confidence
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="historyBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <button id="researchToggle"
+                class="researchToggle">
+
+            فتح Research / Developer Data
+
+        </button>
+
+
+        <div id="researchPanel">
+
+            <div style="height:8px"></div>
+
+            <textarea id="researchOutput"
+                      class="researchTextarea"
+                      readonly></textarea>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<div class="footer">
+
+    Doctor MIMO™ • Medical Intelligence Platform • Experimental Prototype
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* ============================================================
+   DOCTOR MIMO 8.0
+   PRODUCT ENGINE
+============================================================ */
+
+
+/* ============================================================
+   STORAGE
+============================================================ */
+
+const PRODUCT_STORAGE_KEY =
+    "doctor_mimo_product_sessions_v80";
+
+const BP_MODEL_KEY =
+    "doctor_mimo_bp_model_v80";
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const video =
+    document.getElementById("video");
+
+const faceGuideCanvas =
+    document.getElementById(
+        "faceGuideCanvas"
+    );
+
+const guideCtx =
+    faceGuideCanvas.getContext(
+        "2d"
+    );
+
+const analysisCanvas =
+    document.getElementById(
+        "analysisCanvas"
+    );
+
+const analysisCtx =
+    analysisCanvas.getContext(
+        "2d",
+        {
+            willReadFrequently:true
+        }
     );
 
 
-    await initFaceMesh();
+const startBtn =
+    document.getElementById("startBtn");
+
+const assessBtn =
+    document.getElementById("assessBtn");
+
+const stopBtn =
+    document.getElementById("stopBtn");
 
 
-    stream=
-      await navigator.mediaDevices
-        .getUserMedia({
+const scanStatus =
+    document.getElementById("scanStatus");
 
-          video:{
-            facingMode:"user",
-            width:{ideal:640},
-            height:{ideal:480},
-            frameRate:{
-              ideal:30,
-              max:30
-            }
-          },
+const cameraInstruction =
+    document.getElementById(
+        "cameraInstruction"
+    );
 
-          audio:false
 
+const bpmEl =
+    document.getElementById("bpm");
+
+const bpEl =
+    document.getElementById("bp");
+
+const bpSubEl =
+    document.getElementById("bpSub");
+
+const qualityEl =
+    document.getElementById("quality");
+
+const confidenceEl =
+    document.getElementById("confidence");
+
+const confidenceBar =
+    document.getElementById(
+        "confidenceBar"
+    );
+
+const confidenceLabel =
+    document.getElementById(
+        "confidenceLabel"
+    );
+
+
+const analysisStatus =
+    document.getElementById(
+        "analysisStatus"
+    );
+
+const riskBadge =
+    document.getElementById(
+        "riskBadge"
+    );
+
+const findingsEl =
+    document.getElementById(
+        "findings"
+    );
+
+const considerationsEl =
+    document.getElementById(
+        "considerations"
+    );
+
+const recommendationEl =
+    document.getElementById(
+        "recommendation"
+    );
+
+
+const calibrationCount =
+    document.getElementById(
+        "calibrationCount"
+    );
+
+const modelState =
+    document.getElementById(
+        "modelState"
+    );
+
+const modelMessage =
+    document.getElementById(
+        "modelMessage"
+    );
+
+
+const trainModelBtn =
+    document.getElementById(
+        "trainModelBtn"
+    );
+
+const exportModelBtn =
+    document.getElementById(
+        "exportModelBtn"
+    );
+
+const resetModelBtn =
+    document.getElementById(
+        "resetModelBtn"
+    );
+
+
+const historyBody =
+    document.getElementById(
+        "historyBody"
+    );
+
+
+const researchToggle =
+    document.getElementById(
+        "researchToggle"
+    );
+
+const researchPanel =
+    document.getElementById(
+        "researchPanel"
+    );
+
+const researchOutput =
+    document.getElementById(
+        "researchOutput"
+    );
+
+
+/* ============================================================
+   FACE MESH
+============================================================ */
+
+let faceMesh =
+    null;
+
+let camera =
+    null;
+
+let cameraRunning =
+    false;
+
+let assessing =
+    false;
+
+
+/* ============================================================
+   TIMING
+============================================================ */
+
+let assessmentStart =
+    0;
+
+let lastAnalysisTime =
+    0;
+
+let analysisBusy =
+    false;
+
+let assessmentTimer =
+    null;
+
+
+/* ============================================================
+   FACE
+============================================================ */
+
+let faceDetected =
+    false;
+
+let foreheadDetected =
+    false;
+
+let currentForehead =
+    null;
+
+let stableForehead =
+    null;
+
+let previousGuideCenter =
+    null;
+
+let faceStability =
+    100;
+
+
+/* ============================================================
+   SIGNAL
+============================================================ */
+
+let signalTimes = [];
+let redSignal = [];
+let greenSignal = [];
+let blueSignal = [];
+
+let latestLighting =
+    0;
+
+let latestAnalysis =
+    null;
+
+let latestBP =
+    null;
+
+
+/* ============================================================
+   SAMPLE CANVAS
+============================================================ */
+
+analysisCanvas.width =
+    160;
+
+analysisCanvas.height =
+    120;
+
+
+/* ============================================================
+   BASIC HELPERS
+============================================================ */
+
+function clamp(
+    value,
+    min,
+    max
+){
+
+    return Math.max(
+        min,
+        Math.min(
+            max,
+            value
+        )
+    );
+}
+
+
+function finite(
+    value
+){
+
+    return Number.isFinite(
+        value
+    );
+}
+
+
+function mean(
+    values
+){
+
+    if(
+        !values.length
+    ){
+        return 0;
+    }
+
+    let sum = 0;
+
+    for(
+        const value of values
+    ){
+        sum += value;
+    }
+
+    return sum /
+        values.length;
+}
+
+
+function std(
+    values
+){
+
+    if(
+        values.length < 2
+    ){
+        return 0;
+    }
+
+    const m =
+        mean(values);
+
+    let sum = 0;
+
+    for(
+        const value of values
+    ){
+
+        const d =
+            value-m;
+
+        sum += d*d;
+    }
+
+    return Math.sqrt(
+        sum/
+        (
+            values.length-1
+        )
+    );
+}
+
+
+function median(
+    values
+){
+
+    if(
+        !values.length
+    ){
+        return 0;
+    }
+
+    const sorted =
+        [...values].sort(
+            (a,b)=>a-b
+        );
+
+    const middle =
+        Math.floor(
+            sorted.length/2
+        );
+
+    return
+        sorted.length%2
+
+            ? sorted[middle]
+
+            :
+            (
+                sorted[middle-1] +
+                sorted[middle]
+            )/2;
+}
+
+
+function fmt(
+    value,
+    decimals=1
+){
+
+    return finite(value)
+        ? Number(value).toFixed(decimals)
+        : "--";
+}
+
+
+function escapeHtml(
+    value
+){
+
+    return String(value)
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+/* ============================================================
+   FACE LANDMARK GROUPS
+============================================================ */
+
+const rightBrowIds = [
+    46,
+    53,
+    52,
+    65,
+    55,
+    70,
+    63,
+    105,
+    66,
+    107
+];
+
+const leftBrowIds = [
+    276,
+    283,
+    282,
+    295,
+    285,
+    300,
+    293,
+    334,
+    296,
+    336
+];
+
+
+function averageLandmarks(
+    landmarks,
+    ids
+){
+
+    let x = 0;
+    let y = 0;
+
+    let count = 0;
+
+
+    for(
+        const id of ids
+    ){
+
+        const point =
+            landmarks[id];
+
+
+        if(!point){
+            continue;
+        }
+
+
+        x += point.x;
+        y += point.y;
+
+        count++;
+    }
+
+
+    if(
+        !count
+    ){
+
+        return null;
+    }
+
+
+    return {
+
+        x:
+            x/count,
+
+        y:
+            y/count
+    };
+}
+
+
+/* ============================================================
+   REAL FOREHEAD DETECTION
+============================================================ */
+
+function detectForehead(
+    landmarks
+){
+
+    if(
+        !landmarks ||
+        landmarks.length < 468
+    ){
+
+        return null;
+    }
+
+
+    const leftBrow =
+        averageLandmarks(
+            landmarks,
+            leftBrowIds
+        );
+
+
+    const rightBrow =
+        averageLandmarks(
+            landmarks,
+            rightBrowIds
+        );
+
+
+    const foreheadTop =
+        landmarks[10];
+
+
+    if(
+        !leftBrow ||
+        !rightBrow ||
+        !foreheadTop
+    ){
+
+        return null;
+    }
+
+
+    const allBrowPoints =
+        [
+            ...leftBrowIds,
+            ...rightBrowIds
+        ];
+
+
+    const browMinX =
+        Math.min(
+            ...allBrowPoints.map(
+                id =>
+                    landmarks[id].x
+            )
+        );
+
+
+    const browMaxX =
+        Math.max(
+            ...allBrowPoints.map(
+                id =>
+                    landmarks[id].x
+            )
+        );
+
+
+    const browWidth =
+        browMaxX -
+        browMinX;
+
+
+    const browY =
+        (
+            leftBrow.y +
+            rightBrow.y
+        )/2;
+
+
+    const foreheadHeight =
+        browY -
+        foreheadTop.y;
+
+
+    /*
+     * Geometry gate.
+     */
+    if(
+        browWidth < .08 ||
+        foreheadHeight < .025
+    ){
+
+        return null;
+    }
+
+
+    /*
+     * Actual forehead center.
+     */
+    const centerX =
+        (
+            leftBrow.x +
+            rightBrow.x
+        )/2;
+
+
+    const centerY =
+        foreheadTop.y +
+        foreheadHeight*.43;
+
+
+    /*
+     * Actual skin measurement region.
+     */
+    const roiW =
+        clamp(
+            browWidth*.72,
+            .13,
+            .31
+        );
+
+
+    const roiH =
+        clamp(
+            foreheadHeight*.34,
+            .055,
+            .13
+        );
+
+
+    let x =
+        centerX -
+        roiW/2;
+
+
+    let y =
+        centerY -
+        roiH/2;
+
+
+    /*
+     * Eye safety.
+     */
+    const safetyGap =
+        Math.max(
+            .012,
+            foreheadHeight*.09
+        );
+
+
+    const maximumBottom =
+        browY -
+        safetyGap;
+
+
+    if(
+        y+roiH >
+        maximumBottom
+    ){
+
+        y =
+            maximumBottom -
+            roiH;
+    }
+
+
+    x =
+        clamp(
+            x,
+            .02,
+            .98-roiW
+        );
+
+
+    y =
+        clamp(
+            y,
+            .02,
+            .95-roiH
+        );
+
+
+    if(
+        y+roiH>=browY
+    ){
+
+        return null;
+    }
+
+
+    return {
+
+        x,
+        y,
+
+        w:roiW,
+        h:roiH,
+
+        centerX,
+        centerY,
+
+        browY,
+
+        foreheadTopY:
+            foreheadTop.y
+    };
+}
+
+
+/* ============================================================
+   ROI SMOOTHING
+============================================================ */
+
+function smoothForehead(
+    roi
+){
+
+    if(
+        !stableForehead
+    ){
+
+        stableForehead =
+            {
+                ...roi
+            };
+
+        return stableForehead;
+    }
+
+
+    const alpha =
+        .22;
+
+
+    stableForehead = {
+
+        x:
+            stableForehead.x*(1-alpha)
+            +
+            roi.x*alpha,
+
+        y:
+            stableForehead.y*(1-alpha)
+            +
+            roi.y*alpha,
+
+        w:
+            stableForehead.w*(1-alpha)
+            +
+            roi.w*alpha,
+
+        h:
+            stableForehead.h*(1-alpha)
+            +
+            roi.h*alpha,
+
+        centerX:
+            stableForehead.centerX*(1-alpha)
+            +
+            roi.centerX*alpha,
+
+        centerY:
+            stableForehead.centerY*(1-alpha)
+            +
+            roi.centerY*alpha,
+
+        browY:
+            stableForehead.browY*(1-alpha)
+            +
+            roi.browY*alpha,
+
+        foreheadTopY:
+            stableForehead.foreheadTopY*(1-alpha)
+            +
+            roi.foreheadTopY*alpha
+    };
+
+
+    return stableForehead;
+}
+
+
+/* ============================================================
+   FACE GUIDE CANVAS
+============================================================ */
+
+function resizeGuideCanvas(){
+
+    const rect =
+        faceGuideCanvas
+            .getBoundingClientRect();
+
+
+    const ratio =
+        window.devicePixelRatio ||
+        1;
+
+
+    const width =
+        Math.max(
+            1,
+            Math.round(
+                rect.width*
+                ratio
+            )
+        );
+
+
+    const height =
+        Math.max(
+            1,
+            Math.round(
+                rect.height*
+                ratio
+            )
+        );
+
+
+    if(
+        faceGuideCanvas.width!==width ||
+        faceGuideCanvas.height!==height
+    ){
+
+        faceGuideCanvas.width =
+            width;
+
+        faceGuideCanvas.height =
+            height;
+    }
+}
+
+
+/*
+ * This is the user-facing face guide.
+ *
+ * It is NOT the technical ROI.
+ */
+function drawFaceGuide(
+    state="waiting"
+){
+
+    resizeGuideCanvas();
+
+
+    const w =
+        faceGuideCanvas.width;
+
+
+    const h =
+        faceGuideCanvas.height;
+
+
+    guideCtx.clearRect(
+        0,
+        0,
+        w,
+        h
+    );
+
+
+    const cx =
+        w/2;
+
+
+    const cy =
+        h*.46;
+
+
+    const faceW =
+        Math.min(
+            w*.53,
+            h*.50
+        );
+
+
+    const faceH =
+        faceW*1.28;
+
+
+    let stroke =
+        "rgba(255,255,255,.72)";
+
+
+    let lineWidth =
+        2;
+
+
+    if(
+        state==="good"
+    ){
+
+        stroke =
+            "rgba(72,230,164,.95)";
+
+        lineWidth =
+            3;
+    }
+
+
+    if(
+        state==="bad"
+    ){
+
+        stroke =
+            "rgba(255,113,130,.95)";
+    }
+
+
+    if(
+        state==="measuring"
+    ){
+
+        stroke =
+            "rgba(69,216,255,.98)";
+
+        lineWidth =
+            3;
+    }
+
+
+    /*
+     * Head / face contour.
+     */
+    guideCtx.strokeStyle =
+        stroke;
+
+
+    guideCtx.lineWidth =
+        lineWidth*
+        window.devicePixelRatio;
+
+
+    guideCtx.beginPath();
+
+
+    guideCtx.ellipse(
+        cx,
+        cy,
+        faceW/2,
+        faceH/2,
+        0,
+        0,
+        Math.PI*2
+    );
+
+
+    guideCtx.stroke();
+
+
+    /*
+     * Eyes.
+     */
+    const eyeY =
+        cy -
+        faceH*.10;
+
+
+    const eyeDX =
+        faceW*.18;
+
+
+    guideCtx.strokeStyle =
+        "rgba(255,255,255,.42)";
+
+
+    guideCtx.lineWidth =
+        1*
+        window.devicePixelRatio;
+
+
+    guideCtx.beginPath();
+
+
+    guideCtx.ellipse(
+        cx-eyeDX,
+        eyeY,
+        faceW*.075,
+        faceH*.025,
+        0,
+        0,
+        Math.PI*2
+    );
+
+
+    guideCtx.stroke();
+
+
+    guideCtx.beginPath();
+
+
+    guideCtx.ellipse(
+        cx+eyeDX,
+        eyeY,
+        faceW*.075,
+        faceH*.025,
+        0,
+        0,
+        Math.PI*2
+    );
+
+
+    guideCtx.stroke();
+
+
+    /*
+     * Nose.
+     */
+    guideCtx.beginPath();
+
+    guideCtx.moveTo(
+        cx,
+        eyeY+faceH*.03
+    );
+
+    guideCtx.lineTo(
+        cx-faceW*.025,
+        cy+faceH*.075
+    );
+
+    guideCtx.lineTo(
+        cx+faceW*.025,
+        cy+faceH*.075
+    );
+
+    guideCtx.stroke();
+
+
+    /*
+     * Mouth.
+     */
+    guideCtx.beginPath();
+
+    guideCtx.moveTo(
+        cx-faceW*.08,
+        cy+faceH*.17
+    );
+
+    guideCtx.quadraticCurveTo(
+        cx,
+        cy+faceH*.205,
+        cx+faceW*.08,
+        cy+faceH*.17
+    );
+
+    guideCtx.stroke();
+
+
+    /*
+     * Forehead guide band.
+     *
+     * This is only a visual cue.
+     */
+    const foreheadY =
+        cy -
+        faceH*.29;
+
+
+    const foreheadW =
+        faceW*.40;
+
+
+    const foreheadH =
+        faceH*.09;
+
+
+    guideCtx.strokeStyle =
+        state==="measuring"
+
+            ? "rgba(69,216,255,.78)"
+
+            :
+            state==="good"
+
+                ? "rgba(72,230,164,.72)"
+
+                :
+                "rgba(255,255,255,.33)";
+
+
+    guideCtx.setLineDash([
+        5*
+        window.devicePixelRatio,
+
+        5*
+        window.devicePixelRatio
+    ]);
+
+
+    guideCtx.strokeRect(
+        cx-foreheadW/2,
+        foreheadY,
+        foreheadW,
+        foreheadH
+    );
+
+
+    guideCtx.setLineDash([]);
+
+
+    /*
+     * Tiny positioning brackets.
+     */
+    const bracket =
+        faceW*.06;
+
+
+    guideCtx.strokeStyle =
+        stroke;
+
+
+    guideCtx.lineWidth =
+        lineWidth*
+        window.devicePixelRatio;
+
+
+    guideCtx.beginPath();
+
+    guideCtx.moveTo(
+        cx-faceW/2,
+        cy-faceH*.25
+    );
+
+    guideCtx.lineTo(
+        cx-faceW/2+bracket,
+        cy-faceH*.25
+    );
+
+    guideCtx.stroke();
+
+
+    guideCtx.beginPath();
+
+    guideCtx.moveTo(
+        cx+faceW/2-bracket,
+        cy-faceH*.25
+    );
+
+    guideCtx.lineTo(
+        cx+faceW/2,
+        cy-faceH*.25
+    );
+
+    guideCtx.stroke();
+
+
+    /*
+     * Face-center vertical alignment.
+     */
+    guideCtx.strokeStyle =
+        "rgba(255,255,255,.12)";
+
+    guideCtx.lineWidth =
+        1*
+        window.devicePixelRatio;
+
+
+    guideCtx.beginPath();
+
+    guideCtx.moveTo(
+        cx,
+        cy-faceH*.42
+    );
+
+    guideCtx.lineTo(
+        cx,
+        cy+faceH*.42
+    );
+
+    guideCtx.stroke();
+}
+
+
+/* ============================================================
+   SAMPLE ROI
+============================================================ */
+
+function sampleForehead(
+    roi
+){
+
+    if(
+        !video.videoWidth ||
+        !video.videoHeight
+    ){
+
+        return null;
+    }
+
+
+    analysisCtx.drawImage(
+        video,
+        0,
+        0,
+        analysisCanvas.width,
+        analysisCanvas.height
+    );
+
+
+    const x =
+        clamp(
+            Math.floor(
+                roi.x*
+                analysisCanvas.width
+            ),
+            0,
+            analysisCanvas.width-1
+        );
+
+
+    const y =
+        clamp(
+            Math.floor(
+                roi.y*
+                analysisCanvas.height
+            ),
+            0,
+            analysisCanvas.height-1
+        );
+
+
+    const width =
+        clamp(
+            Math.floor(
+                roi.w*
+                analysisCanvas.width
+            ),
+            5,
+            analysisCanvas.width-x
+        );
+
+
+    const height =
+        clamp(
+            Math.floor(
+                roi.h*
+                analysisCanvas.height
+            ),
+            5,
+            analysisCanvas.height-y
+        );
+
+
+    const pixels =
+        analysisCtx.getImageData(
+            x,
+            y,
+            width,
+            height
+        ).data;
+
+
+    let r=0;
+    let g=0;
+    let b=0;
+
+    let brightness=0;
+
+    let valid=0;
+
+
+    for(
+        let i=0;
+        i<pixels.length;
+        i+=4
+    ){
+
+        const rr =
+            pixels[i];
+
+        const gg =
+            pixels[i+1];
+
+        const bb =
+            pixels[i+2];
+
+
+        const luminance =
+            .2126*rr+
+            .7152*gg+
+            .0722*bb;
+
+
+        brightness +=
+            luminance;
+
+
+        if(
+            luminance>18 &&
+            luminance<248
+        ){
+
+            r += rr;
+            g += gg;
+            b += bb;
+
+            valid++;
+        }
+    }
+
+
+    if(
+        valid<5
+    ){
+
+        return null;
+    }
+
+
+    return {
+
+        r:r/valid,
+
+        g:g/valid,
+
+        b:b/valid,
+
+        lighting:
+            brightness/
+            (
+                pixels.length/4
+            )
+    };
+}
+
+
+/* ============================================================
+   DETREND
+============================================================ */
+
+function detrend(
+    signal
+){
+
+    if(
+        signal.length<3
+    ){
+
+        return [
+            ...signal
+        ];
+    }
+
+
+    const n =
+        signal.length;
+
+
+    let sx=0;
+    let sy=0;
+    let sxy=0;
+    let sxx=0;
+
+
+    for(
+        let i=0;
+        i<n;
+        i++
+    ){
+
+        sx += i;
+
+        sy +=
+            signal[i];
+
+        sxy +=
+            i*
+            signal[i];
+
+        sxx +=
+            i*i;
+    }
+
+
+    const denominator =
+        n*sxx -
+        sx*sx;
+
+
+    const slope =
+        Math.abs(
+            denominator
+        )<1e-12
+            ?0
+            :
+            (
+                n*sxy-
+                sx*sy
+            )/
+            denominator;
+
+
+    const intercept =
+        (
+            sy-
+            slope*sx
+        )/
+        n;
+
+
+    return signal.map(
+        (value,i)=>
+            value-
+            (
+                slope*i+
+                intercept
+            )
+    );
+}
+
+
+/* ============================================================
+   MOVING AVERAGE
+============================================================ */
+
+function movingAverage(
+    signal,
+    windowSize
+){
+
+    windowSize =
+        Math.max(
+            2,
+            Math.round(
+                windowSize
+            )
+        );
+
+
+    const output =
+        new Array(
+            signal.length
+        );
+
+
+    let sum=0;
+
+
+    for(
+        let i=0;
+        i<signal.length;
+        i++
+    ){
+
+        sum +=
+            signal[i];
+
+
+        if(
+            i>=windowSize
+        ){
+
+            sum -=
+                signal[
+                    i-windowSize
+                ];
+        }
+
+
+        output[i] =
+            sum/
+            Math.min(
+                i+1,
+                windowSize
+            );
+    }
+
+
+    return output;
+}
+
+
+/* ============================================================
+   BANDPASS
+============================================================ */
+
+function bandpass(
+    signal,
+    fs
+){
+
+    fs =
+        clamp(
+            fs||10,
+            5,
+            30
+        );
+
+
+    const slow =
+        movingAverage(
+            signal,
+            fs/.7
+        );
+
+
+    const fast =
+        movingAverage(
+            signal,
+            fs/3.5
+        );
+
+
+    return detrend(
+        signal.map(
+            (value,i)=>
+                fast[i]-
+                slow[i]
+        )
+    );
+}
+
+
+/* ============================================================
+   SAMPLE RATE
+============================================================ */
+
+function getActualFs(
+    times
+){
+
+    if(
+        times.length<2
+    ){
+        return 0;
+    }
+
+
+    const n =
+        Math.min(
+            100,
+            times.length
+        );
+
+
+    const start =
+        times.length-n;
+
+
+    const elapsed =
+        times[
+            times.length-1
+        ]-
+        times[start];
+
+
+    if(
+        elapsed<=0
+    ){
+        return 0;
+    }
+
+
+    return (
+        n-1
+    )/elapsed;
+}
+
+
+/* ============================================================
+   RECENT WINDOW
+============================================================ */
+
+function recentWindow(
+    data,
+    times,
+    seconds
+){
+
+    if(
+        !data.length ||
+        data.length!==times.length
+    ){
+
+        return {
+            data:[],
+            times:[]
+        };
+    }
+
+
+    const end =
+        times[
+            times.length-1
+        ];
+
+
+    const minimum =
+        end-seconds;
+
+
+    let start=0;
+
+
+    for(
+        let i=times.length-1;
+        i>=0;
+        i--
+    ){
+
+        if(
+            times[i]<minimum
+        ){
+
+            start=i+1;
+
+            break;
+        }
+    }
+
+
+    return {
+
+        data:
+            data.slice(
+                start
+            ),
+
+        times:
+            times.slice(
+                start
+            )
+    };
+}
+
+
+/* ============================================================
+   IRREGULAR DFT
+============================================================ */
+
+function estimateBpm(
+    signal,
+    times
+){
+
+    if(
+        signal.length<60 ||
+        signal.length!==times.length
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const count =
+        Math.min(
+            140,
+            signal.length
+        );
+
+
+    const start =
+        signal.length-count;
+
+
+    const x =
+        detrend(
+            signal.slice(
+                start
+            )
+        );
+
+
+    const t =
+        times.slice(
+            start
+        );
+
+
+    const signalStd =
+        std(x);
+
+
+    if(
+        !finite(signalStd) ||
+        signalStd<1e-8
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
+
+
+    const normalized =
+        x.map(
+            value =>
+                value/
+                signalStd
+        );
+
+
+    let bestPower =
+        -Infinity;
+
+
+    let bestFreq =
+        null;
+
+
+    const powers=[];
+
+
+    for(
+        let frequency=42/60;
+        frequency<=150/60;
+        frequency+=.01
+    ){
+
+        let re=0;
+        let im=0;
+
+
+        for(
+            let i=0;
+            i<normalized.length;
+            i++
+        ){
+
+            const phase =
+                2*
+                Math.PI*
+                frequency*
+                t[i];
+
+
+            re +=
+                normalized[i]*
+                Math.cos(
+                    phase
+                );
+
+
+            im +=
+                normalized[i]*
+                Math.sin(
+                    phase
+                );
+        }
+
+
+        const power =
+            re*re+
+            im*im;
+
+
+        powers.push({
+            frequency,
+            power
         });
 
 
-    video.srcObject=
-      stream;
+        if(
+            power>bestPower
+        ){
+
+            bestPower=
+                power;
+
+            bestFreq=
+                frequency;
+        }
+    }
 
 
-    await video.play();
+    if(
+        !finite(bestFreq)
+    ){
+
+        return {
+            bpm:null,
+            quality:0
+        };
+    }
 
 
-    running=true;
+    const background =
+        median(
+            powers
+                .filter(
+                    p =>
+                        Math.abs(
+                            p.frequency-
+                            bestFreq
+                        )>.08
+                )
+                .map(
+                    p =>
+                        p.power
+                )
+        );
 
 
-    startBtn.disabled=true;
-    stopBtn.disabled=false;
-    scanBtn.disabled=false;
-    recordStart.disabled=false;
+    const snr =
+        clamp(
+            (
+                10*
+                Math.log10(
+                    (
+                        bestPower+1e-9
+                    )/
+                    (
+                        background+1e-9
+                    )
+                )
+            )/18,
+            0,
+            1
+        );
 
 
-    setBadge(
-      scanBadge,
-      "كاميرا نشطة",
-      "good"
-    );
+    return {
 
+        bpm:
+            bestFreq*60,
 
-    setStatus(
-      "الكاميرا نشطة — ثبّت الوجه",
-      "live"
-    );
-
-
-    processingLoop();
-
-  }catch(error){
-
-    console.error(error);
-
-
-    setStatus(
-      "تعذر تشغيل الكاميرا",
-      "bad"
-    );
-
-
-    alert(
-      "تعذر تشغيل الكاميرا. " +
-      "تأكد من السماح بالوصول للكاميرا " +
-      "واستخدام HTTPS أو localhost."
-    );
-  }
+        quality:
+            Math.round(
+                snr*100
+            )
+    };
 }
 
 
-function stopCamera(){
+/* ============================================================
+   NORMALIZE
+============================================================ */
 
-  running=false;
-  scanning=false;
-  recordingActive=false;
+function normalize(
+    values
+){
+
+    const m=
+        mean(values);
 
 
-  if(animationFrame){
+    if(
+        m<=1e-9
+    ){
 
-    cancelAnimationFrame(
-      animationFrame
+        return [];
+    }
+
+
+    return values.map(
+        value =>
+            value/m
     );
-
-    animationFrame=null;
-  }
-
-
-  if(stream){
-
-    stream
-      .getTracks()
-      .forEach(
-        track=>track.stop()
-      );
-
-    stream=null;
-  }
-
-
-  video.srcObject=null;
-
-
-  startBtn.disabled=false;
-  stopBtn.disabled=true;
-  scanBtn.disabled=true;
-  recordStart.disabled=true;
-
-
-  setBadge(
-    scanBadge,
-    "غير نشط",
-    "warn"
-  );
-
-
-  setStatus(
-    "الكاميرا متوقفة",
-    "idle"
-  );
 }
 
 
-async function processingLoop(){
+/* ============================================================
+   CHROM
+============================================================ */
 
-  if(!running){
-    return;
-  }
+function computeChrom(
+    r,
+    g,
+    b
+){
+
+    const nr=
+        normalize(r);
+
+    const ng=
+        normalize(g);
+
+    const nb=
+        normalize(b);
 
 
-  const t=
-    performance.now();
+    if(
+        nr.length!==r.length
+    ){
+
+        return [];
+    }
 
 
-  if(
-    video.readyState>=2 &&
-    faceMesh &&
-    !busy &&
-    t-lastProcessTime>82
-  ){
+    const X=[];
+    const Y=[];
 
-    busy=true;
 
-    lastProcessTime=t;
+    for(
+        let i=0;
+        i<r.length;
+        i++
+    ){
+
+        X.push(
+            3*nr[i]-
+            2*ng[i]
+        );
+
+
+        Y.push(
+            1.5*nr[i]+
+            ng[i]-
+            1.5*nb[i]
+        );
+    }
+
+
+    const alpha=
+        std(X)/
+        (
+            std(Y)+
+            1e-9
+        );
+
+
+    return detrend(
+        X.map(
+            (value,i)=>
+                value-
+                alpha*Y[i]
+        )
+    );
+}
+
+
+/* ============================================================
+   POS
+============================================================ */
+
+function computePOS(
+    r,
+    g,
+    b
+){
+
+    const nr=
+        normalize(r);
+
+    const ng=
+        normalize(g);
+
+    const nb=
+        normalize(b);
+
+
+    if(
+        nr.length!==r.length
+    ){
+
+        return [];
+    }
+
+
+    const S1=[];
+    const S2=[];
+
+
+    for(
+        let i=0;
+        i<r.length;
+        i++
+    ){
+
+        S1.push(
+            -nr[i]+
+            nb[i]
+        );
+
+
+        S2.push(
+            nr[i]-
+            2*ng[i]+
+            nb[i]
+        );
+    }
+
+
+    const alpha=
+        std(S1)/
+        (
+            std(S2)+
+            1e-9
+        );
+
+
+    return detrend(
+        S1.map(
+            (value,i)=>
+                value-
+                alpha*S2[i]
+        )
+    );
+}
+
+
+/* ============================================================
+   RPPG FUSION
+============================================================ */
+
+function analyzeRPPG(){
+
+    if(
+        analysisBusy ||
+        greenSignal.length<60
+    ){
+        return;
+    }
+
+
+    analysisBusy=
+        true;
 
 
     try{
 
-      await faceMesh.send({
-        image:video
-      });
+        const greenWindow=
+            recentWindow(
+                greenSignal,
+                signalTimes,
+                10
+            );
+
+
+        const fs=
+            getActualFs(
+                greenWindow.times
+            );
+
+
+        const greenFiltered=
+            bandpass(
+                greenWindow.data,
+                fs
+            );
+
+
+        const green=
+            estimateBpm(
+                greenFiltered,
+                greenWindow.times
+            );
+
+
+        const count=
+            Math.min(
+                280,
+                signalTimes.length
+            );
+
+
+        const start=
+            signalTimes.length-count;
+
+
+        const t=
+            signalTimes.slice(
+                start
+            );
+
+
+        const r=
+            redSignal.slice(
+                start
+            );
+
+
+        const g=
+            greenSignal.slice(
+                start
+            );
+
+
+        const b=
+            blueSignal.slice(
+                start
+            );
+
+
+        const chromSignal=
+            computeChrom(
+                r,g,b
+            );
+
+
+        const posSignal=
+            computePOS(
+                r,g,b
+            );
+
+
+        const chrom=
+            estimateBpm(
+                bandpass(
+                    chromSignal,
+                    getActualFs(t)
+                ),
+                t
+            );
+
+
+        const pos=
+            estimateBpm(
+                bandpass(
+                    posSignal,
+                    getActualFs(t)
+                ),
+                t
+            );
+
+
+        const candidates=
+            [
+                {
+                    name:"Green",
+                    bpm:green.bpm,
+                    quality:green.quality,
+                    weight:.85
+                },
+
+                {
+                    name:"CHROM",
+                    bpm:chrom.bpm,
+                    quality:chrom.quality,
+                    weight:1.20
+                },
+
+                {
+                    name:"POS",
+                    bpm:pos.bpm,
+                    quality:pos.quality,
+                    weight:1.25
+                }
+            ]
+            .filter(
+                item =>
+                    finite(item.bpm)
+            );
+
+
+        if(
+            !candidates.length
+        ){
+            return;
+        }
+
+
+        /*
+         * Find strongest agreement cluster.
+         */
+        let bestCluster=[];
+
+
+        for(
+            const candidate of
+            candidates
+        ){
+
+            const cluster=
+                candidates.filter(
+                    item =>
+                        Math.abs(
+                            item.bpm-
+                            candidate.bpm
+                        )<=8
+                );
+
+
+            if(
+                cluster.length>
+                bestCluster.length
+            ){
+
+                bestCluster=
+                    cluster;
+            }
+        }
+
+
+        let bpm;
+
+
+        const cp=
+            bestCluster.filter(
+                item =>
+                    item.name==="CHROM" ||
+                    item.name==="POS"
+            );
+
+
+        /*
+         * Preserve the successful
+         * CHROM + POS path.
+         */
+        if(
+            cp.length===2
+        ){
+
+            bpm=
+                (
+                    cp[0].bpm+
+                    cp[1].bpm
+                )/2;
+
+        }else{
+
+            let numerator=0;
+            let denominator=0;
+
+
+            for(
+                const item of
+                bestCluster
+            ){
+
+                numerator +=
+                    item.bpm*
+                    item.weight;
+
+                denominator +=
+                    item.weight;
+            }
+
+
+            bpm=
+                numerator/
+                denominator;
+        }
+
+
+        const quality=
+            Math.round(
+                mean(
+                    bestCluster.map(
+                        item =>
+                            item.quality
+                    )
+                )
+            );
+
+
+        const spread=
+            bestCluster.length>1
+
+                ? std(
+                    bestCluster.map(
+                        item =>
+                            item.bpm
+                    )
+                )
+
+                : 0;
+
+
+        const agreement=
+            bestCluster.length===3
+
+                ? clamp(
+                    100-
+                    spread*3,
+                    70,
+                    100
+                )
+
+                :
+
+            bestCluster.length===2
+
+                ? clamp(
+                    90-
+                    spread*3,
+                    55,
+                    90
+                )
+
+                :
+                40;
+
+
+        const confidence=
+            Math.round(
+                clamp(
+                    quality*.55+
+                    agreement*.35+
+                    faceStability*.10,
+                    0,
+                    100
+                )
+            );
+
+
+        latestAnalysis={
+
+            bpm,
+
+            quality,
+
+            confidence,
+
+            agreement,
+
+            spread,
+
+            candidates,
+
+            sample_rate:fs
+        };
+
+
+        renderVitals();
+
 
     }catch(error){
 
-      console.warn(
-        "FaceMesh:",
-        error
-      );
+        console.error(
+            "rPPG analysis error:",
+            error
+        );
 
     }finally{
 
-      busy=false;
+        analysisBusy=
+            false;
     }
-  }
-
-
-  animationFrame=
-    requestAnimationFrame(
-      processingLoop
-    );
 }
 
 
-/* =========================================================
-   RESET
-========================================================= */
+/* ============================================================
+   PRODUCT VITALS
+============================================================ */
 
-function clearSignal(){
+function renderVitals(){
 
-  channels.r.length=0;
-  channels.g.length=0;
-  channels.b.length=0;
-  channels.green.length=0;
-  channels.chrom.length=0;
-  channels.pos.length=0;
-
-  signalTimes.length=0;
-
-
-  currentBpm=null;
-  currentQuality=0;
-  currentConfidence=0;
-  currentLighting=0;
-
-
-  currentMethods={
-    green:null,
-    chrom:null,
-    pos:null
-  };
-
-
-  lastFaceCenter=null;
-
-
-  bpmValue.textContent="--";
-  qualityValue.textContent="--";
-  confidenceValue.textContent="--";
-  sampleValue.textContent="0";
-
-
-  confidenceLarge.textContent="--";
-  confidenceReason.textContent=
-    "لا توجد نتيجة حتى الآن.";
-
-
-  confidenceProgress.style.width="0%";
-  faceProgress.style.width="0%";
-
-
-  confidenceScoreText.textContent="0%";
-  faceScoreText.textContent="0%";
-
-
-  greenState.textContent="Waiting";
-  chromState.textContent="Waiting";
-  posState.textContent="Waiting";
-  fusionState.textContent="Waiting";
-
-
-  document.getElementById("greenBpm").textContent="--";
-  document.getElementById("chromBpm").textContent="--";
-  document.getElementById("posBpm").textContent="--";
-
-  document.getElementById("greenQuality").textContent="Quality: --";
-  document.getElementById("chromQuality").textContent="Quality: --";
-  document.getElementById("posQuality").textContent="Quality: --";
-
-
-  [5,8,10,12].forEach(
-    seconds=>{
-
-      document.getElementById(
-        "window"+seconds
-      ).textContent="--";
-
-      document.getElementById(
-        "window"+seconds+"q"
-      ).textContent="--";
+    if(
+        !latestAnalysis
+    ){
+        return;
     }
-  );
 
 
-  signalMetaLeft.textContent=
-    "بانتظار الإشارة...";
+    bpmEl.textContent=
+        fmt(
+            latestAnalysis.bpm,
+            1
+        );
 
 
-  aiText.textContent=
-    "أدخل بيانات الحالة ثم شغّل الفحص.";
+    qualityEl.textContent=
+        String(
+            Math.round(
+                latestAnalysis.quality
+            )
+        );
 
 
-  drawSignal();
+    confidenceEl.textContent=
+        String(
+            Math.round(
+                latestAnalysis.confidence
+            )
+        );
+
+
+    confidenceLabel.textContent=
+        latestAnalysis.confidence>=80
+            ? "High"
+            :
+        latestAnalysis.confidence>=60
+            ? "Medium"
+            :
+            "Low";
+
+
+    confidenceBar.style.width=
+        `${latestAnalysis.confidence}%`;
 }
 
 
-/* =========================================================
-   SCAN
-========================================================= */
+/* ============================================================
+   BP FEATURES
+============================================================ */
 
-async function startScan(){
+function extractBPFeatures(){
 
-  if(!running){
-    return;
-  }
+    if(
+        !latestAnalysis
+    ){
+        return null;
+    }
 
 
-  clearSignal();
+    const window=
+        recentWindow(
+            greenSignal,
+            signalTimes,
+            12
+        );
 
 
-  scanning=true;
+    if(
+        window.data.length<70
+    ){
+        return null;
+    }
 
-
-  scanStart=
-    performance.now();
-
-
-  scanBtn.disabled=true;
-  stopBtn.disabled=true;
-  reportBtn.disabled=true;
-
-
-  setBadge(
-    scanBadge,
-    "فحص جارٍ",
-    "warn"
-  );
-
-
-  setBadge(
-    riskBadge,
-    "جاري جمع الأدلة",
-    "warn"
-  );
-
-
-  setStatus(
-    "جاري جمع الإشارة — لا تتحرك",
-    "live"
-  );
-
-
-  await new Promise(
-    resolve=>
-      setTimeout(
-        resolve,
-        15000
-      )
-  );
-
-
-  if(!scanning){
-    return;
-  }
-
-
-  finishScan();
-}
-
-
-function finishScan(){
-
-  scanning=false;
-
-
-  if(currentBpm){
-
-    updateConfidenceUI();
-
-    updateMethodUI();
-
-    runMIMOFusion();
-  }
-
-
-  setBadge(
-    scanBadge,
-    currentBpm
-      ? "اكتمل الفحص"
-      : "بيانات غير كافية",
-    currentBpm
-      ? "good"
-      : "warn"
-  );
-
-
-  setStatus(
-    currentBpm
-      ? "اكتمل الفحص"
-      : "لم يتم الحصول على قياس موثوق",
-    currentBpm
-      ? "live"
-      : "bad"
-  );
-
-
-  stopBtn.disabled=false;
-  scanBtn.disabled=false;
-  reportBtn.disabled=
-    !currentBpm;
-
-
-  if(
-    currentConfidence<55
-  ){
-
-    aiText.innerHTML=
-      `
-      <b style="color:var(--warn)">
-      القياس غير كافٍ للاعتماد العالي.
-      </b><br><br>
-      BPM:
-      <b>${currentBpm||"--"}</b>
-      • Signal Quality:
-      <b>${currentQuality}%</b>
-      • Confidence:
-      <b>${currentConfidence}%</b>
-      <br><br>
-      أعد الفحص في ظروف إضاءة أفضل وبدون حركة.
-      `;
-  }
-}
-
-
-/* =========================================================
-   MIMO
-========================================================= */
-
-function getPatientData(){
-
-  return {
-
-    name:
-      document.getElementById(
-        "pName"
-      ).value.trim(),
-
-    age:
-      parseInt(
-        document.getElementById(
-          "pAge"
-        ).value||"0",
-        10
-      ),
-
-    sex:
-      document.getElementById(
-        "pSex"
-      ).value,
-
-    duration:
-      document.getElementById(
-        "duration"
-      ).value,
-
-    notes:
-      document.getElementById(
-        "pNotes"
-      ).value.trim()
-  };
-}
-
-
-function getSymptoms(){
-
-  return [
-    ...
-    document.querySelectorAll(
-      ".chip input:checked"
-    )
-  ].map(
-    input=>input.value
-  );
-}
-
-
-function classifyRisk(){
-
-  const symptoms=
-    getSymptoms();
-
-
-  if(
-    symptoms.some(
-      item=>
-        [
-          "chest",
-          "breath",
-          "faint",
-          "neuro",
-          "bleed"
-        ].includes(item)
-    )
-  ){
-
-    return "urgent";
-  }
-
-
-  if(
-    !currentBpm ||
-    currentConfidence<45
-  ){
-
-    return "uncertain";
-  }
-
-
-  if(
-    currentBpm<50 ||
-    currentBpm>110
-  ){
-
-    return "attention";
-  }
-
-
-  return "routine";
-}
-
-
-function runMIMOFusion(){
-
-  if(!currentBpm){
-    return;
-  }
-
-
-  const risk=
-    classifyRisk();
-
-
-  if(risk==="urgent"){
-
-    setBadge(
-      riskBadge,
-      "أولوية طبية",
-      "bad"
-    );
-
-  }else if(risk==="attention"){
-
-    setBadge(
-      riskBadge,
-      "يحتاج انتباهًا",
-      "warn"
-    );
-
-  }else if(risk==="uncertain"){
-
-    setBadge(
-      riskBadge,
-      "القياس غير حاسم",
-      "warn"
-    );
-
-  }else{
-
-    setBadge(
-      riskBadge,
-      "مستقر مبدئيًا",
-      "good"
-    );
-  }
-}
-
-
-/* =========================================================
-   SIGNAL DRAW
-========================================================= */
-
-function resizeSignalCanvas(){
-
-  const rect=
-    signalCanvas.getBoundingClientRect();
-
-
-  const dpr=
-    window.devicePixelRatio||1;
-
-
-  signalCanvas.width=
-    Math.max(
-      500,
-      Math.floor(
-        rect.width*dpr
-      )
-    );
-
-
-  signalCanvas.height=
-    Math.max(
-      190,
-      Math.floor(
-        rect.height*dpr
-      )
-    );
-}
-
-
-function drawSignal(){
-
-  resizeSignalCanvas();
-
-
-  const W=
-    signalCanvas.width;
-
-  const H=
-    signalCanvas.height;
-
-
-  signalCtx.clearRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  signalCtx.strokeStyle=
-    "rgba(255,255,255,.05)";
-
-  signalCtx.lineWidth=1;
-
-
-  for(
-    let y=H/5;
-    y<H;
-    y+=H/5
-  ){
-
-    signalCtx.beginPath();
-
-    signalCtx.moveTo(
-      0,
-      y
-    );
-
-    signalCtx.lineTo(
-      W,
-      y
-    );
-
-    signalCtx.stroke();
-  }
-
-
-  if(channels.green.length<4){
-    return;
-  }
-
-
-  const recent=
-    channels.green.slice(-240);
-
-
-  const m=
-    mean(recent);
-
-  const s=
-    std(recent)||1;
-
-
-  const normalized=
-    recent.map(
-      x=>(x-m)/s
-    );
-
-
-  signalCtx.beginPath();
-
-
-  for(
-    let i=0;
-    i<normalized.length;
-    i++
-  ){
 
     const x=
-      i/
-      (
-        normalized.length-1
-      )*
-      W;
+        detrend(
+            window.data
+        );
 
 
-    const y=
-      H/2-
-      clamp(
-        normalized[i],
-        -3,
-        3
-      )*
-      H*.12;
+    const duration=
+        window.times.length>1
+
+            ? window.times[
+                window.times.length-1
+              ]-
+              window.times[0]
+
+            : 0;
 
 
-    if(i===0){
+    const amplitude=
+        Math.max(...x)-
+        Math.min(...x);
 
-      signalCtx.moveTo(
-        x,
-        y
-      );
 
+    const sd=
+        std(x);
+
+
+    const cv=
+        Math.abs(
+            sd/
+            (
+                Math.abs(
+                    mean(x)
+                )+
+                1e-9
+            )
+        );
+
+
+    let crossings=0;
+
+
+    for(
+        let i=1;
+        i<x.length;
+        i++
+    ){
+
+        if(
+            (
+                x[i-1]<=0 &&
+                x[i]>0
+            ) ||
+            (
+                x[i-1]>=0 &&
+                x[i]<0
+            )
+        ){
+
+            crossings++;
+        }
+    }
+
+
+    const crossingRate=
+        crossings/
+        Math.max(
+            duration,
+            1
+        );
+
+
+    const bpm=
+        latestAnalysis.bpm;
+
+
+    const pulsePeriod=
+        bpm>0
+            ?60/bpm
+            :0;
+
+
+    return [
+
+        1,
+
+        bpm,
+
+        amplitude,
+
+        sd,
+
+        cv,
+
+        crossingRate,
+
+        pulsePeriod,
+
+        latestAnalysis.quality,
+
+        faceStability,
+
+        latestLighting,
+
+        bpm*
+        latestAnalysis.quality,
+
+        bpm*
+        faceStability
+    ];
+}
+
+
+/* ============================================================
+   MODEL STORAGE
+============================================================ */
+
+function getBPModel(){
+
+    try{
+
+        const raw=
+            localStorage.getItem(
+                BP_MODEL_KEY
+            );
+
+
+        return raw
+            ?JSON.parse(raw)
+            :null;
+
+    }catch{
+
+        return null;
+    }
+}
+
+
+function storeBPModel(
+    model
+){
+
+    localStorage.setItem(
+        BP_MODEL_KEY,
+        JSON.stringify(
+            model
+        )
+    );
+}
+
+
+/* ============================================================
+   MATRIX SOLVER
+============================================================ */
+
+function solveLinearSystem(
+    A,
+    b
+){
+
+    const n=
+        b.length;
+
+
+    const M=
+        A.map(
+            (row,i)=>
+                [
+                    ...row,
+                    b[i]
+                ]
+        );
+
+
+    for(
+        let col=0;
+        col<n;
+        col++
+    ){
+
+        let pivot=
+            col;
+
+
+        for(
+            let row=col+1;
+            row<n;
+            row++
+        ){
+
+            if(
+                Math.abs(
+                    M[row][col]
+                )>
+                Math.abs(
+                    M[pivot][col]
+                )
+            ){
+
+                pivot=
+                    row;
+            }
+        }
+
+
+        if(
+            Math.abs(
+                M[pivot][col]
+            )<1e-10
+        ){
+
+            return null;
+        }
+
+
+        [
+            M[col],
+            M[pivot]
+        ]=
+        [
+            M[pivot],
+            M[col]
+        ];
+
+
+        const div=
+            M[col][col];
+
+
+        for(
+            let j=col;
+            j<=n;
+            j++
+        ){
+
+            M[col][j]/=
+                div;
+        }
+
+
+        for(
+            let row=0;
+            row<n;
+            row++
+        ){
+
+            if(
+                row===col
+            ){
+                continue;
+            }
+
+
+            const factor=
+                M[row][col];
+
+
+            for(
+                let j=col;
+                j<=n;
+                j++
+            ){
+
+                M[row][j]-=
+                    factor*
+                    M[col][j];
+            }
+        }
+    }
+
+
+    return M.map(
+        row =>
+            row[n]
+    );
+}
+
+
+/* ============================================================
+   RIDGE
+============================================================ */
+
+function ridge(
+    X,
+    y,
+    lambda=.8
+){
+
+    if(
+        !X.length
+    ){
+        return null;
+    }
+
+
+    const p=
+        X[0].length;
+
+
+    const A=
+        Array.from(
+            {
+                length:p
+            },
+            () =>
+                Array(
+                    p
+                ).fill(0)
+        );
+
+
+    const b=
+        Array(p).fill(0);
+
+
+    for(
+        let i=0;
+        i<X.length;
+        i++
+    ){
+
+        for(
+            let j=0;
+            j<p;
+            j++
+        ){
+
+            b[j]+=
+                X[i][j]*
+                y[i];
+
+
+            for(
+                let k=0;
+                k<p;
+                k++
+            ){
+
+                A[j][k]+=
+                    X[i][j]*
+                    X[i][k];
+            }
+        }
+    }
+
+
+    for(
+        let i=0;
+        i<p;
+        i++
+    ){
+
+        A[i][i]+=lambda;
+    }
+
+
+    const weights=
+        solveLinearSystem(
+            A,
+            b
+        );
+
+
+    return weights
+        ?{
+            weights,
+            lambda
+        }
+        :null;
+}
+
+
+/* ============================================================
+   STANDARDIZATION
+============================================================ */
+
+function standardize(
+    X
+){
+
+    const p=
+        X[0].length;
+
+
+    const means=
+        Array(p).fill(0);
+
+    const stds=
+        Array(p).fill(1);
+
+
+    for(
+        let j=0;
+        j<p;
+        j++
+    ){
+
+        means[j]=
+            mean(
+                X.map(
+                    row =>
+                        row[j]
+                )
+            );
+
+
+        stds[j]=
+            std(
+                X.map(
+                    row =>
+                        row[j]
+                )
+            ) ||
+            1;
+    }
+
+
+    const transformed=
+        X.map(
+            row =>
+                row.map(
+                    (value,j)=>
+                        (
+                            value-
+                            means[j]
+                        )/
+                        stds[j]
+                )
+        );
+
+
+    return {
+        transformed,
+        means,
+        stds
+    };
+}
+
+
+/* ============================================================
+   SESSION FEATURE EXTRACTION
+============================================================ */
+
+function featureFromSession(
+    session
+){
+
+    const bpm=
+        Number(
+            session.mimo_bpm ??
+            session.bpm
+        );
+
+
+    const quality=
+        Number(
+            session.signal_quality ??
+            session.quality
+        );
+
+
+    const stability=
+        Number(
+            session.face_stability ??
+            80
+        );
+
+
+    const lighting=
+        Number(
+            session.lighting ??
+            120
+        );
+
+
+    if(
+        !finite(bpm) ||
+        !finite(quality)
+    ){
+
+        return null;
+    }
+
+
+    let rawGreen=
+        Array.isArray(
+            session.raw_green
+        )
+            ?session.raw_green
+            :[];
+
+
+    /*
+     * If raw signal is unavailable,
+     * fall back to neutral morphology.
+     */
+    if(
+        rawGreen.length<70
+    ){
+
+        rawGreen=
+            new Array(100).fill(0);
+    }
+
+
+    const x=
+        detrend(
+            rawGreen
+        );
+
+
+    const amplitude=
+        Math.max(...x)-
+        Math.min(...x);
+
+
+    const sd=
+        std(x);
+
+
+    const cv=
+        Math.abs(
+            sd/
+            (
+                Math.abs(
+                    mean(x)
+                )+
+                1e-9
+            )
+        );
+
+
+    const times=
+        Array.isArray(
+            session.raw_times
+        )
+            ?session.raw_times
+            :[];
+
+
+    const duration=
+        times.length>1
+            ?
+            times[
+                times.length-1
+            ]-
+            times[0]
+            :
+            10;
+
+
+    let crossings=0;
+
+
+    for(
+        let i=1;
+        i<x.length;
+        i++
+    ){
+
+        if(
+            (
+                x[i-1]<=0 &&
+                x[i]>0
+            ) ||
+            (
+                x[i-1]>=0 &&
+                x[i]<0
+            )
+        ){
+
+            crossings++;
+        }
+    }
+
+
+    const crossingRate=
+        crossings/
+        Math.max(
+            duration,
+            1
+        );
+
+
+    const pulsePeriod=
+        bpm>0
+            ?60/bpm
+            :0;
+
+
+    return [
+
+        1,
+        bpm,
+        amplitude,
+        sd,
+        cv,
+        crossingRate,
+        pulsePeriod,
+        quality,
+        stability,
+        lighting,
+        bpm*quality,
+        bpm*stability
+    ];
+}
+
+
+/* ============================================================
+   CALIBRATION SESSIONS
+============================================================ */
+
+function getCalibrationSessions(){
+
+    const keys=[
+
+        "doctor_mimo_research_v60",
+
+        "doctor_mimo_forehead_research_v61",
+
+        "doctor_mimo_research_v54",
+
+        "doctor_mimo_v54_final_sessions"
+
+    ];
+
+
+    const result=[];
+
+
+    for(
+        const key of keys
+    ){
+
+        try{
+
+            const raw=
+                localStorage.getItem(
+                    key
+                );
+
+
+            if(!raw){
+                continue;
+            }
+
+
+            const data=
+                JSON.parse(raw);
+
+
+            if(
+                Array.isArray(data)
+            ){
+
+                for(
+                    const session of data
+                ){
+
+                    if(
+                        session &&
+                        (
+                            finite(
+                                Number(
+                                    session.reference_sys
+                                )
+                            ) ||
+                            finite(
+                                Number(
+                                    session.reference_bpm
+                                )
+                            )
+                        )
+                    ){
+
+                        result.push(
+                            session
+                        );
+                    }
+                }
+            }
+
+        }catch{}
+    }
+
+
+    /*
+     * Also allow product sessions with
+     * explicit reference values later.
+     */
+    try{
+
+        const raw=
+            localStorage.getItem(
+                PRODUCT_STORAGE_KEY
+            );
+
+
+        if(raw){
+
+            const data=
+                JSON.parse(raw);
+
+
+            if(
+                Array.isArray(data)
+            ){
+
+                result.push(
+                    ...data.filter(
+                        session =>
+                            finite(
+                                Number(
+                                    session.reference_sys
+                                )
+                            ) &&
+                            finite(
+                                Number(
+                                    session.reference_dia
+                                )
+                            )
+                    )
+                );
+            }
+        }
+
+    }catch{}
+
+
+    /*
+     * Deduplicate by session_id / id.
+     */
+    const map=
+        new Map();
+
+
+    for(
+        const session of result
+    ){
+
+        const key=
+            session.session_id ||
+            session.id ||
+            (
+                session.timestamp+
+                "_" +
+                session.reference_sys+
+                "_" +
+                session.reference_dia
+            );
+
+
+        map.set(
+            key,
+            session
+        );
+    }
+
+
+    return [
+        ...map.values()
+    ];
+}
+
+
+/* ============================================================
+   TRAIN BP MODEL
+============================================================ */
+
+function trainBPModel(){
+
+    const sessions=
+        getCalibrationSessions();
+
+
+    const usable=
+        sessions.filter(
+            session =>
+
+                finite(
+                    Number(
+                        session.reference_sys
+                    )
+                ) &&
+
+                finite(
+                    Number(
+                        session.reference_dia
+                    )
+                )
+        );
+
+
+    calibrationCount.textContent=
+        usable.length;
+
+
+    if(
+        usable.length<8
+    ){
+
+        modelState.textContent=
+            "Not Ready";
+
+
+        modelMessage.textContent=
+            "نحتاج إلى 8 جلسات مرجعية على الأقل. الأفضل جمع أكثر من 20 جلسة وبمدى ضغط متنوع.";
+
+
+        return;
+    }
+
+
+    const sysValues=
+        usable.map(
+            s =>
+                Number(
+                    s.reference_sys
+                )
+        );
+
+
+    const diaValues=
+        usable.map(
+            s =>
+                Number(
+                    s.reference_dia
+                )
+        );
+
+
+    const sysRange=
+        Math.max(...sysValues)-
+        Math.min(...sysValues);
+
+
+    const diaRange=
+        Math.max(...diaValues)-
+        Math.min(...diaValues);
+
+
+    if(
+        sysRange<10 ||
+        diaRange<6
+    ){
+
+        modelState.textContent=
+            "Not Ready";
+
+
+        modelMessage.textContent=
+            "الجلسات الحالية متقاربة جدًا في ضغط الدم. النموذج يحتاج تنوعًا أكبر قبل التنبؤ.";
+
+
+        return;
+    }
+
+
+    const rawX=[];
+    const ySys=[];
+    const yDia=[];
+
+
+    for(
+        const session of usable
+    ){
+
+        const features=
+            featureFromSession(
+                session
+            );
+
+
+        if(!features){
+            continue;
+        }
+
+
+        rawX.push(
+            features
+        );
+
+
+        ySys.push(
+            Number(
+                session.reference_sys
+            )
+        );
+
+
+        yDia.push(
+            Number(
+                session.reference_dia
+            )
+        );
+    }
+
+
+    if(
+        rawX.length<8
+    ){
+
+        modelState.textContent=
+            "Not Ready";
+
+
+        modelMessage.textContent=
+            "عدد الجلسات الصالحة أقل من المطلوب.";
+
+        return;
+    }
+
+
+    const normalized=
+        standardize(
+            rawX
+        );
+
+
+    const sysModel=
+        ridge(
+            normalized.transformed,
+            ySys
+        );
+
+
+    const diaModel=
+        ridge(
+            normalized.transformed,
+            yDia
+        );
+
+
+    if(
+        !sysModel ||
+        !diaModel
+    ){
+
+        modelState.textContent=
+            "Failed";
+
+        modelMessage.textContent=
+            "تعذر بناء نموذج المعايرة.";
+
+        return;
+    }
+
+
+    let maeSys=0;
+    let maeDia=0;
+
+
+    for(
+        let i=0;
+        i<normalized.transformed.length;
+        i++
+    ){
+
+        const sysPrediction=
+            predict(
+                sysModel,
+                normalized.transformed[i]
+            );
+
+
+        const diaPrediction=
+            predict(
+                diaModel,
+                normalized.transformed[i]
+            );
+
+
+        maeSys +=
+            Math.abs(
+                sysPrediction-
+                ySys[i]
+            );
+
+
+        maeDia +=
+            Math.abs(
+                diaPrediction-
+                yDia[i]
+            );
+    }
+
+
+    maeSys /=
+        normalized.transformed.length;
+
+
+    maeDia /=
+        normalized.transformed.length;
+
+
+    const model={
+
+        version:"8.0",
+
+        created_at:
+            new Date()
+                .toISOString(),
+
+        samples:
+            rawX.length,
+
+        normalization:
+            normalized,
+
+        systolic:
+            sysModel,
+
+        diastolic:
+            diaModel,
+
+        sys_range:[
+            Math.min(...sysValues),
+            Math.max(...sysValues)
+        ],
+
+        dia_range:[
+            Math.min(...diaValues),
+            Math.max(...diaValues)
+        ],
+
+        training_mae_sys:
+            maeSys,
+
+        training_mae_dia:
+            maeDia
+    };
+
+
+    storeBPModel(
+        model
+    );
+
+
+    renderModelStatus(
+        model
+    );
+
+
+    /*
+     * Run prediction if we already have
+     * a current vital assessment.
+     */
+    if(
+        latestAnalysis
+    ){
+
+        runBP();
+    }
+}
+
+
+/* ============================================================
+   MODEL PREDICTION
+============================================================ */
+
+function predict(
+    model,
+    features
+){
+
+    if(
+        !model ||
+        !model.weights
+    ){
+
+        return null;
+    }
+
+
+    let output=0;
+
+
+    for(
+        let i=0;
+        i<model.weights.length;
+        i++
+    ){
+
+        output +=
+            model.weights[i]*
+            features[i];
+    }
+
+
+    return output;
+}
+
+
+/* ============================================================
+   BP PREDICTION
+============================================================ */
+
+function runBP(){
+
+    const model=
+        getBPModel();
+
+
+    if(
+        !model
+    ){
+
+        latestBP=
+            null;
+
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "يحتاج نموذج معايرة صالح";
+
+
+        return;
+    }
+
+
+    const features=
+        extractBPFeatures();
+
+
+    if(!features){
+
+        latestBP=
+            null;
+
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "إشارة غير كافية";
+
+
+        return;
+    }
+
+
+    const normalized=
+        features.map(
+            (value,i)=>
+                (
+                    value-
+                    model.normalization.means[i]
+                )/
+                (
+                    model.normalization.stds[i]||
+                    1
+                )
+        );
+
+
+    const sys=
+        predict(
+            model.systolic,
+            normalized
+        );
+
+
+    const dia=
+        predict(
+            model.diastolic,
+            normalized
+        );
+
+
+    if(
+        !finite(sys) ||
+        !finite(dia)
+    ){
+
+        latestBP=
+            null;
+
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "تعذر حساب التقدير";
+
+
+        return;
+    }
+
+
+    /*
+     * Only expose predictions
+     * inside the calibrated range + margin.
+     */
+    const safeSys=
+        clamp(
+            sys,
+            model.sys_range[0]-15,
+            model.sys_range[1]+15
+        );
+
+
+    const safeDia=
+        clamp(
+            dia,
+            model.dia_range[0]-10,
+            model.dia_range[1]+10
+        );
+
+
+    if(
+        safeSys<=safeDia
+    ){
+
+        latestBP=
+            null;
+
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "تقدير غير مستقر";
+
+
+        return;
+    }
+
+
+    latestBP={
+
+        sys:safeSys,
+
+        dia:safeDia
+    };
+
+
+    bpEl.textContent=
+        `${safeSys.toFixed(0)}/${safeDia.toFixed(0)}`;
+
+
+    bpSubEl.textContent=
+        "AI estimated • calibrated research model";
+}
+
+
+/* ============================================================
+   MODEL STATUS
+============================================================ */
+
+function renderModelStatus(
+    model
+){
+
+    const sessions=
+        getCalibrationSessions();
+
+
+    calibrationCount.textContent=
+        sessions.length;
+
+
+    if(!model){
+
+        modelState.textContent=
+            "Not Ready";
+
+
+        modelMessage.textContent=
+            "النموذج غير معاير حاليًا.";
+
+        return;
+    }
+
+
+    modelState.textContent=
+        "Ready";
+
+
+    modelMessage.textContent=
+        `
+        ${model.samples} paired sessions.
+        Training MAE:
+        SYS ${model.training_mae_sys.toFixed(1)}
+        /
+        DIA ${model.training_mae_dia.toFixed(1)}
+        mmHg.
+        `
+        .trim();
+}
+
+
+/* ============================================================
+   PATIENT ASSESSMENT
+============================================================ */
+
+function buildAssessment(){
+
+    if(
+        !latestAnalysis
+    ){
+
+        return;
+    }
+
+
+    const symptoms=
+        document
+            .getElementById(
+                "symptoms"
+            )
+            .value
+            .trim();
+
+
+    const history=
+        document
+            .getElementById(
+                "history"
+            )
+            .value
+            .trim();
+
+
+    let risk=
+        "low";
+
+
+    let riskText=
+        "لا توجد إشارة فسيولوجية آلية مرتفعة في القياس الحالي.";
+
+
+    let considerations=
+        "يجب دمج الأعراض والتاريخ المرضي والفحوصات الأخرى قبل اتخاذ أي استنتاج.";
+
+
+    let recommendation=
+        "مراجعة الطبيب عند وجود أعراض أو عوامل خطورة، وعدم الاعتماد على التقدير التجريبي وحده.";
+
+
+    if(
+        latestAnalysis.bpm>=120 ||
+        latestAnalysis.bpm<=45
+    ){
+
+        risk=
+            "attention";
+
+
+        riskText=
+            "معدل ضربات القلب خارج النطاق المعتاد ويحتاج إلى مراجعة السياق السريري.";
+
+
+        considerations=
+            "قد تتأثر النتيجة بالحركة أو القلق أو جودة الإشارة، وقد تكون هناك عوامل فسيولوجية أخرى.";
+
+
+        recommendation=
+            "إعادة القياس في حالة الراحة ومراجعة الطبيب عند استمرار النتيجة أو وجود أعراض.";
+    }
+
+
+    if(
+        latestBP &&
+        latestBP.sys>=140
+    ){
+
+        risk=
+            "attention";
+
+
+        riskText=
+            "تقدير ضغط الدم الانقباضي مرتفع ويحتاج إلى تأكيد بقياس طبي موثوق.";
+
+
+        considerations=
+            "هذا تقدير بحثي وليس تشخيصًا. لا ينبغي اتخاذ قرار علاجي اعتمادًا عليه وحده.";
+
+
+        recommendation=
+            "تأكيد القراءة بجهاز ضغط معتمد وإجراء تقييم طبي مناسب.";
+    }
+
+
+    if(
+        latestBP &&
+        latestBP.sys<90
+    ){
+
+        risk=
+            "attention";
+
+
+        riskText=
+            "تقدير ضغط الدم الانقباضي منخفض ويحتاج إلى تأكيد طبي.";
+
+
+        considerations=
+            "يجب ربط النتيجة بالأعراض مثل الدوخة أو الإغماء أو الضعف إن وجدت.";
+
+
+        recommendation=
+            "إعادة القياس في حالة الراحة وطلب تقييم طبي عند وجود أعراض.";
+    }
+
+
+    /*
+     * Urgent symptom keywords.
+     */
+    const urgentPattern =
+        /(إغماء|ألم صدر|ضيق تنفس شديد|فقدان الوعي|تشنج|نزيف شديد|ضعف مفاجئ|صعوبة كلام)/i;
+
+
+    if(
+        urgentPattern.test(
+            symptoms
+        )
+    ){
+
+        risk=
+            "urgent";
+
+
+        riskText=
+            "تم إدخال أعراض تستدعي تقييمًا طبيًا عاجلًا.";
+
+
+        considerations=
+            "الأعراض قد تكون أكثر أهمية من القياس التجريبي الحالي.";
+
+
+        recommendation=
+            "اطلب تقييمًا طبيًا عاجلًا أو خدمات الطوارئ المناسبة حسب شدة الحالة.";
+    }
+
+
+    riskBadge.textContent=
+        riskText;
+
+
+    riskBadge.className=
+        "riskBadge " +
+        (
+            risk==="urgent"
+                ? "riskUrgent"
+                :
+            risk==="attention"
+                ? "riskAttention"
+                :
+                "riskLow"
+        );
+
+
+    findingsEl.textContent=
+        `
+        Heart Rate:
+        ${latestAnalysis.bpm.toFixed(1)} BPM.
+        Signal quality:
+        ${latestAnalysis.quality}%.
+        ${
+            latestBP
+                ? `Estimated BP: ${latestBP.sys.toFixed(0)}/${latestBP.dia.toFixed(0)} mmHg.`
+                : "Blood pressure estimate unavailable."
+        }
+        `;
+
+
+    considerationsEl.textContent=
+        considerations;
+
+
+    recommendationEl.textContent=
+        recommendation;
+
+
+    analysisStatus.textContent=
+        "اكتمل التحليل";
+
+
+    /*
+     * History text is intentionally not
+     * treated as an automatic diagnosis.
+     */
+    if(
+        history
+    ){
+
+        findingsEl.textContent +=
+            " تم إدخال تاريخ مرضي للمريض ويجب تفسيره بواسطة مختص.";
+    }
+}
+
+
+/* ============================================================
+   CAMERA
+============================================================ */
+
+async function startCamera(){
+
+    if(
+        cameraRunning
+    ){
+        return;
+    }
+
+
+    try{
+
+        if(
+            !faceMesh
+        ){
+
+            faceMesh=
+                new FaceMesh({
+
+                    locateFile:
+                        file =>
+                            "https://cdn.jsdelivr.net/npm/" +
+                            "@mediapipe/face_mesh/" +
+                            file
+                });
+
+
+            faceMesh.setOptions({
+
+                maxNumFaces:1,
+
+                refineLandmarks:true,
+
+                minDetectionConfidence:.65,
+
+                minTrackingConfidence:.65
+            });
+
+
+            faceMesh.onResults(
+                processFaceResults
+            );
+        }
+
+
+        const stream=
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    video:{
+
+                        facingMode:"user",
+
+                        width:{
+                            ideal:640
+                        },
+
+                        height:{
+                            ideal:480
+                        },
+
+                        frameRate:{
+                            ideal:30,
+                            max:30
+                        }
+                    },
+
+                    audio:false
+                });
+
+
+        video.srcObject=
+            stream;
+
+
+        await video.play();
+
+
+        cameraRunning=
+            true;
+
+
+        camera=
+            new Camera(
+                video,
+                {
+
+                    width:640,
+
+                    height:480,
+
+                    onFrame:
+                        async()=>{
+                            if(
+                                cameraRunning
+                            ){
+
+                                await faceMesh.send({
+                                    image:video
+                                });
+                            }
+                        }
+                }
+            );
+
+
+        camera.start();
+
+
+        startBtn.disabled=
+            true;
+
+        assessBtn.disabled=
+            false;
+
+        stopBtn.disabled=
+            false;
+
+
+        setStatus(
+            "الكاميرا تعمل — ضع وجهك داخل الشكل",
+            "warning"
+        );
+
+
+        cameraInstruction.textContent=
+            "ضع وجهك داخل شكل الوجه، وانظر مباشرة إلى الكاميرا";
+
+
+        drawFaceGuide(
+            "waiting"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setStatus(
+            "تعذر تشغيل الكاميرا. تأكد من HTTPS وصلاحية الكاميرا.",
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   FACE RESULTS
+============================================================ */
+
+function processFaceResults(
+    results
+){
+
+    if(
+        !cameraRunning
+    ){
+        return;
+    }
+
+
+    if(
+        !results.multiFaceLandmarks ||
+        !results.multiFaceLandmarks.length
+    ){
+
+        faceDetected=
+            false;
+
+        foreheadDetected=
+            false;
+
+        currentForehead=
+            null;
+
+
+        /*
+         * Important:
+         * Do not move the guide around.
+         * The guide belongs to the user.
+         */
+        drawFaceGuide(
+            "bad"
+        );
+
+
+        setStatus(
+            "لم يتم اكتشاف الوجه — قرّب وجهك من الشكل",
+            "error"
+        );
+
+
+        cameraInstruction.textContent=
+            "أدخل الوجه بالكامل داخل الإطار";
+
+
+        return;
+    }
+
+
+    faceDetected=
+        true;
+
+
+    const landmarks=
+        results.multiFaceLandmarks[0];
+
+
+    const detected=
+        detectForehead(
+            landmarks
+        );
+
+
+    if(
+        !detected
+    ){
+
+        foreheadDetected=
+            false;
+
+        currentForehead=
+            null;
+
+
+        drawFaceGuide(
+            "waiting"
+        );
+
+
+        setStatus(
+            "تم اكتشاف الوجه — عدّل وضع الوجه قليلًا",
+            "warning"
+        );
+
+
+        cameraInstruction.textContent=
+            "اجعل الوجه مستقيمًا أمام الكاميرا";
+
+
+        return;
+    }
+
+
+    foreheadDetected=
+        true;
+
+
+    currentForehead=
+        detected;
+
+
+    stableForehead=
+        smoothForehead(
+            detected
+        );
+
+
+    updateFaceStability(
+        stableForehead.centerX,
+        stableForehead.centerY
+    );
+
+
+    drawFaceGuide(
+        assessing
+            ? "measuring"
+            : "good"
+    );
+
+
+    if(
+        assessing
+    ){
+
+        setStatus(
+            "الجبهة محددة تلقائيًا — يتم تحليل الإشارة",
+            "ready"
+        );
+
+
+        cameraInstruction.textContent=
+            "ممتاز — ابقَ طبيعيًا وثبّت وجهك";
     }else{
 
-      signalCtx.lineTo(
+        setStatus(
+            "الوجه جاهز — يمكنك بدء الفحص",
+            "ready"
+        );
+
+
+        cameraInstruction.textContent=
+            "ممتاز — اضغط بدء الفحص الذكي";
+    }
+
+
+    /*
+     * Technical sampling.
+     * User never sees this ROI.
+     */
+    if(
+        assessing &&
+        stableForehead
+    ){
+
+        const rgb=
+            sampleForehead(
+                stableForehead
+            );
+
+
+        if(
+            rgb
+        ){
+
+            const elapsed=
+                (
+                    performance.now()-
+                    assessmentStart
+                )/1000;
+
+
+            signalTimes.push(
+                elapsed
+            );
+
+            redSignal.push(
+                rgb.r
+            );
+
+            greenSignal.push(
+                rgb.g
+            );
+
+            blueSignal.push(
+                rgb.b
+            );
+
+
+            latestLighting=
+                rgb.lighting;
+
+
+            const limit=
+                700;
+
+
+            while(
+                signalTimes.length>limit
+            ){
+
+                signalTimes.shift();
+                redSignal.shift();
+                greenSignal.shift();
+                blueSignal.shift();
+            }
+
+
+            const now=
+                performance.now();
+
+
+            if(
+                now-lastAnalysisTime>=700
+            ){
+
+                lastAnalysisTime=
+                    now;
+
+                analyzeRPPG();
+            }
+        }
+    }
+}
+
+
+/* ============================================================
+   FACE STABILITY
+============================================================ */
+
+function updateFaceStability(
+    x,
+    y
+){
+
+    if(
+        !previousGuideCenter
+    ){
+
+        previousGuideCenter={
+            x,
+            y
+        };
+
+        faceStability=
+            100;
+
+        return;
+    }
+
+
+    const distance=
+        Math.sqrt(
+            (
+                x-
+                previousGuideCenter.x
+            )**2
+            +
+            (
+                y-
+                previousGuideCenter.y
+            )**2
+        );
+
+
+    previousGuideCenter={
         x,
         y
-      );
-    }
-  }
+    };
 
 
-  signalCtx.lineWidth=2.2;
+    const instant=
+        clamp(
+            100-
+            distance*900,
+            0,
+            100
+        );
 
-  signalCtx.strokeStyle=
-    "#39e6ca";
 
-  signalCtx.stroke();
+    faceStability=
+        faceStability*.75+
+        instant*.25;
 }
 
 
-/* =========================================================
-   RESEARCH RECORDING
-========================================================= */
+/* ============================================================
+   STATUS
+============================================================ */
 
-function startRecordingSession(){
+function setStatus(
+    message,
+    type="normal"
+){
 
-  if(!running){
+    scanStatus.textContent=
+        message;
 
-    alert(
-      "شغّل الكاميرا أولًا."
+
+    scanStatus.className=
+        "scanStatus";
+
+
+    if(
+        type==="ready"
+    ){
+
+        scanStatus.classList.add(
+            "ready"
+        );
+
+    }else if(
+        type==="warning"
+    ){
+
+        scanStatus.classList.add(
+            "warning"
+        );
+
+    }else if(
+        type==="error"
+    ){
+
+        scanStatus.classList.add(
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   START ASSESSMENT
+============================================================ */
+
+function startAssessment(){
+
+    if(
+        !cameraRunning
+    ){
+        return;
+    }
+
+
+    if(
+        !faceDetected ||
+        !foreheadDetected ||
+        !stableForehead
+    ){
+
+        alert(
+            "انتظر حتى يظهر أن الوجه جاهز."
+        );
+
+        return;
+    }
+
+
+    clearMeasurement();
+
+
+    assessing=
+        true;
+
+
+    assessmentStart=
+        performance.now();
+
+
+    lastAnalysisTime=
+        0;
+
+
+    assessBtn.disabled=
+        true;
+
+
+    setStatus(
+        "بدأ الفحص — لا تحرك رأسك",
+        "ready"
     );
 
-    return;
-  }
+
+    cameraInstruction.textContent=
+        "جاري القياس... حافظ على وضع طبيعي وثابت";
 
 
-  clearSignal();
+    drawFaceGuide(
+        "measuring"
+    );
 
 
-  currentRecording={
-
-    id:uid(),
-
-    startedAt:
-      new Date()
-      .toISOString(),
-
-    subjectId:
-      document.getElementById(
-        "subjectId"
-      ).value.trim(),
-
-    sessionLabel:
-      document.getElementById(
-        "sessionLabel"
-      ).value.trim(),
-
-    environment:
-      document.getElementById(
-        "environment"
-      ).value,
-
-    movement:
-      document.getElementById(
-        "movement"
-      ).value,
-
-    patient:
-      getPatientData(),
-
-    reference:{
-      bpm:null,
-      sys:null,
-      dia:null
-    }
-  };
-
-
-  recordingActive=true;
-  scanning=true;
-
-
-  recordingStartedAt=
-    performance.now();
-
-  scanStart=
-    recordingStartedAt;
-
-
-  recordStart.disabled=true;
-  recordSave.disabled=true;
-
-
-  setBadge(
-    recordStatus,
-    "Recording",
-    "warn"
-  );
-
-
-  setBadge(
-    scanBadge,
-    "Research Recording",
-    "warn"
-  );
-
-
-  setStatus(
-    "تسجيل بحثي — ثبّت الوجه",
-    "live"
-  );
-
-
-  recordTimer.textContent=
-    "Recording 0.0 / 15 sec";
-
-
-  recordingLoop();
-}
-
-
-async function recordingLoop(){
-
-  while(
-    recordingActive &&
-    performance.now()-
-      recordingStartedAt<
-      15000
-  ){
-
-    updateRecordingUI();
-
-
-    await new Promise(
-      resolve=>
+    assessmentTimer=
         setTimeout(
-          resolve,
-          100
-        )
-    );
-  }
-
-
-  if(
-    !recordingActive
-  ){
-
-    return;
-  }
-
-
-  finishRecording();
+            stopAssessment,
+            15000
+        );
 }
 
 
-function updateRecordingUI(){
+/* ============================================================
+   STOP ASSESSMENT
+============================================================ */
 
-  const elapsed=
-    (
-      performance.now()-
-      recordingStartedAt
-    )/1000;
+function stopAssessment(){
 
-
-  recordTimer.textContent=
-    "Recording "+
-    Math.min(
-      15,
-      elapsed
-    ).toFixed(1)+
-    " / 15 sec";
-
-
-  const reference=
-    getReferenceInputs();
-
-
-  recordComparison.textContent=
-    "MIMO: "+
-    (
-      currentBpm ??
-      "--"
-    )+
-    " • Reference: "+
-    (
-      reference.bpm ??
-      "--"
-    )+
-    " • Error: "+
-    (
-      reference.bpm!==null &&
-      currentBpm!==null
-        ?
-        (
-          currentBpm-
-          reference.bpm
-        )
-        :
-        "--"
-    );
-}
-
-
-function finishRecording(){
-
-  recordingActive=false;
-  scanning=false;
-
-
-  const reference=
-    getReferenceInputs();
-
-
-  currentRecording.endedAt=
-    new Date()
-      .toISOString();
-
-
-  currentRecording.durationSeconds=
-    15;
-
-
-  currentRecording.reference=
-    reference;
-
-
-  currentRecording.measurement={
-
-    mimoBpm:
-      currentBpm,
-
-    signalQuality:
-      currentQuality,
-
-    measurementConfidence:
-      currentConfidence,
-
-    faceStability:
-      currentFaceScore,
-
-    lighting:
-      currentLighting,
-
-    samples:
-      channels.green.length,
-
-    methods:{
-      green:
-        currentMethods?.methods
-          ?.find(
-            m=>m.name==="green"
-          )
-          ?.bpm ??
-        null,
-
-      chrom:
-        currentMethods?.methods
-          ?.find(
-            m=>m.name==="chrom"
-          )
-          ?.bpm ??
-        null,
-
-      pos:
-        currentMethods?.methods
-          ?.find(
-            m=>m.name==="pos"
-          )
-          ?.bpm ??
-        null
-    },
-
-    rawSignal:
-      channels.green.slice(),
-
-    rgb:{
-      r:channels.r.slice(),
-      g:channels.g.slice(),
-      b:channels.b.slice()
-    },
-
-    signalTimes:
-      signalTimes.slice()
-  };
-
-
-  if(
-    reference.bpm!==null &&
-    currentBpm!==null
-  ){
-
-    currentRecording.validation={
-
-      signedError:
-        currentBpm-
-        reference.bpm,
-
-      absoluteError:
-        Math.abs(
-          currentBpm-
-          reference.bpm
-        )
-    };
-
-  }else{
-
-    currentRecording.validation=null;
-  }
-
-
-  setBadge(
-    recordStatus,
-    "Session جاهزة للحفظ",
-    "good"
-  );
-
-
-  setBadge(
-    scanBadge,
-    "اكتمل التسجيل",
-    "good"
-  );
-
-
-  setStatus(
-    "اكتمل التسجيل البحثي",
-    "live"
-  );
-
-
-  recordStart.disabled=false;
-  recordSave.disabled=false;
-
-
-  updateRecordingUI();
-
-
-  recordTimer.textContent=
-    "Session مكتملة — أدخل Reference ثم احفظ.";
-}
-
-
-function getReferenceInputs(){
-
-  function read(id){
-
-    const value=
-      document.getElementById(
-        id
-      ).value.trim();
-
-
-    if(value===""){
-      return null;
+    if(
+        !assessing
+    ){
+        return;
     }
 
 
-    const num=
-      Number(value);
+    assessing=
+        false;
 
 
-    return Number.isFinite(num)
-      ? num
-      : null;
-  }
+    if(
+        assessmentTimer
+    ){
 
+        clearTimeout(
+            assessmentTimer
+        );
 
-  return {
-
-    bpm:read("refBpm"),
-
-    sys:read("refSys"),
-
-    dia:read("refDia")
-  };
-}
-
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE_KEY=
-  "doctor_mimo_v5_1_sessions";
-
-
-function loadSessions(){
-
-  try{
-
-    const raw=
-      localStorage.getItem(
-        STORAGE_KEY
-      );
-
-
-    if(!raw){
-      return [];
+        assessmentTimer=
+            null;
     }
 
 
-    const data=
-      JSON.parse(raw);
+    assessBtn.disabled=
+        !cameraRunning;
 
 
-    return Array.isArray(data)
-      ? data
-      : [];
+    /*
+     * Final analysis.
+     */
+    analyzeRPPG();
 
-  }catch(error){
 
-    console.warn(
-      "loadSessions:",
-      error
+    /*
+     * BP prediction AFTER final rPPG.
+     */
+    setTimeout(
+        ()=>{
+            runBP();
+            buildAssessment();
+            saveProductSession();
+        },
+        120
     );
 
-    return [];
-  }
+
+    setStatus(
+        "اكتمل الفحص — تم تجهيز نتيجة Doctor MIMO",
+        "ready"
+    );
+
+
+    cameraInstruction.textContent=
+        "اكتمل الفحص ويمكن مراجعة النتيجة.";
 }
 
 
-function saveSessions(
-  sessions
-){
+/* ============================================================
+   CLEAR MEASUREMENT
+============================================================ */
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(
-      sessions
-    )
-  );
+function clearMeasurement(){
+
+    signalTimes=[];
+    redSignal=[];
+    greenSignal=[];
+    blueSignal=[];
+
+
+    latestAnalysis=
+        null;
+
+    latestBP=
+        null;
+
+
+    bpmEl.textContent=
+        "--";
+
+    qualityEl.textContent=
+        "--";
+
+    confidenceEl.textContent=
+        "--";
+
+    confidenceLabel.textContent=
+        "--";
+
+    confidenceBar.style.width=
+        "0%";
+
+
+    bpEl.textContent=
+        "--";
+
+    bpSubEl.textContent=
+        "يحتاج نموذج معايرة صالح";
+
+
+    analysisStatus.textContent=
+        "في انتظار الفحص";
+
+
+    findingsEl.textContent=
+        "ابدأ الفحص لإجراء التحليل.";
+
+
+    considerationsEl.textContent=
+        "--";
+
+
+    recommendationEl.textContent=
+        "--";
+
+
+    riskBadge.textContent=
+        "في انتظار البيانات";
+
+
+    riskBadge.className=
+        "riskBadge riskLow";
 }
 
 
-function saveCurrentRecording(){
+/* ============================================================
+   STOP CAMERA
+============================================================ */
 
-  if(!currentRecording){
+function stopCamera(){
 
-    alert(
-      "لا توجد Session جاهزة للحفظ."
-    );
+    assessing=
+        false;
 
-    return;
-  }
 
+    cameraRunning=
+        false;
 
-  currentRecording.reference=
-    getReferenceInputs();
 
+    if(
+        assessmentTimer
+    ){
 
-  if(
-    currentRecording.reference.bpm!==null &&
-    currentRecording.measurement.mimoBpm!==null
-  ){
-
-    currentRecording.validation={
-
-      signedError:
-        currentRecording.measurement.mimoBpm-
-        currentRecording.reference.bpm,
-
-      absoluteError:
-        Math.abs(
-          currentRecording.measurement.mimoBpm-
-          currentRecording.reference.bpm
-        )
-    };
-  }
-
-
-  const sessions=
-    loadSessions();
-
-
-  sessions.push(
-    currentRecording
-  );
-
-
-  saveSessions(
-    sessions
-  );
-
-
-  renderSessions();
-
-
-  setBadge(
-    recordStatus,
-    "تم الحفظ",
-    "good"
-  );
-
-
-  recordSave.disabled=true;
-
-
-  currentRecording=null;
-}
-
-
-function renderSessions(){
-
-  const sessions=
-    loadSessions();
-
-
-  sessionTableBody.innerHTML="";
-
-
-  if(!sessions.length){
-
-    sessionTableBody.innerHTML=
-      `<tr>
-        <td
-          colspan="11"
-          style="text-align:center;color:#71879b;padding:20px">
-          لا توجد Sessions محفوظة بعد.
-        </td>
-      </tr>`;
-
-    return;
-  }
-
-
-  sessions
-    .slice()
-    .reverse()
-    .forEach(
-      session=>{
-
-        const m=
-          session.measurement||{};
-
-        const r=
-          session.reference||{};
-
-        const v=
-          session.validation;
-
-
-        const error=
-          v
-            ? (
-              v.signedError>0
-                ? "+"+
-                  v.signedError
-                : v.signedError
-            )
-            : "--";
-
-
-        const row=
-          document.createElement(
-            "tr"
-          );
-
-
-        row.innerHTML=
-          `<td>
-            ${escapeHtml(
-              session.id
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              session.subjectId||
-              "--"
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              session.environment||
-              "--"
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              session.movement||
-              "--"
-            )}
-          </td>
-
-          <td>
-            ${m.mimoBpm ??
-              "--"}
-          </td>
-
-          <td>
-            ${r.bpm ??
-              "--"}
-          </td>
-
-          <td>
-            ${error}
-          </td>
-
-          <td>
-            ${m.signalQuality ??
-              "--"}%
-          </td>
-
-          <td>
-            ${m.measurementConfidence ??
-              "--"}%
-          </td>
-
-          <td>
-            ${m.samples ??
-              0}
-          </td>
-
-          <td>
-
-            <button
-              class="secondary miniAction"
-              data-id="${escapeHtml(
-                session.id
-              )}"
-              data-action="delete">
-
-              حذف
-
-            </button>
-
-          </td>`;
-
-
-        sessionTableBody.appendChild(
-          row
-        );
-      }
-    );
-}
-
-
-function deleteSession(
-  id
-){
-
-  const sessions=
-    loadSessions()
-      .filter(
-        session=>
-          session.id!==id
-      );
-
-
-  saveSessions(
-    sessions
-  );
-
-
-  renderSessions();
-}
-
-
-/* =========================================================
-   EXPORT
-========================================================= */
-
-function download(
-  content,
-  filename,
-  type
-){
-
-  const blob=
-    new Blob(
-      [content],
-      {type}
-    );
-
-
-  const url=
-    URL.createObjectURL(
-      blob
-    );
-
-
-  const a=
-    document.createElement(
-      "a"
-    );
-
-
-  a.href=url;
-  a.download=filename;
-
-
-  document.body.appendChild(
-    a
-  );
-
-
-  a.click();
-
-  a.remove();
-
-
-  URL.revokeObjectURL(
-    url
-  );
-}
-
-
-function csvEscape(
-  value
-){
-
-  const text=
-    String(
-      value??
-      ""
-    );
-
-
-  return /[",\n]/.test(text)
-    ? `"${text.replace(
-        /"/g,
-        '""'
-      )}"`
-    : text;
-}
-
-
-function exportCSV(){
-
-  const sessions=
-    loadSessions();
-
-
-  if(!sessions.length){
-
-    alert(
-      "لا توجد Sessions."
-    );
-
-    return;
-  }
-
-
-  const headers=[
-
-    "session_id",
-    "subject_id",
-    "session_label",
-    "timestamp",
-    "environment",
-    "movement",
-
-    "mimo_bpm",
-    "reference_bpm",
-
-    "reference_sys",
-    "reference_dia",
-
-    "signed_error",
-    "absolute_error",
-
-    "signal_quality",
-    "measurement_confidence",
-
-    "green_bpm",
-    "chrom_bpm",
-    "pos_bpm",
-
-    "lighting",
-    "face_stability",
-    "samples"
-
-  ];
-
-
-  const rows=[
-    headers.join(",")
-  ];
-
-
-  for(
-    const s
-    of
-    sessions
-  ){
-
-    const m=
-      s.measurement||{};
-
-    const r=
-      s.reference||{};
-
-    const v=
-      s.validation||{};
-
-    const methods=
-      m.methods||{};
-
-
-    const row=[
-
-      s.id,
-
-      s.subjectId,
-
-      s.sessionLabel,
-
-      s.startedAt,
-
-      s.environment,
-
-      s.movement,
-
-      m.mimoBpm,
-
-      r.bpm,
-
-      r.sys,
-
-      r.dia,
-
-      v.signedError,
-
-      v.absoluteError,
-
-      m.signalQuality,
-
-      m.measurementConfidence,
-
-      methods.green,
-
-      methods.chrom,
-
-      methods.pos,
-
-      m.lighting,
-
-      m.faceStability,
-
-      m.samples
-
-    ].map(csvEscape);
-
-
-    rows.push(
-      row.join(",")
-    );
-  }
-
-
-  download(
-    rows.join("\n"),
-    "doctor_mimo_v5_1_dataset.csv",
-    "text/csv;charset=utf-8"
-  );
-}
-
-
-function exportJSON(){
-
-  const sessions=
-    loadSessions();
-
-
-  if(!sessions.length){
-
-    alert(
-      "لا توجد Sessions."
-    );
-
-    return;
-  }
-
-
-  download(
-
-    JSON.stringify(
-      {
-        project:
-          "Doctor MIMO",
-
-        version:
-          "5.1",
-
-        exportedAt:
-          new Date()
-            .toISOString(),
-
-        sessions
-      },
-      null,
-      2
-    ),
-
-    "doctor_mimo_v5_1_dataset.json",
-
-    "application/json"
-  );
-}
-
-
-/* =========================================================
-   REPORT
-========================================================= */
-
-function buildReport(){
-
-  if(!currentBpm){
-    return;
-  }
-
-
-  const patient=
-    getPatientData();
-
-
-  const methods=
-    currentMethods?.methods||[];
-
-
-  const getMethodBpm=
-    name =>{
-
-      const m=
-        methods.find(
-          method=>
-            method.name===name
+        clearTimeout(
+            assessmentTimer
         );
 
-      return m
-        ? Math.round(m.bpm)
-        : null;
-    };
+        assessmentTimer=
+            null;
+    }
 
 
-  const risk=
-    classifyRisk();
+    if(
+        camera
+    ){
+
+        try{
+            camera.stop();
+        }catch{}
+    }
 
 
-  const riskView=
-    risk==="urgent"
-      ? {
-          text:"أولوية طبية",
-          cls:"bad"
+    camera=
+        null;
+
+
+    if(
+        video.srcObject
+    ){
+
+        video.srcObject
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+
+        video.srcObject=
+            null;
+    }
+
+
+    startBtn.disabled=
+        false;
+
+    assessBtn.disabled=
+        true;
+
+    stopBtn.disabled=
+        true;
+
+
+    faceDetected=
+        false;
+
+    foreheadDetected=
+        false;
+
+    currentForehead=
+        null;
+
+    stableForehead=
+        null;
+
+    previousGuideCenter=
+        null;
+
+
+    drawFaceGuide(
+        "waiting"
+    );
+
+
+    setStatus(
+        "الكاميرا متوقفة",
+        "normal"
+    );
+
+
+    cameraInstruction.textContent=
+        "اضغط تشغيل الكاميرا للبدء";
+}
+
+
+/* ============================================================
+   PRODUCT SESSIONS
+============================================================ */
+
+function getProductSessions(){
+
+    try{
+
+        const raw=
+            localStorage.getItem(
+                PRODUCT_STORAGE_KEY
+            );
+
+
+        if(!raw){
+            return [];
         }
-      : risk==="attention"
-        ? {
-            text:"يحتاج انتباهًا",
-            cls:"warn"
-          }
-        : risk==="uncertain"
-          ? {
-              text:"غير حاسم",
-              cls:"warn"
-            }
-          : {
-              text:"مستقر مبدئيًا",
-              cls:"good"
-            };
 
 
-  reportData={
-
-    system:
-      "Doctor MIMO",
-
-    version:
-      "5.1",
-
-    timestamp:
-      new Date().toISOString(),
-
-    patient,
-
-    symptoms:
-      getSymptoms(),
-
-    measurements:{
-
-      fusedBpm:
-        currentBpm,
-
-      signalQuality:
-        currentQuality,
-
-      confidence:
-        currentConfidence,
-
-      greenBpm:
-        getMethodBpm(
-          "green"
-        ),
-
-      chromBpm:
-        getMethodBpm(
-          "chrom"
-        ),
-
-      posBpm:
-        getMethodBpm(
-          "pos"
-        ),
-
-      lighting:
-        currentLighting,
-
-      faceStability:
-        currentFaceScore,
-
-      samples:
-        channels.green.length
-    },
-
-    assessment:{
-      category:risk,
-      label:riskView.text
-    },
-
-    disclaimer:
-      "Research prototype. Not a medical device and not diagnostic."
-  };
+        const data=
+            JSON.parse(raw);
 
 
-  document.getElementById(
-    "reportMeta"
-  ).textContent=
-    "التاريخ: "+
-    new Date(
-      reportData.timestamp
-    ).toLocaleString(
-      "ar-EG"
+        return Array.isArray(data)
+            ?data
+            :[];
+
+    }catch{
+
+        return [];
+    }
+}
+
+
+function saveProductSession(){
+
+    if(
+        !latestAnalysis
+    ){
+        return;
+    }
+
+
+    const patientName=
+        document
+            .getElementById(
+                "patientName"
+            )
+            .value
+            .trim();
+
+
+    const patientId=
+        document
+            .getElementById(
+                "patientId"
+            )
+            .value
+            .trim();
+
+
+    const session={
+
+        id:
+            "DM-"+Date.now(),
+
+        timestamp:
+            new Date()
+                .toISOString(),
+
+        patient_name:
+            patientName,
+
+        patient_id:
+            patientId,
+
+        bpm:
+            latestAnalysis.bpm,
+
+        quality:
+            latestAnalysis.quality,
+
+        confidence:
+            latestAnalysis.confidence,
+
+        bp_sys:
+            latestBP
+                ?latestBP.sys
+                :null,
+
+        bp_dia:
+            latestBP
+                ?latestBP.dia
+                :null,
+
+        sample_rate:
+            latestAnalysis.sample_rate,
+
+        lighting:
+            latestLighting,
+
+        face_stability:
+            faceStability,
+
+        raw_times:
+            [...signalTimes],
+
+        raw_green:
+            [...greenSignal]
+    };
+
+
+    const sessions=
+        getProductSessions();
+
+
+    sessions.unshift(
+        session
     );
 
 
-  setBadge(
-    document.getElementById(
-      "reportRisk"
-    ),
-    riskView.text,
-    riskView.cls
-  );
-
-
-  document.getElementById(
-    "reportPatient"
-  ).innerHTML=
-    `<b>${
-      escapeHtml(
-        patient.name||
-        "غير محدد"
-      )
-    }</b>`+
-
-    ` — العمر: ${
-      escapeHtml(
-        patient.age||
-        "غير محدد"
-      )
-    }`+
-
-    ` — الجنس: ${
-      patient.sex==="male"
-        ? "ذكر"
-        : patient.sex==="female"
-          ? "أنثى"
-          : "غير محدد"
-    }`+
-
-    `<br>مدة الأعراض: ${
-      escapeHtml(
-        patient.duration||
-        "غير محددة"
-      )
-    }`+
-
-    (
-      patient.notes
-      ?
-      `<br><br>
-       الشكوى:
-       ${escapeHtml(
-         patient.notes
-       )}`
-      :
-      ""
+    localStorage.setItem(
+        PRODUCT_STORAGE_KEY,
+        JSON.stringify(
+            sessions
+        )
     );
 
 
-  document.getElementById(
-    "rBpm"
-  ).textContent=
-    currentBpm;
+    renderHistory();
 
 
-  document.getElementById(
-    "rQuality"
-  ).textContent=
-    currentQuality+
-    "%";
+    updateResearchOutput();
+}
 
 
-  document.getElementById(
-    "rConfidence"
-  ).textContent=
-    currentConfidence+
-    "%";
+/* ============================================================
+   HISTORY
+============================================================ */
+
+function renderHistory(){
+
+    const sessions=
+        getProductSessions();
 
 
-  document.getElementById(
-    "rGreen"
-  ).textContent=
-    getMethodBpm("green") ??
-    "--";
+    historyBody.innerHTML=
+        "";
 
 
-  document.getElementById(
-    "rChrom"
-  ).textContent=
-    getMethodBpm("chrom") ??
-    "--";
+    if(
+        !sessions.length
+    ){
+
+        historyBody.innerHTML=
+            `
+            <tr>
+                <td colspan="6"
+                    style="padding:18px;color:#8190a2;">
+                    لا توجد سجلات حتى الآن.
+                </td>
+            </tr>
+            `;
+
+        return;
+    }
 
 
-  document.getElementById(
-    "rPos"
-  ).textContent=
-    getMethodBpm("pos") ??
-    "--";
+    for(
+        const session of
+        sessions.slice(
+            0,
+            30
+        )
+    ){
+
+        const tr=
+            document.createElement(
+                "tr"
+            );
 
 
-  const confidence=
-    calculateConfidence();
+        tr.innerHTML=
+            `
+
+            <td>
+                ${new Date(
+                    session.timestamp
+                ).toLocaleString(
+                    "ar-EG"
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    session.patient_name ||
+                    "--"
+                )}
+            </td>
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            session.bpm
+                        )
+                    )
+                        ?Number(
+                            session.bpm
+                        ).toFixed(1)
+                        :"--"
+                }
+            </td>
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            session.bp_sys
+                        )
+                    ) &&
+                    finite(
+                        Number(
+                            session.bp_dia
+                        )
+                    )
+
+                        ?
+                        `${Number(
+                            session.bp_sys
+                        ).toFixed(0)}
+                        /
+                        ${Number(
+                            session.bp_dia
+                        ).toFixed(0)}`
+
+                        :
+                        "--"
+                }
+            </td>
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            session.quality
+                        )
+                    )
+                        ?Number(
+                            session.quality
+                        ).toFixed(0)+"%"
+                        :
+                        "--"
+                }
+            </td>
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            session.confidence
+                        )
+                    )
+                        ?Number(
+                            session.confidence
+                        ).toFixed(0)+"%"
+                        :
+                        "--"
+                }
+            </td>
+
+            `;
 
 
-  document.getElementById(
-    "rConfidenceReason"
-  ).textContent=
-    `${confidence.level} — `+
-    confidence.reason;
+        historyBody.appendChild(
+            tr
+        );
+    }
 
 
-  const safety=
-    document.getElementById(
-      "rSafety"
-    );
+    updateResearchOutput();
+}
 
 
-  safety.innerHTML="";
+/* ============================================================
+   RESEARCH OUTPUT
+============================================================ */
+
+function updateResearchOutput(){
+
+    const sessions=
+        getProductSessions();
 
 
-  const items=[
-
-    "Signal Quality ليست دقة طبية؛ إنها مؤشر داخلي لجودة الإشارة.",
-
-    "Measurement Confidence ليست تشخيصًا، بل تقدير لمدى اتفاق الأدلة المتاحة.",
-
-    "rPPG من الكاميرا حساس للحركة والإضاءة وجودة الجهاز.",
-
-    "لا تستخدم النتيجة لاستبعاد حالة طبية خطرة أو طارئة.",
-
-    "لا تقيس هذه النسخة ضغط الدم أو SpO₂ أو ECG بالكاميرا.",
-
-    "يجب تأكيد أي قراءة مهمة بجهاز أو طريقة طبية مناسبة."
-
-  ];
+    researchOutput.value=
+        JSON.stringify(
+            sessions,
+            null,
+            2
+        );
+}
 
 
-  items.forEach(
-    text=>{
+/* ============================================================
+   EXPORT BP MODEL
+============================================================ */
 
-      const li=
-        document.createElement(
-          "li"
+function exportBPModel(){
+
+    const model=
+        getBPModel();
+
+
+    if(
+        !model
+    ){
+
+        alert(
+            "لا يوجد نموذج BP صالح للتصدير."
         );
 
-      li.textContent=text;
-
-      safety.appendChild(
-        li
-      );
+        return;
     }
-  );
 
 
-  document.getElementById(
-    "reportOverlay"
-  ).classList.add(
-    "open"
-  );
+    downloadFile(
+        "doctor-mimo-bp-model-v80.json",
+        JSON.stringify(
+            model,
+            null,
+            2
+        ),
+        "application/json"
+    );
 }
 
 
-function closeReport(){
+/* ============================================================
+   DOWNLOAD
+============================================================ */
 
-  document.getElementById(
-    "reportOverlay"
-  ).classList.remove(
-    "open"
-  );
+function downloadFile(
+    filename,
+    content,
+    type
+){
+
+    const blob=
+        new Blob(
+            [content],
+            {
+                type
+            }
+        );
+
+
+    const url=
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link=
+        document.createElement(
+            "a"
+        );
+
+
+    link.href=
+        url;
+
+    link.download=
+        filename;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(
+        ()=>{
+            URL.revokeObjectURL(
+                url
+            );
+        },
+        1000
+    );
 }
 
 
-/* =========================================================
+/* ============================================================
+   RESET MODEL
+============================================================ */
+
+function resetBPModel(){
+
+    if(
+        !confirm(
+            "هل تريد حذف نموذج ضغط الدم الحالي؟"
+        )
+    ){
+
+        return;
+    }
+
+
+    localStorage.removeItem(
+        BP_MODEL_KEY
+    );
+
+
+    renderModelStatus(
+        null
+    );
+
+
+    latestBP=
+        null;
+
+
+    bpEl.textContent=
+        "--";
+
+
+    bpSubEl.textContent=
+        "يحتاج نموذج معايرة صالح";
+}
+
+
+/* ============================================================
    EVENTS
-========================================================= */
+============================================================ */
 
 startBtn.addEventListener(
-  "click",
-  startCamera
+    "click",
+    startCamera
 );
+
+
+assessBtn.addEventListener(
+    "click",
+    startAssessment
+);
+
 
 stopBtn.addEventListener(
-  "click",
-  stopCamera
-);
-
-scanBtn.addEventListener(
-  "click",
-  startScan
-);
-
-reportBtn.addEventListener(
-  "click",
-  buildReport
-);
-
-recordStart.addEventListener(
-  "click",
-  startRecordingSession
-);
-
-recordSave.addEventListener(
-  "click",
-  saveCurrentRecording
-);
-
-document.getElementById(
-  "exportCSV"
-).addEventListener(
-  "click",
-  exportCSV
-);
-
-document.getElementById(
-  "exportJSON"
-).addEventListener(
-  "click",
-  exportJSON
-);
-
-document.getElementById(
-  "clearSessions"
-).addEventListener(
-  "click",
-  ()=>{
-    if(
-      confirm(
-        "حذف جميع Sessions المحفوظة محليًا؟"
-      )
-    ){
-
-      localStorage.removeItem(
-        STORAGE_KEY
-      );
-
-      renderSessions();
-    }
-  }
+    "click",
+    stopCamera
 );
 
 
-sessionTableBody.addEventListener(
-  "click",
-  event=>{
-
-    const button=
-      event.target.closest(
-        "button[data-action]"
-      );
-
-
-    if(!button){
-      return;
-    }
-
-
-    if(
-      button.dataset.action===
-      "delete"
-    ){
-
-      deleteSession(
-        button.dataset.id
-      );
-    }
-  }
+trainModelBtn.addEventListener(
+    "click",
+    trainBPModel
 );
 
 
-[
-  "pName",
-  "pAge",
-  "pSex",
-  "duration",
-  "pNotes"
-].forEach(
-  id=>{
-
-    const element=
-      document.getElementById(
-        id
-      );
-
-
-    element.addEventListener(
-      "input",
-      ()=>{
-        if(currentBpm){
-          runMIMOFusion();
-        }
-      }
-    );
-
-
-    element.addEventListener(
-      "change",
-      ()=>{
-        if(currentBpm){
-          runMIMOFusion();
-        }
-      }
-    );
-  }
+exportModelBtn.addEventListener(
+    "click",
+    exportBPModel
 );
 
 
-document
-  .querySelectorAll(
-    ".chip input"
-  )
-  .forEach(
-    input=>{
+resetModelBtn.addEventListener(
+    "click",
+    resetBPModel
+);
 
-      input.addEventListener(
-        "change",
-        ()=>{
-          if(currentBpm){
-            runMIMOFusion();
-          }
-        }
-      );
+
+researchToggle.addEventListener(
+    "click",
+    ()=>{
+        researchPanel.classList.toggle(
+            "open"
+        );
+
+        updateResearchOutput();
     }
 );
 
+
+/* ============================================================
+   RESIZE
+============================================================ */
 
 window.addEventListener(
-  "resize",
-  ()=>{
-    drawSignal();
-  }
-);
-
-
-window.addEventListener(
-  "beforeunload",
-  ()=>{
-    if(stream){
-
-      stream
-        .getTracks()
-        .forEach(
-          track=>track.stop()
+    "resize",
+    ()=>{
+        drawFaceGuide(
+            assessing
+                ? "measuring"
+                :
+                foreheadDetected
+                    ? "good"
+                    : "waiting"
         );
     }
-  }
 );
 
 
-/* =========================================================
-   INITIALIZATION
-========================================================= */
+/* ============================================================
+   INITIALIZE
+============================================================ */
 
-renderSessions();
+renderHistory();
 
-resizeSignalCanvas();
 
-drawSignal();
+renderModelStatus(
+    getBPModel()
+);
 
-setStatus(
-  "جاهز",
-  "idle"
+
+drawFaceGuide(
+    "waiting"
+);
+
+
+console.log(
+    "Doctor MIMO 8.0 initialized."
 );
 
 </script>
