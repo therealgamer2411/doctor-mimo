@@ -209,31 +209,184 @@ function applyWindow(signal){const w=hann(signal.length);return signal.map((v,i)
 
 /* Spectral + autocorrelation estimator. */
 function estimateBpm(signal,times){
-    if(signal.length<80||signal.length!==times.length)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,spectralStrength:0,periodicity:0};
-    const uniform=resampleUniform(signal,times,20);if(uniform.data.length<80)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,spectralStrength:0,periodicity:0};
-    let x=bandpass(uniform.data,getActualFs(uniform.times));const m=mean(x),sd=std(x);if(sd<1e-8)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,spectralStrength:0,periodicity:0};
-    x=x.map(v=>(v-m)/sd);const windowed=applyWindow(x);const fs=getActualFs(uniform.times);let bestPower=-Infinity,bestFreq=null;const powers=[];
-    for(let bpm=45;bpm<=150;bpm+=.5){const f=bpm/60;let re=0,im=0;for(let i=0;i<windowed.length;i++){const ph=2*Math.PI*f*uniform.times[i];re+=windowed[i]*Math.cos(ph);im+=windowed[i]*Math.sin(ph);}const p=re*re+im*im;powers.push({bpm,power:p});if(p>bestPower){bestPower=p;bestFreq=f;}}
-    if(!finite(bestFreq))return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,spectralStrength:0,periodicity:0};
-    const sorted=[...powers].sort((a,b)=>b.power-a.power),top=sorted.slice(0,5);const background=median(powers.filter(p=>Math.abs(p.bpm-bestFreq*60)>8).map(p=>p.power));
-    const spectralStrength=clamp(10*Math.log10((bestPower+1e-9)/(background+1e-9))/16,0,1);
+    if(signal.length<80||signal.length!==times.length)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,validatedAutoBpm:null,spectralStrength:0,periodicity:0};
 
-    /* Normalized autocorrelation in the physiological band. */
-    let bestLag=-1,bestCorr=-Infinity;
-    const minLag=Math.floor(fs/(150/60)),maxLag=Math.ceil(fs/(45/60));
-    for(let lag=minLag;lag<=maxLag;lag++){
-        let a=0,b=0,aa=0,bb=0,count=0;
-        for(let i=lag;i<x.length;i++){const u=x[i],v=x[i-lag];a+=u;b+=v;aa+=u*u;bb+=v*v;count++;}
-        if(count>10){a/=count;b/=count;let num=0,da=0,db=0;for(let i=lag;i<x.length;i++){const u=x[i]-a,v=x[i-lag]-b;num+=u*v;da+=u*u;db+=v*v;}const corr=num/Math.sqrt((da+1e-9)*(db+1e-9));if(corr>bestCorr){bestCorr=corr;bestLag=lag;}}
+    const uniform=resampleUniform(signal,times,20);
+    if(uniform.data.length<80)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,validatedAutoBpm:null,spectralStrength:0,periodicity:0};
+
+    let x=bandpass(uniform.data,getActualFs(uniform.times));
+    const m=mean(x),sd=std(x);
+    if(!finite(sd)||sd<1e-8)return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,validatedAutoBpm:null,spectralStrength:0,periodicity:0};
+
+    x=x.map(v=>(v-m)/sd);
+
+    const windowed=applyWindow(x);
+    const fs=getActualFs(uniform.times);
+
+    /* ========================================================
+       SPECTRAL ESTIMATE — PRIMARY BPM SOURCE
+       ======================================================== */
+    let bestPower=-Infinity;
+    let bestFreq=null;
+    const powers=[];
+
+    for(let bpm=45;bpm<=150;bpm+=.5){
+        const f=bpm/60;
+        let re=0,im=0;
+
+        for(let i=0;i<windowed.length;i++){
+            const ph=2*Math.PI*f*(uniform.times[i]-uniform.times[0]);
+            re+=windowed[i]*Math.cos(ph);
+            im+=windowed[i]*Math.sin(ph);
+        }
+
+        const power=re*re+im*im;
+        powers.push({bpm,power});
+
+        if(power>bestPower){
+            bestPower=power;
+            bestFreq=f;
+        }
     }
-    const autoBpm=bestLag>0?60*fs/bestLag:null;const periodicity=clamp((bestCorr+1)/2,0,1);
-    const spectralBpm=bestFreq*60;const disagree=finite(autoBpm)?Math.abs(spectralBpm-autoBpm):99;
-    let bpm=spectralBpm;
-    if(finite(autoBpm)&&disagree<=10)bpm=.65*spectralBpm+.35*autoBpm;
-    /* Reject a lone low-frequency spectral winner when periodicity points elsewhere. */
-    if(spectralBpm<65&&finite(autoBpm)&&autoBpm>=70&&Math.abs(spectralBpm-autoBpm)>8){bpm=autoBpm;}
-    const quality=Math.round(clamp(spectralStrength*.55+periodicity*.35+clamp(1-disagree/20,0,1)*.10,0,1)*100);
-    return{bpm,quality,spectralBpm,autoBpm,spectralStrength,periodicity,top};
+
+    if(!finite(bestFreq))return{bpm:null,quality:0,spectralBpm:null,autoBpm:null,validatedAutoBpm:null,spectralStrength:0,periodicity:0};
+
+    const spectralBpm=bestFreq*60;
+
+    const background=
+        median(
+            powers
+                .filter(p=>Math.abs(p.bpm-spectralBpm)>8)
+                .map(p=>p.power)
+        );
+
+    const spectralStrength=clamp(
+        10*Math.log10((bestPower+1e-9)/(background+1e-9))/16,
+        0,
+        1
+    );
+
+    /* ========================================================
+       AUTOCORRELATION — VALIDATION ONLY
+       It must NOT override the spectral result when it lands
+       on a harmonic or sub-harmonic (e.g. 44, 170).
+       ======================================================== */
+    let bestLag=-1;
+    let bestCorr=-Infinity;
+
+    const minLag=Math.floor(fs/(150/60));
+    const maxLag=Math.ceil(fs/(45/60));
+
+    for(let lag=minLag;lag<=maxLag;lag++){
+        let a=0,b=0,count=0;
+
+        for(let i=lag;i<x.length;i++){
+            a+=x[i];
+            b+=x[i-lag];
+            count++;
+        }
+
+        if(count<=10)continue;
+
+        a/=count;
+        b/=count;
+
+        let num=0,da=0,db=0;
+
+        for(let i=lag;i<x.length;i++){
+            const u=x[i]-a;
+            const v=x[i-lag]-b;
+            num+=u*v;
+            da+=u*u;
+            db+=v*v;
+        }
+
+        const corr=
+            num/
+            Math.sqrt(
+                (da+1e-9)*
+                (db+1e-9)
+            );
+
+        if(corr>bestCorr){
+            bestCorr=corr;
+            bestLag=lag;
+        }
+    }
+
+    const autoBpm=
+        bestLag>0
+            ?60*fs/bestLag
+            :null;
+
+    /*
+     * Convert harmonic/sub-harmonic autocorrelation results
+     * back toward the spectral fundamental for diagnostics.
+     * The corrected value is NEVER used as the primary BPM.
+     */
+    let validatedAutoBpm=autoBpm;
+
+    if(finite(autoBpm)){
+        const ratios=[
+            {ratio:1,value:autoBpm},
+            {ratio:2,value:autoBpm/2},
+            {ratio:.5,value:autoBpm*2},
+            {ratio:3,value:autoBpm/3},
+            {ratio:1/3,value:autoBpm*3}
+        ];
+
+        let bestRatio=null;
+        let bestDistance=Infinity;
+
+        for(const item of ratios){
+            const value=item.value;
+            if(!finite(value)||value<45||value>150)continue;
+            const distance=Math.abs(value-spectralBpm);
+            if(distance<bestDistance){
+                bestDistance=distance;
+                bestRatio=value;
+            }
+        }
+
+        if(finite(bestRatio)&&bestDistance<=12){
+            validatedAutoBpm=bestRatio;
+        }else{
+            validatedAutoBpm=null;
+        }
+    }
+
+    const periodicity=clamp((bestCorr+1)/2,0,1);
+
+    /*
+     * Primary BPM is always spectral.
+     * Autocorrelation only increases confidence when it validates
+     * the same fundamental frequency (including harmonic correction).
+     */
+    const autoAgreement=
+        finite(validatedAutoBpm)
+            ?clamp(1-Math.abs(spectralBpm-validatedAutoBpm)/12,0,1)
+            :0;
+
+    const quality=Math.round(
+        clamp(
+            spectralStrength*.60+
+            periodicity*.25+
+            autoAgreement*.15,
+            0,
+            1
+        )*100
+    );
+
+    return{
+        bpm:spectralBpm,
+        quality,
+        spectralBpm,
+        autoBpm,
+        validatedAutoBpm,
+        spectralStrength,
+        periodicity,
+        top:[...powers].sort((a,b)=>b.power-a.power).slice(0,5)
+    };
 }
 
 function normalize(values){const m=mean(values);if(m<=1e-9)return[];return values.map(v=>v/m);}
@@ -326,13 +479,13 @@ function stopCamera(){
 }
 
 function getProductSessions(){try{const raw=localStorage.getItem(PRODUCT_STORAGE_KEY);if(!raw)return[];const data=JSON.parse(raw);return Array.isArray(data)?data:[]}catch{return[]}}
-function saveProductSession(){if(!latestAnalysis)return;const session={id:"DM-"+Date.now(),timestamp:new Date().toISOString(),patient_name:document.getElementById("patientName").value.trim(),patient_id:document.getElementById("patientId").value.trim(),bpm:latestAnalysis.bpm,quality:latestAnalysis.quality,confidence:latestAnalysis.confidence,sample_rate:latestAnalysis.sample_rate,duration:latestAnalysis.duration,samples:latestAnalysis.samples,lighting:latestLighting,face_stability:faceStability,methods:{green:latestAnalysis.green.bpm,chrom:latestAnalysis.chrom.bpm,pos:latestAnalysis.pos.bpm},method_quality:{green:latestAnalysis.green.quality,chrom:latestAnalysis.chrom.quality,pos:latestAnalysis.pos.quality},spectral:{green:latestAnalysis.green.spectralBpm,chrom:latestAnalysis.chrom.spectralBpm,pos:latestAnalysis.pos.spectralBpm},autocorrelation:{green:latestAnalysis.green.autoBpm,chrom:latestAnalysis.chrom.autoBpm,pos:latestAnalysis.pos.autoBpm},raw_times:[...signalTimes],raw_green:[...greenSignal]};const sessions=getProductSessions();sessions.unshift(session);localStorage.setItem(PRODUCT_STORAGE_KEY,JSON.stringify(sessions));renderHistory();updateResearchOutput();}
+function saveProductSession(){if(!latestAnalysis)return;const session={id:"DM-"+Date.now(),timestamp:new Date().toISOString(),patient_name:document.getElementById("patientName").value.trim(),patient_id:document.getElementById("patientId").value.trim(),bpm:latestAnalysis.bpm,quality:latestAnalysis.quality,confidence:latestAnalysis.confidence,sample_rate:latestAnalysis.sample_rate,duration:latestAnalysis.duration,samples:latestAnalysis.samples,lighting:latestLighting,face_stability:faceStability,methods:{green:latestAnalysis.green.bpm,chrom:latestAnalysis.chrom.bpm,pos:latestAnalysis.pos.bpm},method_quality:{green:latestAnalysis.green.quality,chrom:latestAnalysis.chrom.quality,pos:latestAnalysis.pos.quality},spectral:{green:latestAnalysis.green.spectralBpm,chrom:latestAnalysis.chrom.spectralBpm,pos:latestAnalysis.pos.spectralBpm},autocorrelation:{green:latestAnalysis.green.autoBpm,chrom:latestAnalysis.chrom.autoBpm,pos:latestAnalysis.pos.autoBpm},validated_autocorrelation:{green:latestAnalysis.green.validatedAutoBpm,chrom:latestAnalysis.chrom.validatedAutoBpm,pos:latestAnalysis.pos.validatedAutoBpm},raw_times:[...signalTimes],raw_green:[...greenSignal]};const sessions=getProductSessions();sessions.unshift(session);localStorage.setItem(PRODUCT_STORAGE_KEY,JSON.stringify(sessions));renderHistory();updateResearchOutput();}
 
 function renderHistory(){const sessions=getProductSessions();historyBody.innerHTML="";if(!sessions.length){historyBody.innerHTML='<tr><td colspan="5" style="padding:18px;color:#8190a2;">لا توجد سجلات حتى الآن.</td></tr>';return;}for(const s of sessions.slice(0,30)){const tr=document.createElement("tr");tr.innerHTML=`<td>${new Date(s.timestamp).toLocaleString("ar-EG")}</td><td>${escapeHtml(s.patient_name||"--")}</td><td>${finite(Number(s.bpm))?Number(s.bpm).toFixed(1):"--"}</td><td>${finite(Number(s.quality))?Number(s.quality).toFixed(0)+"%":"--"}</td><td>${finite(Number(s.confidence))?Number(s.confidence).toFixed(0)+"%":"--"}</td>`;historyBody.appendChild(tr);}updateResearchOutput();}
 
 function updateResearchOutput(){
     const sessions=getProductSessions();
-    researchOutput.value=JSON.stringify({version:"8.0-final-bpm-only",note:"Unified 10s window + uniform resampling + Hann + spectral/autocorrelation consensus. No BP measurement.",latest:latestAnalysis,sessions},null,2);
+    researchOutput.value=JSON.stringify({version:"8.0-final-bpm-only",note:"Unified 10s window + uniform resampling + Hann + spectral-primary BPM with autocorrelation validation/harmonic rejection. No BP measurement.",latest:latestAnalysis,sessions},null,2);
 }
 
 startBtn.addEventListener("click",startCamera);assessBtn.addEventListener("click",startAssessment);stopBtn.addEventListener("click",stopCamera);researchToggle.addEventListener("click",()=>{researchPanel.classList.toggle("open");updateResearchOutput();});
