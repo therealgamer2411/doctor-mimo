@@ -2659,76 +2659,43 @@ function estimateSignal(
   }
 
 
-  if(times.length!==signal.length){
-    return null;
-  }
-
-
   const duration=
     (
-      times[times.length-1]-
+      times[
+        times.length-1
+      ]-
       times[0]
     )/1000;
 
 
-  if(
-    !Number.isFinite(duration) ||
-    duration<3.5
-  ){
+  if(duration<3.5){
     return null;
   }
-
-
-  /*
-    IMPORTANT:
-    Use the real acquisition time only to build a
-    uniform signal. Do not infer a fixed FPS.
-  */
-  const targetN=
-    Math.max(
-      220,
-      Math.min(
-        420,
-        Math.round(
-          duration*24
-        )
-      )
-    );
 
 
   const uniform=
     resampleUniform(
       signal,
       times,
-      targetN
+      320
     );
 
 
-  if(uniform.length<120){
+  if(uniform.length<100){
     return null;
   }
 
 
-  /* ---------------------------------------------------------
-     SIGNAL PREPARATION
-     Remove slow illumination / motion drift, then apply a
-     lightweight physiological band-pass.
-  --------------------------------------------------------- */
-
-  let x=
-    detrend(uniform);
-
-
-  x=
+  const processed=
     smooth(
-      x,
+      detrend(uniform),
       2
     );
 
 
   const fs=
     (
-      x.length-1
+      processed.length-1
     )/
     Math.max(
       .001,
@@ -2736,531 +2703,98 @@ function estimateSignal(
     );
 
 
-  if(
-    !Number.isFinite(fs) ||
-    fs<8 ||
-    fs>40
-  ){
-    return null;
-  }
-
-
-  /*
-    First-order high-pass around 0.65 Hz.
-    This suppresses breathing, head drift and
-    slow illumination changes without requiring
-    external libraries.
-  */
-  function highPass(
-    input,
-    cutoff
-  ){
-
-    const dt=1/fs;
-    const rc=1/(2*Math.PI*cutoff);
-    const alpha=rc/(rc+dt);
-
-    const out=new Array(input.length);
-
-    out[0]=0;
-
-    for(let i=1;i<input.length;i++){
-
-      out[i]=
-        alpha*
-        (
-          out[i-1]+
-          input[i]-
-          input[i-1]
-        );
-    }
-
-    return out;
-  }
-
-
-  /*
-    First-order low-pass around 3 Hz to suppress
-    camera/compression noise.
-  */
-  function lowPass(
-    input,
-    cutoff
-  ){
-
-    const dt=1/fs;
-    const rc=1/(2*Math.PI*cutoff);
-    const alpha=dt/(rc+dt);
-
-    const out=new Array(input.length);
-
-    out[0]=input[0];
-
-    for(let i=1;i<input.length;i++){
-
-      out[i]=
-        out[i-1]+
-        alpha*
-        (
-          input[i]-
-          out[i-1]
-        );
-    }
-
-    return out;
-  }
-
-
-  x=
-    highPass(
-      x,
-      .65
-    );
-
-
-  x=
-    lowPass(
-      x,
-      3.0
-    );
-
-
-  x=
-    detrend(x);
-
-
-  const signalStd=
-    std(x);
-
-
-  if(
-    !Number.isFinite(signalStd) ||
-    signalStd<1e-5
-  ){
-    return null;
-  }
-
-
-  /* ---------------------------------------------------------
-     SPECTRAL SEARCH
-     45–150 BPM, 0.5 BPM resolution.
-  --------------------------------------------------------- */
-
-  function dft(
-    frequency
-  ){
-
-    let re=0;
-    let im=0;
-
-    const omega=
-      2*Math.PI*frequency/fs;
-
-
-    for(
-      let n=0;
-      n<x.length;
-      n++
-    ){
-
-      re +=
-        x[n]*
-        Math.cos(
-          omega*n
-        );
-
-      im -=
-        x[n]*
-        Math.sin(
-          omega*n
-        );
-    }
-
-
-    return re*re+im*im;
-  }
-
-
-  const spectral=[];
+  let bestFrequency=0;
+  let bestPower=-Infinity;
+  let secondPower=-Infinity;
 
 
   for(
-    let bpm=45;
-    bpm<=150;
-    bpm+=.5
+    let f=.70;
+    f<=3.00;
+    f+=.01
   ){
 
-    spectral.push({
-
-      bpm,
-
-      power:dft(
-        bpm/60
-      )
-    });
-  }
-
-
-  spectral.sort(
-    (a,b)=>
-      b.power-a.power
-  );
-
-
-  /* ---------------------------------------------------------
-     NORMALIZED AUTOCORRELATION SEARCH
-     Search all physiological lags instead of checking only
-     the DFT winner. This is the main protection against a
-     low-frequency spectral false peak.
-  --------------------------------------------------------- */
-
-  function autocorr(
-    lag
-  ){
-
-    if(
-      lag<2 ||
-      lag>=x.length-3
-    ){
-      return 0;
-    }
-
-    let xy=0;
-    let xx=0;
-    let yy=0;
-
-    for(
-      let i=lag;
-      i<x.length;
-      i++
-    ){
-
-      const a=x[i];
-      const b=x[i-lag];
-
-      xy += a*b;
-      xx += a*a;
-      yy += b*b;
-    }
-
-    if(
-      xx<=1e-12 ||
-      yy<=1e-12
-    ){
-      return 0;
-    }
-
-    return xy/
-      Math.sqrt(
-        xx*yy
-      );
-  }
-
-
-  const ac=[];
-
-
-  for(
-    let bpm=45;
-    bpm<=150;
-    bpm+=.5
-  ){
-
-    const lag=
-      Math.round(
-        fs*60/bpm
+    const power=
+      dftPower(
+        processed,
+        fs,
+        f
       );
 
-    ac.push({
 
-      bpm,
+    if(power>bestPower){
 
-      value:clamp(
-        autocorr(lag),
-        -1,
-        1
-      )
-    });
-  }
+      secondPower=
+        bestPower;
 
+      bestPower=
+        power;
 
-  ac.sort(
-    (a,b)=>
-      b.value-a.value
-  );
+      bestFrequency=
+        f;
 
-
-  const spectralBest=
-    spectral[0];
-
-
-  const spectralSecond=
-    spectral.find(
-      p=>
-        Math.abs(
-          p.bpm-
-          spectralBest.bpm
-        )>=4
-    )||spectral[1];
-
-
-  const acBest=
-    ac[0];
-
-
-  /* ---------------------------------------------------------
-     Candidate pool
-  --------------------------------------------------------- */
-
-  const candidateBpms=[];
-
-  candidateBpms.push(
-    spectralBest.bpm
-  );
-
-  candidateBpms.push(
-    acBest.bpm
-  );
-
-
-  /* Add nearby spectral peaks. */
-  for(
-    const item of spectral.slice(0,8)
-  ){
-
-    if(
-      candidateBpms.every(
-        v=>
-          Math.abs(
-            v-item.bpm
-          )>3
-      )
+    }else if(
+      power>secondPower
     ){
 
-      candidateBpms.push(
-        item.bpm
-      );
+      secondPower=
+        power;
     }
   }
 
 
-  /* ---------------------------------------------------------
-     Score each candidate using BOTH spectral and temporal
-     periodic evidence.
-  --------------------------------------------------------- */
-
-  let best=null;
+  const bpm=
+    bestFrequency*60;
 
 
-  const backgroundPowers=
-    spectral
-      .slice(
-        8,
-        Math.min(
-          55,
-          spectral.length
-        )
-      )
-      .map(
-        x=>x.power
-      );
-
-  const backgroundMedian=
-    median(
-      backgroundPowers
-    )||1e-9;
-
-
-  for(
-    const bpm of candidateBpms
+  if(
+    !Number.isFinite(bpm) ||
+    bpm<42 ||
+    bpm>180
   ){
-
-    const spectrumItem=
-      spectral.reduce(
-        (bestItem,item)=>
-          Math.abs(
-            item.bpm-bpm
-          )<Math.abs(
-            bestItem.bpm-bpm
-          )
-            ? item
-            : bestItem,
-        spectral[0]
-      );
-
-
-    const lag=
-      Math.round(
-        fs*60/bpm
-      );
-
-
-    const acValue=
-      clamp(
-        autocorr(lag),
-        -1,
-        1
-      );
-
-
-    const peakRatio=
-      (
-        spectrumItem.power+
-        1e-9
-      )/
-      backgroundMedian;
-
-
-    const spectralStrength=
-      clamp(
-        Math.log(
-          Math.max(
-            1,
-            peakRatio
-          )
-        )/
-        Math.log(12),
-        0,
-        1
-      );
-
-
-    const periodicityStrength=
-      clamp(
-        (acValue+.05)/.80,
-        0,
-        1
-      );
-
-
-    /*
-      Distance between spectral and autocorrelation
-      estimates is itself evidence.
-    */
-    const crossAgreement=
-      clamp(
-        1-
-        Math.abs(
-          bpm-acBest.bpm
-        )/12,
-        0,
-        1
-      );
-
-
-    const score=
-      .48*spectralStrength+
-      .37*periodicityStrength+
-      .15*crossAgreement;
-
-
-    if(
-      !best ||
-      score>best.score
-    ){
-
-      best={
-
-        bpm,
-
-        score,
-
-        spectralStrength,
-
-        periodicityStrength,
-
-        crossAgreement,
-
-        acValue,
-
-        peakRatio
-      };
-    }
-  }
-
-
-  if(!best){
     return null;
   }
 
 
-  /* ---------------------------------------------------------
-     Final anti-artifact checks.
-  --------------------------------------------------------- */
-
-  const winnerSpread=
-    Math.abs(
-      best.bpm-
-      acBest.bpm
+  const peakRatio=
+    bestPower/
+    (
+      secondPower+
+      1e-9
     );
 
 
-  const second=
-    spectral.find(
-      item=>
-        Math.abs(
-          item.bpm-best.bpm
-        )>=5
+  const periodicity=
+    autocorrelationScore(
+      processed,
+      fs,
+      bpm
     );
-
-
-  const separation=
-    second
-      ?
-        second.power/
-        (
-          spectrumItemPower(
-            spectral,
-            best.bpm
-          )+
-          1e-9
-        )
-      : 0;
-
-
-  /* A low-frequency candidate that has weak periodicity is rejected. */
-  if(
-    best.periodicityStrength<.18 &&
-    best.spectralStrength<.30
-  ){
-
-    return null;
-  }
-
-
-  /*
-    If the spectral and autocorrelation estimates strongly
-    disagree, do not blindly report the spectral peak.
-  */
-  if(
-    winnerSpread>18 &&
-    best.periodicityStrength<.60
-  ){
-
-    return null;
-  }
 
 
   const peakScore=
     clamp(
-      best.spectralStrength,
+      (peakRatio-1)/1.8,
       0,
       1
     );
+
 
   const periodicityScore=
     clamp(
-      best.periodicityStrength,
+      (periodicity+1)/2,
       0,
       1
     );
 
+
   const amplitudeScore=
     clamp(
-      (signalStd-.015)/.060,
+      (std(processed)-.45)/1.1,
       0,
       1
     );
+
 
   const lightingScore=
     clamp(
@@ -3272,6 +2806,7 @@ function estimateSignal(
       1
     );
 
+
   const faceScore=
     clamp(
       currentFaceScore/100,
@@ -3280,19 +2815,18 @@ function estimateSignal(
     );
 
 
+  /*
+    Signal Quality only.
+    No reference BPM is used here.
+  */
   const quality=
     100*
     clamp(
-      .42*peakScore+
-      .30*periodicityScore+
-      .12*clamp(
-        best.crossAgreement,
-        0,
-        1
-      )+
-      .09*amplitudeScore+
-      .04*lightingScore+
-      .03*faceScore,
+      .43*peakScore+
+      .27*periodicityScore+
+      .15*amplitudeScore+
+      .08*lightingScore+
+      .07*faceScore,
       0,
       1
     );
@@ -3300,59 +2834,19 @@ function estimateSignal(
 
   return {
 
-    bpm:best.bpm,
+    bpm,
 
     quality:
       Math.round(
         quality
       ),
 
-    periodicity:
-      best.acValue,
+    periodicity,
 
-    peakRatio:
-      best.peakRatio,
+    peakRatio,
 
-    fs,
-
-    spectralStrength:
-      best.spectralStrength,
-
-    periodicityStrength:
-      best.periodicityStrength,
-
-    crossAgreement:
-      best.crossAgreement
+    fs
   };
-}
-
-
-function spectrumItemPower(
-  spectral,
-  bpm
-){
-
-  let best=spectral[0];
-
-  for(
-    const item of spectral
-  ){
-
-    if(
-      Math.abs(
-        item.bpm-bpm
-      )<Math.abs(
-        best.bpm-bpm
-      )
-    ){
-
-      best=item;
-    }
-  }
-
-  return best
-    ? best.power
-    : 0;
 }
 
 
