@@ -458,14 +458,6 @@ button{
     font-size:8px;
 }
 
-.bpCard{
-    grid-column:span 2;
-}
-
-.bpValue{
-    font-size:37px;
-}
-
 
 /* =========================================================
    PATIENT
@@ -666,44 +658,6 @@ button{
 
 
 /* =========================================================
-   MODEL
-========================================================== */
-
-.modelBox{
-    display:grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap:8px;
-}
-
-.modelItem{
-    border:1px solid var(--line);
-
-    background:var(--surface-soft);
-
-    border-radius:12px;
-
-    padding:11px;
-}
-
-.modelItem span{
-    display:block;
-
-    color:var(--muted);
-
-    font-size:8px;
-
-    margin-bottom:6px;
-}
-
-.modelItem strong{
-    font-size:17px;
-}
-
-
-/* =========================================================
    HISTORY
 ========================================================== */
 
@@ -718,7 +672,7 @@ button{
 table{
     width:100%;
 
-    min-width:700px;
+    min-width:620px;
 
     border-collapse:collapse;
 
@@ -836,20 +790,12 @@ tr:last-child td{
         grid-template-columns:1fr 1fr;
     }
 
-    .bpCard{
-        grid-column:span 2;
-    }
-
     .formGrid{
         grid-template-columns:1fr;
     }
 
     .field.full{
         grid-column:auto;
-    }
-
-    .modelBox{
-        grid-template-columns:1fr 1fr;
     }
 }
 
@@ -930,16 +876,9 @@ tr:last-child td{
                muted></video>
 
 
-        <!--
-            USER GUIDANCE CANVAS
-
-            هذا Canvas إرشادي للمستخدم فقط.
-            لا يمثل ROI التقنية.
-        -->
         <canvas id="faceGuideCanvas"></canvas>
 
 
-        <!-- Hidden technical canvas -->
         <canvas id="analysisCanvas"></canvas>
 
 
@@ -1038,7 +977,6 @@ tr:last-child td{
 
             <div class="vitalSmall">
                 %
-
             </div>
 
         </div>
@@ -1059,30 +997,6 @@ tr:last-child td{
 
             <div class="vitalSmall">
                 %
-
-            </div>
-
-        </div>
-
-
-        <div class="vital bpCard">
-
-            <div class="vitalLabel">
-                ضغط الدم التقديري
-            </div>
-
-            <div id="bp"
-                 class="vitalValue bpValue">
-
-                --
-
-            </div>
-
-            <div id="bpSub"
-                 class="vitalSmall">
-
-                يحتاج نموذج معايرة صالح
-
             </div>
 
         </div>
@@ -1305,7 +1219,6 @@ tr:last-child td{
 
             <span id="confidenceLabel">
                 --
-
             </span>
 
         </div>
@@ -1343,103 +1256,6 @@ tr:last-child td{
 </section>
 
 </main>
-
-
-
-<!-- =========================================================
-     BP CALIBRATION
-========================================================== -->
-
-<section class="card"
-         style="margin-top:16px;">
-
-    <div class="cardHead">
-
-        <h2>
-            Blood Pressure Intelligence
-        </h2>
-
-        <p>
-            Research calibration engine
-        </p>
-
-    </div>
-
-
-    <div class="section">
-
-        <div class="modelBox">
-
-
-            <div class="modelItem">
-
-                <span>
-                    Calibration Sessions
-                </span>
-
-                <strong id="calibrationCount">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="modelItem">
-
-                <span>
-                    Model Status
-                </span>
-
-                <strong id="modelState">
-                    Not Ready
-                </strong>
-
-            </div>
-
-
-        </div>
-
-
-        <div class="actions"
-             style="padding:11px 0 0;">
-
-            <button id="trainModelBtn"
-                    class="btn btnPrimary">
-
-                Build BP Model
-
-            </button>
-
-
-            <button id="exportModelBtn"
-                    class="btn">
-
-                Export Model
-
-            </button>
-
-
-            <button id="resetModelBtn"
-                    class="btn btnDanger">
-
-                Reset Model
-
-            </button>
-
-        </div>
-
-
-        <div id="modelMessage"
-             class="scanStatus warning"
-             style="margin:0;">
-
-            النموذج غير معاير حاليًا.
-
-        </div>
-
-    </div>
-
-</section>
 
 
 
@@ -1483,10 +1299,6 @@ tr:last-child td{
 
                         <th>
                             BPM
-                        </th>
-
-                        <th>
-                            BP
                         </th>
 
                         <th>
@@ -1549,7 +1361,7 @@ tr:last-child td{
 
 /* ============================================================
    DOCTOR MIMO 8.0
-   PRODUCT ENGINE
+   PRODUCT ENGINE — BPM ONLY
 ============================================================ */
 
 
@@ -1559,9 +1371,6 @@ tr:last-child td{
 
 const PRODUCT_STORAGE_KEY =
     "doctor_mimo_product_sessions_v80";
-
-const BP_MODEL_KEY =
-    "doctor_mimo_bp_model_v80";
 
 
 /* ============================================================
@@ -1617,12 +1426,6 @@ const cameraInstruction =
 const bpmEl =
     document.getElementById("bpm");
 
-const bpEl =
-    document.getElementById("bp");
-
-const bpSubEl =
-    document.getElementById("bpSub");
-
 const qualityEl =
     document.getElementById("quality");
 
@@ -1663,38 +1466,6 @@ const considerationsEl =
 const recommendationEl =
     document.getElementById(
         "recommendation"
-    );
-
-
-const calibrationCount =
-    document.getElementById(
-        "calibrationCount"
-    );
-
-const modelState =
-    document.getElementById(
-        "modelState"
-    );
-
-const modelMessage =
-    document.getElementById(
-        "modelMessage"
-    );
-
-
-const trainModelBtn =
-    document.getElementById(
-        "trainModelBtn"
-    );
-
-const exportModelBtn =
-    document.getElementById(
-        "exportModelBtn"
-    );
-
-const resetModelBtn =
-    document.getElementById(
-        "resetModelBtn"
     );
 
 
@@ -1790,9 +1561,6 @@ let latestLighting =
     0;
 
 let latestAnalysis =
-    null;
-
-let latestBP =
     null;
 
 
@@ -2134,9 +1902,6 @@ function detectForehead(
         foreheadTop.y;
 
 
-    /*
-     * Geometry gate.
-     */
     if(
         browWidth < .08 ||
         foreheadHeight < .025
@@ -2146,9 +1911,6 @@ function detectForehead(
     }
 
 
-    /*
-     * Actual forehead center.
-     */
     const centerX =
         (
             leftBrow.x +
@@ -2161,9 +1923,6 @@ function detectForehead(
         foreheadHeight*.43;
 
 
-    /*
-     * Actual skin measurement region.
-     */
     const roiW =
         clamp(
             browWidth*.72,
@@ -2190,9 +1949,6 @@ function detectForehead(
         roiH/2;
 
 
-    /*
-     * Eye safety.
-     */
     const safetyGap =
         Math.max(
             .012,
@@ -2382,11 +2138,6 @@ function resizeGuideCanvas(){
 }
 
 
-/*
- * This is the user-facing face guide.
- *
- * It is NOT the technical ROI.
- */
 function drawFaceGuide(
     state="waiting"
 ){
@@ -2470,9 +2221,6 @@ function drawFaceGuide(
     }
 
 
-    /*
-     * Head / face contour.
-     */
     guideCtx.strokeStyle =
         stroke;
 
@@ -2499,9 +2247,6 @@ function drawFaceGuide(
     guideCtx.stroke();
 
 
-    /*
-     * Eyes.
-     */
     const eyeY =
         cy -
         faceH*.10;
@@ -2554,9 +2299,6 @@ function drawFaceGuide(
     guideCtx.stroke();
 
 
-    /*
-     * Nose.
-     */
     guideCtx.beginPath();
 
     guideCtx.moveTo(
@@ -2577,9 +2319,6 @@ function drawFaceGuide(
     guideCtx.stroke();
 
 
-    /*
-     * Mouth.
-     */
     guideCtx.beginPath();
 
     guideCtx.moveTo(
@@ -2597,11 +2336,6 @@ function drawFaceGuide(
     guideCtx.stroke();
 
 
-    /*
-     * Forehead guide band.
-     *
-     * This is only a visual cue.
-     */
     const foreheadY =
         cy -
         faceH*.29;
@@ -2649,9 +2383,6 @@ function drawFaceGuide(
     guideCtx.setLineDash([]);
 
 
-    /*
-     * Tiny positioning brackets.
-     */
     const bracket =
         faceW*.06;
 
@@ -2695,9 +2426,6 @@ function drawFaceGuide(
     guideCtx.stroke();
 
 
-    /*
-     * Face-center vertical alignment.
-     */
     guideCtx.strokeStyle =
         "rgba(255,255,255,.12)";
 
@@ -3695,9 +3423,6 @@ function analyzeRPPG(){
         }
 
 
-        /*
-         * Find strongest agreement cluster.
-         */
         let bestCluster=[];
 
 
@@ -3738,10 +3463,6 @@ function analyzeRPPG(){
             );
 
 
-        /*
-         * Preserve the successful
-         * CHROM + POS path.
-         */
         if(
             cp.length===2
         ){
@@ -3799,7 +3520,7 @@ function analyzeRPPG(){
                     )
                 )
 
-                : 0;
+                :0;
 
 
         const agreement=
@@ -3813,7 +3534,6 @@ function analyzeRPPG(){
                 )
 
                 :
-
             bestCluster.length===2
 
                 ? clamp(
@@ -3854,6 +3574,7 @@ function analyzeRPPG(){
             candidates,
 
             sample_rate:fs
+
         };
 
 
@@ -3927,1330 +3648,6 @@ function renderVitals(){
 
 
 /* ============================================================
-   BP FEATURES
-============================================================ */
-
-function extractBPFeatures(){
-
-    if(
-        !latestAnalysis
-    ){
-        return null;
-    }
-
-
-    const window=
-        recentWindow(
-            greenSignal,
-            signalTimes,
-            12
-        );
-
-
-    if(
-        window.data.length<70
-    ){
-        return null;
-    }
-
-
-    const x=
-        detrend(
-            window.data
-        );
-
-
-    const duration=
-        window.times.length>1
-
-            ? window.times[
-                window.times.length-1
-              ]-
-              window.times[0]
-
-            : 0;
-
-
-    const amplitude=
-        Math.max(...x)-
-        Math.min(...x);
-
-
-    const sd=
-        std(x);
-
-
-    const cv=
-        Math.abs(
-            sd/
-            (
-                Math.abs(
-                    mean(x)
-                )+
-                1e-9
-            )
-        );
-
-
-    let crossings=0;
-
-
-    for(
-        let i=1;
-        i<x.length;
-        i++
-    ){
-
-        if(
-            (
-                x[i-1]<=0 &&
-                x[i]>0
-            ) ||
-            (
-                x[i-1]>=0 &&
-                x[i]<0
-            )
-        ){
-
-            crossings++;
-        }
-    }
-
-
-    const crossingRate=
-        crossings/
-        Math.max(
-            duration,
-            1
-        );
-
-
-    const bpm=
-        latestAnalysis.bpm;
-
-
-    const pulsePeriod=
-        bpm>0
-            ?60/bpm
-            :0;
-
-
-    return [
-
-        1,
-
-        bpm,
-
-        amplitude,
-
-        sd,
-
-        cv,
-
-        crossingRate,
-
-        pulsePeriod,
-
-        latestAnalysis.quality,
-
-        faceStability,
-
-        latestLighting,
-
-        bpm*
-        latestAnalysis.quality,
-
-        bpm*
-        faceStability
-    ];
-}
-
-
-/* ============================================================
-   MODEL STORAGE
-============================================================ */
-
-function getBPModel(){
-
-    try{
-
-        const raw=
-            localStorage.getItem(
-                BP_MODEL_KEY
-            );
-
-
-        return raw
-            ?JSON.parse(raw)
-            :null;
-
-    }catch{
-
-        return null;
-    }
-}
-
-
-function storeBPModel(
-    model
-){
-
-    localStorage.setItem(
-        BP_MODEL_KEY,
-        JSON.stringify(
-            model
-        )
-    );
-}
-
-
-/* ============================================================
-   MATRIX SOLVER
-============================================================ */
-
-function solveLinearSystem(
-    A,
-    b
-){
-
-    const n=
-        b.length;
-
-
-    const M=
-        A.map(
-            (row,i)=>
-                [
-                    ...row,
-                    b[i]
-                ]
-        );
-
-
-    for(
-        let col=0;
-        col<n;
-        col++
-    ){
-
-        let pivot=
-            col;
-
-
-        for(
-            let row=col+1;
-            row<n;
-            row++
-        ){
-
-            if(
-                Math.abs(
-                    M[row][col]
-                )>
-                Math.abs(
-                    M[pivot][col]
-                )
-            ){
-
-                pivot=
-                    row;
-            }
-        }
-
-
-        if(
-            Math.abs(
-                M[pivot][col]
-            )<1e-10
-        ){
-
-            return null;
-        }
-
-
-        [
-            M[col],
-            M[pivot]
-        ]=
-        [
-            M[pivot],
-            M[col]
-        ];
-
-
-        const div=
-            M[col][col];
-
-
-        for(
-            let j=col;
-            j<=n;
-            j++
-        ){
-
-            M[col][j]/=
-                div;
-        }
-
-
-        for(
-            let row=0;
-            row<n;
-            row++
-        ){
-
-            if(
-                row===col
-            ){
-                continue;
-            }
-
-
-            const factor=
-                M[row][col];
-
-
-            for(
-                let j=col;
-                j<=n;
-                j++
-            ){
-
-                M[row][j]-=
-                    factor*
-                    M[col][j];
-            }
-        }
-    }
-
-
-    return M.map(
-        row =>
-            row[n]
-    );
-}
-
-
-/* ============================================================
-   RIDGE
-============================================================ */
-
-function ridge(
-    X,
-    y,
-    lambda=.8
-){
-
-    if(
-        !X.length
-    ){
-        return null;
-    }
-
-
-    const p=
-        X[0].length;
-
-
-    const A=
-        Array.from(
-            {
-                length:p
-            },
-            () =>
-                Array(
-                    p
-                ).fill(0)
-        );
-
-
-    const b=
-        Array(p).fill(0);
-
-
-    for(
-        let i=0;
-        i<X.length;
-        i++
-    ){
-
-        for(
-            let j=0;
-            j<p;
-            j++
-        ){
-
-            b[j]+=
-                X[i][j]*
-                y[i];
-
-
-            for(
-                let k=0;
-                k<p;
-                k++
-            ){
-
-                A[j][k]+=
-                    X[i][j]*
-                    X[i][k];
-            }
-        }
-    }
-
-
-    for(
-        let i=0;
-        i<p;
-        i++
-    ){
-
-        A[i][i]+=lambda;
-    }
-
-
-    const weights=
-        solveLinearSystem(
-            A,
-            b
-        );
-
-
-    return weights
-        ?{
-            weights,
-            lambda
-        }
-        :null;
-}
-
-
-/* ============================================================
-   STANDARDIZATION
-============================================================ */
-
-function standardize(
-    X
-){
-
-    const p=
-        X[0].length;
-
-
-    const means=
-        Array(p).fill(0);
-
-    const stds=
-        Array(p).fill(1);
-
-
-    for(
-        let j=0;
-        j<p;
-        j++
-    ){
-
-        means[j]=
-            mean(
-                X.map(
-                    row =>
-                        row[j]
-                )
-            );
-
-
-        stds[j]=
-            std(
-                X.map(
-                    row =>
-                        row[j]
-                )
-            ) ||
-            1;
-    }
-
-
-    const transformed=
-        X.map(
-            row =>
-                row.map(
-                    (value,j)=>
-                        (
-                            value-
-                            means[j]
-                        )/
-                        stds[j]
-                )
-        );
-
-
-    return {
-        transformed,
-        means,
-        stds
-    };
-}
-
-
-/* ============================================================
-   SESSION FEATURE EXTRACTION
-============================================================ */
-
-function featureFromSession(
-    session
-){
-
-    const bpm=
-        Number(
-            session.mimo_bpm ??
-            session.bpm
-        );
-
-
-    const quality=
-        Number(
-            session.signal_quality ??
-            session.quality
-        );
-
-
-    const stability=
-        Number(
-            session.face_stability ??
-            80
-        );
-
-
-    const lighting=
-        Number(
-            session.lighting ??
-            120
-        );
-
-
-    if(
-        !finite(bpm) ||
-        !finite(quality)
-    ){
-
-        return null;
-    }
-
-
-    let rawGreen=
-        Array.isArray(
-            session.raw_green
-        )
-            ?session.raw_green
-            :[];
-
-
-    /*
-     * If raw signal is unavailable,
-     * fall back to neutral morphology.
-     */
-    if(
-        rawGreen.length<70
-    ){
-
-        rawGreen=
-            new Array(100).fill(0);
-    }
-
-
-    const x=
-        detrend(
-            rawGreen
-        );
-
-
-    const amplitude=
-        Math.max(...x)-
-        Math.min(...x);
-
-
-    const sd=
-        std(x);
-
-
-    const cv=
-        Math.abs(
-            sd/
-            (
-                Math.abs(
-                    mean(x)
-                )+
-                1e-9
-            )
-        );
-
-
-    const times=
-        Array.isArray(
-            session.raw_times
-        )
-            ?session.raw_times
-            :[];
-
-
-    const duration=
-        times.length>1
-            ?
-            times[
-                times.length-1
-            ]-
-            times[0]
-            :
-            10;
-
-
-    let crossings=0;
-
-
-    for(
-        let i=1;
-        i<x.length;
-        i++
-    ){
-
-        if(
-            (
-                x[i-1]<=0 &&
-                x[i]>0
-            ) ||
-            (
-                x[i-1]>=0 &&
-                x[i]<0
-            )
-        ){
-
-            crossings++;
-        }
-    }
-
-
-    const crossingRate=
-        crossings/
-        Math.max(
-            duration,
-            1
-        );
-
-
-    const pulsePeriod=
-        bpm>0
-            ?60/bpm
-            :0;
-
-
-    return [
-
-        1,
-        bpm,
-        amplitude,
-        sd,
-        cv,
-        crossingRate,
-        pulsePeriod,
-        quality,
-        stability,
-        lighting,
-        bpm*quality,
-        bpm*stability
-    ];
-}
-
-
-/* ============================================================
-   CALIBRATION SESSIONS
-============================================================ */
-
-function getCalibrationSessions(){
-
-    const keys=[
-
-        "doctor_mimo_research_v60",
-
-        "doctor_mimo_forehead_research_v61",
-
-        "doctor_mimo_research_v54",
-
-        "doctor_mimo_v54_final_sessions"
-
-    ];
-
-
-    const result=[];
-
-
-    for(
-        const key of keys
-    ){
-
-        try{
-
-            const raw=
-                localStorage.getItem(
-                    key
-                );
-
-
-            if(!raw){
-                continue;
-            }
-
-
-            const data=
-                JSON.parse(raw);
-
-
-            if(
-                Array.isArray(data)
-            ){
-
-                for(
-                    const session of data
-                ){
-
-                    if(
-                        session &&
-                        (
-                            finite(
-                                Number(
-                                    session.reference_sys
-                                )
-                            ) ||
-                            finite(
-                                Number(
-                                    session.reference_bpm
-                                )
-                            )
-                        )
-                    ){
-
-                        result.push(
-                            session
-                        );
-                    }
-                }
-            }
-
-        }catch{}
-    }
-
-
-    /*
-     * Also allow product sessions with
-     * explicit reference values later.
-     */
-    try{
-
-        const raw=
-            localStorage.getItem(
-                PRODUCT_STORAGE_KEY
-            );
-
-
-        if(raw){
-
-            const data=
-                JSON.parse(raw);
-
-
-            if(
-                Array.isArray(data)
-            ){
-
-                result.push(
-                    ...data.filter(
-                        session =>
-                            finite(
-                                Number(
-                                    session.reference_sys
-                                )
-                            ) &&
-                            finite(
-                                Number(
-                                    session.reference_dia
-                                )
-                            )
-                    )
-                );
-            }
-        }
-
-    }catch{}
-
-
-    /*
-     * Deduplicate by session_id / id.
-     */
-    const map=
-        new Map();
-
-
-    for(
-        const session of result
-    ){
-
-        const key=
-            session.session_id ||
-            session.id ||
-            (
-                session.timestamp+
-                "_" +
-                session.reference_sys+
-                "_" +
-                session.reference_dia
-            );
-
-
-        map.set(
-            key,
-            session
-        );
-    }
-
-
-    return [
-        ...map.values()
-    ];
-}
-
-
-/* ============================================================
-   TRAIN BP MODEL
-============================================================ */
-
-function trainBPModel(){
-
-    const sessions=
-        getCalibrationSessions();
-
-
-    const usable=
-        sessions.filter(
-            session =>
-
-                finite(
-                    Number(
-                        session.reference_sys
-                    )
-                ) &&
-
-                finite(
-                    Number(
-                        session.reference_dia
-                    )
-                )
-        );
-
-
-    calibrationCount.textContent=
-        usable.length;
-
-
-    if(
-        usable.length<8
-    ){
-
-        modelState.textContent=
-            "Not Ready";
-
-
-        modelMessage.textContent=
-            "نحتاج إلى 8 جلسات مرجعية على الأقل. الأفضل جمع أكثر من 20 جلسة وبمدى ضغط متنوع.";
-
-
-        return;
-    }
-
-
-    const sysValues=
-        usable.map(
-            s =>
-                Number(
-                    s.reference_sys
-                )
-        );
-
-
-    const diaValues=
-        usable.map(
-            s =>
-                Number(
-                    s.reference_dia
-                )
-        );
-
-
-    const sysRange=
-        Math.max(...sysValues)-
-        Math.min(...sysValues);
-
-
-    const diaRange=
-        Math.max(...diaValues)-
-        Math.min(...diaValues);
-
-
-    if(
-        sysRange<10 ||
-        diaRange<6
-    ){
-
-        modelState.textContent=
-            "Not Ready";
-
-
-        modelMessage.textContent=
-            "الجلسات الحالية متقاربة جدًا في ضغط الدم. النموذج يحتاج تنوعًا أكبر قبل التنبؤ.";
-
-
-        return;
-    }
-
-
-    const rawX=[];
-    const ySys=[];
-    const yDia=[];
-
-
-    for(
-        const session of usable
-    ){
-
-        const features=
-            featureFromSession(
-                session
-            );
-
-
-        if(!features){
-            continue;
-        }
-
-
-        rawX.push(
-            features
-        );
-
-
-        ySys.push(
-            Number(
-                session.reference_sys
-            )
-        );
-
-
-        yDia.push(
-            Number(
-                session.reference_dia
-            )
-        );
-    }
-
-
-    if(
-        rawX.length<8
-    ){
-
-        modelState.textContent=
-            "Not Ready";
-
-
-        modelMessage.textContent=
-            "عدد الجلسات الصالحة أقل من المطلوب.";
-
-        return;
-    }
-
-
-    const normalized=
-        standardize(
-            rawX
-        );
-
-
-    const sysModel=
-        ridge(
-            normalized.transformed,
-            ySys
-        );
-
-
-    const diaModel=
-        ridge(
-            normalized.transformed,
-            yDia
-        );
-
-
-    if(
-        !sysModel ||
-        !diaModel
-    ){
-
-        modelState.textContent=
-            "Failed";
-
-        modelMessage.textContent=
-            "تعذر بناء نموذج المعايرة.";
-
-        return;
-    }
-
-
-    let maeSys=0;
-    let maeDia=0;
-
-
-    for(
-        let i=0;
-        i<normalized.transformed.length;
-        i++
-    ){
-
-        const sysPrediction=
-            predict(
-                sysModel,
-                normalized.transformed[i]
-            );
-
-
-        const diaPrediction=
-            predict(
-                diaModel,
-                normalized.transformed[i]
-            );
-
-
-        maeSys +=
-            Math.abs(
-                sysPrediction-
-                ySys[i]
-            );
-
-
-        maeDia +=
-            Math.abs(
-                diaPrediction-
-                yDia[i]
-            );
-    }
-
-
-    maeSys /=
-        normalized.transformed.length;
-
-
-    maeDia /=
-        normalized.transformed.length;
-
-
-    const model={
-
-        version:"8.0",
-
-        created_at:
-            new Date()
-                .toISOString(),
-
-        samples:
-            rawX.length,
-
-        normalization:
-            normalized,
-
-        systolic:
-            sysModel,
-
-        diastolic:
-            diaModel,
-
-        sys_range:[
-            Math.min(...sysValues),
-            Math.max(...sysValues)
-        ],
-
-        dia_range:[
-            Math.min(...diaValues),
-            Math.max(...diaValues)
-        ],
-
-        training_mae_sys:
-            maeSys,
-
-        training_mae_dia:
-            maeDia
-    };
-
-
-    storeBPModel(
-        model
-    );
-
-
-    renderModelStatus(
-        model
-    );
-
-
-    /*
-     * Run prediction if we already have
-     * a current vital assessment.
-     */
-    if(
-        latestAnalysis
-    ){
-
-        runBP();
-    }
-}
-
-
-/* ============================================================
-   MODEL PREDICTION
-============================================================ */
-
-function predict(
-    model,
-    features
-){
-
-    if(
-        !model ||
-        !model.weights
-    ){
-
-        return null;
-    }
-
-
-    let output=0;
-
-
-    for(
-        let i=0;
-        i<model.weights.length;
-        i++
-    ){
-
-        output +=
-            model.weights[i]*
-            features[i];
-    }
-
-
-    return output;
-}
-
-
-/* ============================================================
-   BP PREDICTION
-============================================================ */
-
-function runBP(){
-
-    const model=
-        getBPModel();
-
-
-    if(
-        !model
-    ){
-
-        latestBP=
-            null;
-
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "يحتاج نموذج معايرة صالح";
-
-
-        return;
-    }
-
-
-    const features=
-        extractBPFeatures();
-
-
-    if(!features){
-
-        latestBP=
-            null;
-
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "إشارة غير كافية";
-
-
-        return;
-    }
-
-
-    const normalized=
-        features.map(
-            (value,i)=>
-                (
-                    value-
-                    model.normalization.means[i]
-                )/
-                (
-                    model.normalization.stds[i]||
-                    1
-                )
-        );
-
-
-    const sys=
-        predict(
-            model.systolic,
-            normalized
-        );
-
-
-    const dia=
-        predict(
-            model.diastolic,
-            normalized
-        );
-
-
-    if(
-        !finite(sys) ||
-        !finite(dia)
-    ){
-
-        latestBP=
-            null;
-
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "تعذر حساب التقدير";
-
-
-        return;
-    }
-
-
-    /*
-     * Only expose predictions
-     * inside the calibrated range + margin.
-     */
-    const safeSys=
-        clamp(
-            sys,
-            model.sys_range[0]-15,
-            model.sys_range[1]+15
-        );
-
-
-    const safeDia=
-        clamp(
-            dia,
-            model.dia_range[0]-10,
-            model.dia_range[1]+10
-        );
-
-
-    if(
-        safeSys<=safeDia
-    ){
-
-        latestBP=
-            null;
-
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "تقدير غير مستقر";
-
-
-        return;
-    }
-
-
-    latestBP={
-
-        sys:safeSys,
-
-        dia:safeDia
-    };
-
-
-    bpEl.textContent=
-        `${safeSys.toFixed(0)}/${safeDia.toFixed(0)}`;
-
-
-    bpSubEl.textContent=
-        "AI estimated • calibrated research model";
-}
-
-
-/* ============================================================
-   MODEL STATUS
-============================================================ */
-
-function renderModelStatus(
-    model
-){
-
-    const sessions=
-        getCalibrationSessions();
-
-
-    calibrationCount.textContent=
-        sessions.length;
-
-
-    if(!model){
-
-        modelState.textContent=
-            "Not Ready";
-
-
-        modelMessage.textContent=
-            "النموذج غير معاير حاليًا.";
-
-        return;
-    }
-
-
-    modelState.textContent=
-        "Ready";
-
-
-    modelMessage.textContent=
-        `
-        ${model.samples} paired sessions.
-        Training MAE:
-        SYS ${model.training_mae_sys.toFixed(1)}
-        /
-        DIA ${model.training_mae_dia.toFixed(1)}
-        mmHg.
-        `
-        .trim();
-}
-
-
-/* ============================================================
    PATIENT ASSESSMENT
 ============================================================ */
 
@@ -5320,53 +3717,6 @@ function buildAssessment(){
     }
 
 
-    if(
-        latestBP &&
-        latestBP.sys>=140
-    ){
-
-        risk=
-            "attention";
-
-
-        riskText=
-            "تقدير ضغط الدم الانقباضي مرتفع ويحتاج إلى تأكيد بقياس طبي موثوق.";
-
-
-        considerations=
-            "هذا تقدير بحثي وليس تشخيصًا. لا ينبغي اتخاذ قرار علاجي اعتمادًا عليه وحده.";
-
-
-        recommendation=
-            "تأكيد القراءة بجهاز ضغط معتمد وإجراء تقييم طبي مناسب.";
-    }
-
-
-    if(
-        latestBP &&
-        latestBP.sys<90
-    ){
-
-        risk=
-            "attention";
-
-
-        riskText=
-            "تقدير ضغط الدم الانقباضي منخفض ويحتاج إلى تأكيد طبي.";
-
-
-        considerations=
-            "يجب ربط النتيجة بالأعراض مثل الدوخة أو الإغماء أو الضعف إن وجدت.";
-
-
-        recommendation=
-            "إعادة القياس في حالة الراحة وطلب تقييم طبي عند وجود أعراض.";
-    }
-
-
-    /*
-     * Urgent symptom keywords.
-     */
     const urgentPattern =
         /(إغماء|ألم صدر|ضيق تنفس شديد|فقدان الوعي|تشنج|نزيف شديد|ضعف مفاجئ|صعوبة كلام)/i;
 
@@ -5417,11 +3767,6 @@ function buildAssessment(){
         ${latestAnalysis.bpm.toFixed(1)} BPM.
         Signal quality:
         ${latestAnalysis.quality}%.
-        ${
-            latestBP
-                ? `Estimated BP: ${latestBP.sys.toFixed(0)}/${latestBP.dia.toFixed(0)} mmHg.`
-                : "Blood pressure estimate unavailable."
-        }
         `;
 
 
@@ -5437,10 +3782,6 @@ function buildAssessment(){
         "اكتمل التحليل";
 
 
-    /*
-     * History text is intentionally not
-     * treated as an automatic diagnosis.
-     */
     if(
         history
     ){
@@ -5490,6 +3831,7 @@ async function startCamera(){
                 minDetectionConfidence:.65,
 
                 minTrackingConfidence:.65
+
             });
 
 
@@ -5557,6 +3899,7 @@ async function startCamera(){
                                 });
                             }
                         }
+
                 }
             );
 
@@ -5634,11 +3977,6 @@ function processFaceResults(
             null;
 
 
-        /*
-         * Important:
-         * Do not move the guide around.
-         * The guide belongs to the user.
-         */
         drawFaceGuide(
             "bad"
         );
@@ -5741,6 +4079,7 @@ function processFaceResults(
 
         cameraInstruction.textContent=
             "ممتاز — ابقَ طبيعيًا وثبّت وجهك";
+
     }else{
 
         setStatus(
@@ -5754,10 +4093,6 @@ function processFaceResults(
     }
 
 
-    /*
-     * Technical sampling.
-     * User never sees this ROI.
-     */
     if(
         assessing &&
         stableForehead
@@ -5784,13 +4119,16 @@ function processFaceResults(
                 elapsed
             );
 
+
             redSignal.push(
                 rgb.r
             );
 
+
             greenSignal.push(
                 rgb.g
             );
+
 
             blueSignal.push(
                 rgb.b
@@ -5826,6 +4164,7 @@ function processFaceResults(
 
                 lastAnalysisTime=
                     now;
+
 
                 analyzeRPPG();
             }
@@ -6041,18 +4380,11 @@ function stopAssessment(){
         !cameraRunning;
 
 
-    /*
-     * Final analysis.
-     */
     analyzeRPPG();
 
 
-    /*
-     * BP prediction AFTER final rPPG.
-     */
     setTimeout(
         ()=>{
-            runBP();
             buildAssessment();
             saveProductSession();
         },
@@ -6086,31 +4418,25 @@ function clearMeasurement(){
     latestAnalysis=
         null;
 
-    latestBP=
-        null;
-
 
     bpmEl.textContent=
         "--";
 
+
     qualityEl.textContent=
         "--";
+
 
     confidenceEl.textContent=
         "--";
 
+
     confidenceLabel.textContent=
         "--";
 
+
     confidenceBar.style.width=
         "0%";
-
-
-    bpEl.textContent=
-        "--";
-
-    bpSubEl.textContent=
-        "يحتاج نموذج معايرة صالح";
 
 
     analysisStatus.textContent=
@@ -6323,16 +4649,6 @@ function saveProductSession(){
         confidence:
             latestAnalysis.confidence,
 
-        bp_sys:
-            latestBP
-                ?latestBP.sys
-                :null,
-
-        bp_dia:
-            latestBP
-                ?latestBP.dia
-                :null,
-
         sample_rate:
             latestAnalysis.sample_rate,
 
@@ -6395,7 +4711,7 @@ function renderHistory(){
         historyBody.innerHTML=
             `
             <tr>
-                <td colspan="6"
+                <td colspan="5"
                     style="padding:18px;color:#8190a2;">
                     لا توجد سجلات حتى الآن.
                 </td>
@@ -6449,33 +4765,6 @@ function renderHistory(){
                             session.bpm
                         ).toFixed(1)
                         :"--"
-                }
-            </td>
-
-            <td>
-                ${
-                    finite(
-                        Number(
-                            session.bp_sys
-                        )
-                    ) &&
-                    finite(
-                        Number(
-                            session.bp_dia
-                        )
-                    )
-
-                        ?
-                        `${Number(
-                            session.bp_sys
-                        ).toFixed(0)}
-                        /
-                        ${Number(
-                            session.bp_dia
-                        ).toFixed(0)}`
-
-                        :
-                        "--"
                 }
             </td>
 
@@ -6542,139 +4831,6 @@ function updateResearchOutput(){
 
 
 /* ============================================================
-   EXPORT BP MODEL
-============================================================ */
-
-function exportBPModel(){
-
-    const model=
-        getBPModel();
-
-
-    if(
-        !model
-    ){
-
-        alert(
-            "لا يوجد نموذج BP صالح للتصدير."
-        );
-
-        return;
-    }
-
-
-    downloadFile(
-        "doctor-mimo-bp-model-v80.json",
-        JSON.stringify(
-            model,
-            null,
-            2
-        ),
-        "application/json"
-    );
-}
-
-
-/* ============================================================
-   DOWNLOAD
-============================================================ */
-
-function downloadFile(
-    filename,
-    content,
-    type
-){
-
-    const blob=
-        new Blob(
-            [content],
-            {
-                type
-            }
-        );
-
-
-    const url=
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link=
-        document.createElement(
-            "a"
-        );
-
-
-    link.href=
-        url;
-
-    link.download=
-        filename;
-
-
-    document.body.appendChild(
-        link
-    );
-
-
-    link.click();
-
-
-    link.remove();
-
-
-    setTimeout(
-        ()=>{
-            URL.revokeObjectURL(
-                url
-            );
-        },
-        1000
-    );
-}
-
-
-/* ============================================================
-   RESET MODEL
-============================================================ */
-
-function resetBPModel(){
-
-    if(
-        !confirm(
-            "هل تريد حذف نموذج ضغط الدم الحالي؟"
-        )
-    ){
-
-        return;
-    }
-
-
-    localStorage.removeItem(
-        BP_MODEL_KEY
-    );
-
-
-    renderModelStatus(
-        null
-    );
-
-
-    latestBP=
-        null;
-
-
-    bpEl.textContent=
-        "--";
-
-
-    bpSubEl.textContent=
-        "يحتاج نموذج معايرة صالح";
-}
-
-
-/* ============================================================
    EVENTS
 ============================================================ */
 
@@ -6696,30 +4852,14 @@ stopBtn.addEventListener(
 );
 
 
-trainModelBtn.addEventListener(
-    "click",
-    trainBPModel
-);
-
-
-exportModelBtn.addEventListener(
-    "click",
-    exportBPModel
-);
-
-
-resetModelBtn.addEventListener(
-    "click",
-    resetBPModel
-);
-
-
 researchToggle.addEventListener(
     "click",
     ()=>{
+
         researchPanel.classList.toggle(
             "open"
         );
+
 
         updateResearchOutput();
     }
@@ -6733,6 +4873,7 @@ researchToggle.addEventListener(
 window.addEventListener(
     "resize",
     ()=>{
+
         drawFaceGuide(
             assessing
                 ? "measuring"
@@ -6752,18 +4893,13 @@ window.addEventListener(
 renderHistory();
 
 
-renderModelStatus(
-    getBPModel()
-);
-
-
 drawFaceGuide(
     "waiting"
 );
 
 
 console.log(
-    "Doctor MIMO 8.0 initialized."
+    "Doctor MIMO 8.0 BPM-only initialized."
 );
 
 </script>
