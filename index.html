@@ -8,68 +8,48 @@
       content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <meta name="theme-color"
-      content="#0b7898">
+      content="#087ea4">
 
 <title>Doctor MIMO™</title>
 
-
-<!-- =========================================================
-     MEDIAPIPE FACE MESH
-========================================================= -->
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
 
 <style>
 
 /* =========================================================
-   DESIGN SYSTEM
+   DESIGN
 ========================================================= */
 
 :root{
 
     --bg:#f4f8fb;
-
     --surface:#ffffff;
-
-    --surface-soft:#f7fafc;
+    --soft:#f7fafc;
 
     --line:#dce6ee;
 
     --text:#152233;
+    --muted:#718094;
 
-    --muted:#6e7d90;
-
-    --primary:#087d9f;
-
-    --primary-dark:#06667f;
-
-    --primary-soft:#e8f6fa;
+    --primary:#087ea4;
+    --primary-dark:#06657f;
 
     --green:#15966a;
-
     --green-soft:#eefaf5;
 
-    --yellow:#b77800;
-
+    --yellow:#b77b00;
     --yellow-soft:#fff8e9;
 
-    --red:#c53b4e;
-
+    --red:#c63d50;
     --red-soft:#fff2f4;
 
     --shadow:
-        0 18px 65px rgba(28,55,78,.09);
+        0 18px 60px rgba(30,55,80,.09);
 
     --radius:21px;
 }
-
-
-/* =========================================================
-   RESET
-========================================================= */
 
 *{
     box-sizing:border-box;
@@ -77,9 +57,12 @@
 
 html,
 body{
+
     margin:0;
     padding:0;
+
     min-height:100%;
+
 }
 
 body{
@@ -87,8 +70,8 @@ body{
     background:
         radial-gradient(
             circle at 10% 0%,
-            rgba(8,125,159,.06),
-            transparent 27%
+            rgba(8,126,164,.055),
+            transparent 28%
         ),
         var(--bg);
 
@@ -125,7 +108,7 @@ button{
 
     padding:
         18px 0
-        38px;
+        40px;
 }
 
 
@@ -141,12 +124,15 @@ button{
 
     justify-content:space-between;
 
-    gap:15px;
-
-    margin-bottom:16px;
+    gap:16px;
 
     padding:
         17px 19px;
+
+    margin-bottom:16px;
+
+    background:
+        var(--surface);
 
     border:
         1px solid var(--line);
@@ -154,13 +140,9 @@ button{
     border-radius:
         var(--radius);
 
-    background:
-        var(--surface);
-
     box-shadow:
         var(--shadow);
 }
-
 
 .brand{
 
@@ -171,33 +153,28 @@ button{
     gap:12px;
 }
 
-
 .logo{
 
     width:51px;
-
     height:51px;
+
+    display:grid;
+    place-items:center;
 
     border-radius:16px;
 
-    display:grid;
-
-    place-items:center;
-
     background:
-        var(--primary-soft);
+        #e8f6fa;
 
     border:
-        1px solid #c4e7ef;
+        1px solid #c3e7ef;
 
     color:
         var(--primary);
 
     font-weight:900;
-
     font-size:20px;
 }
-
 
 .brand h1{
 
@@ -205,7 +182,6 @@ button{
 
     font-size:21px;
 }
-
 
 .brand p{
 
@@ -218,7 +194,6 @@ button{
     font-size:11px;
 }
 
-
 .headerBadge{
 
     padding:
@@ -228,7 +203,7 @@ button{
         999px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 
     border:
         1px solid var(--line);
@@ -241,7 +216,7 @@ button{
 
 
 /* =========================================================
-   MAIN
+   LAYOUT
 ========================================================= */
 
 .main{
@@ -249,12 +224,11 @@ button{
     display:grid;
 
     grid-template-columns:
-        minmax(0,1fr)
+        minmax(0,1.04fr)
         minmax(400px,.96fr);
 
     gap:16px;
 }
-
 
 .card{
 
@@ -273,23 +247,20 @@ button{
     overflow:hidden;
 }
 
-
-.cardHeader{
+.cardHead{
 
     padding:
         18px 19px 12px;
 }
 
-
-.cardHeader h2{
+.cardHead h2{
 
     margin:0;
 
     font-size:15px;
 }
 
-
-.cardHeader p{
+.cardHead p{
 
     margin:
         5px 0 0;
@@ -319,10 +290,8 @@ button{
 
     border-radius:18px;
 
-    background:
-        #06111c;
+    background:#06111c;
 }
-
 
 #video{
 
@@ -331,32 +300,31 @@ button{
     inset:0;
 
     width:100%;
-
     height:100%;
-
-    display:block;
 
     object-fit:cover;
 
-    transform:
-        scaleX(-1);
+    display:block;
 
     background:#000;
+
+    transform:
+        scaleX(-1);
 }
 
 
-/* =========================================================
-   USER GUIDE CANVAS
-========================================================= */
+/*
+ * User guide only.
+ * No technical ROI visible.
+ */
 
-#guideCanvas{
+#faceGuide{
 
     position:absolute;
 
     inset:0;
 
     width:100%;
-
     height:100%;
 
     display:block;
@@ -369,18 +337,17 @@ button{
 
 
 /* =========================================================
-   CAMERA LABEL
+   CAMERA BADGE
 ========================================================= */
 
 .cameraBadge{
 
     position:absolute;
 
-    z-index:5;
-
     top:12px;
-
     right:12px;
+
+    z-index:5;
 
     padding:
         8px 11px;
@@ -389,13 +356,13 @@ button{
         999px;
 
     background:
-        rgba(0,0,0,.45);
-
-    color:
-        #e8fbff;
+        rgba(0,0,0,.42);
 
     border:
-        1px solid rgba(255,255,255,.09);
+        1px solid rgba(255,255,255,.08);
+
+    color:
+        #e7fbff;
 
     font-size:9px;
 
@@ -405,17 +372,14 @@ button{
 
 
 /* =========================================================
-   USER INSTRUCTION
+   INSTRUCTION
 ========================================================= */
 
 .instruction{
 
     position:absolute;
 
-    z-index:5;
-
     left:50%;
-
     bottom:12px;
 
     transform:
@@ -424,14 +388,15 @@ button{
     width:
         calc(100% - 24px);
 
+    z-index:5;
+
     padding:
         10px 12px;
 
     text-align:center;
 
-    color:#fff;
-
-    border-radius:13px;
+    border-radius:
+        13px;
 
     background:
         rgba(0,0,0,.54);
@@ -439,12 +404,14 @@ button{
     border:
         1px solid rgba(255,255,255,.08);
 
-    backdrop-filter:
-        blur(9px);
+    color:#fff;
 
     font-size:10px;
 
     line-height:1.55;
+
+    backdrop-filter:
+        blur(10px);
 }
 
 
@@ -467,7 +434,7 @@ button{
         12px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 
     color:
         var(--muted);
@@ -479,38 +446,38 @@ button{
 
 .status.ready{
 
-    color:
-        var(--green);
-
     background:
         var(--green-soft);
 
+    color:
+        var(--green);
+
     border-color:
-        #c6e7d8;
+        #c4e5d7;
 }
 
 .status.warning{
 
-    color:
-        var(--yellow);
-
     background:
         var(--yellow-soft);
 
+    color:
+        var(--yellow);
+
     border-color:
-        #ecdcae;
+        #ebdbaa;
 }
 
 .status.error{
 
-    color:
-        var(--red);
-
     background:
         var(--red-soft);
 
+    color:
+        var(--red);
+
     border-color:
-        #ecc6ce;
+        #edc8cf;
 }
 
 
@@ -530,7 +497,6 @@ button{
         0 13px 13px;
 }
 
-
 .btn{
 
     min-height:42px;
@@ -541,28 +507,25 @@ button{
     border-radius:
         11px;
 
+    background:#fff;
+
     border:
         1px solid var(--line);
-
-    background:
-        #fff;
 
     color:
         var(--text);
 }
 
-
 .btnPrimary{
+
+    color:#fff;
 
     background:
         var(--primary);
 
     border-color:
         var(--primary);
-
-    color:#fff;
 }
-
 
 .btnPrimary:hover:not(:disabled){
 
@@ -570,32 +533,29 @@ button{
         var(--primary-dark);
 }
 
-
 .btnGreen{
+
+    color:
+        var(--green);
 
     background:
         var(--green-soft);
 
     border-color:
-        #c5e6d9;
-
-    color:
-        var(--green);
+        #c4e5d7;
 }
 
-
 .btnDanger{
+
+    color:
+        var(--red);
 
     background:
         var(--red-soft);
 
     border-color:
-        #ecc8cf;
-
-    color:
-        var(--red);
+        #edc7cf;
 }
-
 
 .btn:disabled{
 
@@ -622,7 +582,6 @@ button{
         0 13px 13px;
 }
 
-
 .vital{
 
     padding:
@@ -635,48 +594,45 @@ button{
         14px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 }
 
-
 .vitalLabel{
+
+    margin-bottom:7px;
 
     color:
         var(--muted);
 
     font-size:9px;
-
-    margin-bottom:7px;
 }
-
 
 .vitalValue{
 
     font-size:29px;
 
+    line-height:1;
+
     font-weight:900;
 
-    line-height:1;
+    white-space:nowrap;
 }
 
-
 .vitalSub{
+
+    margin-top:5px;
 
     color:
         var(--muted);
 
     font-size:8px;
-
-    margin-top:6px;
 }
 
-
-.bp{
+.bpCard{
 
     grid-column:
         span 2;
 }
-
 
 .bpValue{
 
@@ -697,26 +653,23 @@ button{
         1px solid var(--line);
 }
 
-
 .sectionTitle{
 
     display:flex;
 
-    justify-content:space-between;
-
     align-items:center;
+
+    justify-content:space-between;
 
     gap:8px;
 
     margin-bottom:10px;
 }
 
-
 .sectionTitle strong{
 
     font-size:12px;
 }
-
 
 .sectionTitle span{
 
@@ -728,7 +681,7 @@ button{
 
 
 /* =========================================================
-   PATIENT FORM
+   FORM
 ========================================================= */
 
 .form{
@@ -741,7 +694,6 @@ button{
     gap:9px;
 }
 
-
 .field{
 
     display:flex;
@@ -751,13 +703,11 @@ button{
     gap:6px;
 }
 
-
 .field.full{
 
     grid-column:
         1 / -1;
 }
-
 
 .field label{
 
@@ -767,7 +717,6 @@ button{
     font-size:9px;
 }
 
-
 .field input,
 .field select,
 .field textarea{
@@ -776,24 +725,22 @@ button{
 
     min-height:41px;
 
+    padding:
+        0 10px;
+
     border:
         1px solid var(--line);
 
     border-radius:
         10px;
 
-    background:
-        #fff;
+    background:#fff;
 
     color:
         var(--text);
 
-    padding:
-        0 10px;
-
     outline:none;
 }
-
 
 .field textarea{
 
@@ -805,20 +752,11 @@ button{
 }
 
 
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-
-    border-color:
-        #8bcddd;
-}
-
-
 /* =========================================================
    RESULT
 ========================================================= */
 
-.resultBox{
+.result{
 
     padding:
         13px;
@@ -830,21 +768,18 @@ button{
         14px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 }
-
 
 .resultItem{
 
     margin-bottom:12px;
 }
 
-
 .resultItem:last-child{
 
     margin-bottom:0;
 }
-
 
 .resultItem h4{
 
@@ -853,7 +788,6 @@ button{
 
     font-size:10px;
 }
-
 
 .resultItem p{
 
@@ -872,10 +806,10 @@ button{
 
     display:inline-flex;
 
-    margin-bottom:9px;
-
     padding:
         6px 10px;
+
+    margin-bottom:9px;
 
     border-radius:
         999px;
@@ -883,34 +817,31 @@ button{
     font-size:9px;
 }
 
-
 .riskLow{
-
-    background:
-        var(--green-soft);
 
     color:
         var(--green);
-}
 
+    background:
+        var(--green-soft);
+}
 
 .riskAttention{
 
-    background:
-        var(--yellow-soft);
-
     color:
         var(--yellow);
-}
 
+    background:
+        var(--yellow-soft);
+}
 
 .riskUrgent{
 
-    background:
-        var(--red-soft);
-
     color:
         var(--red);
+
+    background:
+        var(--red-soft);
 }
 
 
@@ -922,34 +853,32 @@ button{
 
     display:flex;
 
+    align-items:center;
+
     justify-content:space-between;
 
-    align-items:center;
+    margin-bottom:7px;
 
     color:
         var(--muted);
 
     font-size:9px;
-
-    margin-bottom:7px;
 }
-
 
 .progress{
 
+    height:7px;
+
     width:100%;
 
-    height:7px;
+    overflow:hidden;
 
     border-radius:
         999px;
 
     background:
         #e8edf2;
-
-    overflow:hidden;
 }
-
 
 #confidenceBar{
 
@@ -961,7 +890,7 @@ button{
         var(--primary);
 
     transition:
-        width .3s ease;
+        width .25s ease;
 }
 
 
@@ -974,13 +903,12 @@ button{
     display:grid;
 
     grid-template-columns:
-        repeat(2,minmax(0,1fr));
+        1fr 1fr;
 
     gap:8px;
 }
 
-
-.modelCard{
+.modelItem{
 
     padding:
         11px;
@@ -992,28 +920,25 @@ button{
         12px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 }
 
-
-.modelCard span{
+.modelItem span{
 
     display:block;
+
+    margin-bottom:5px;
 
     color:
         var(--muted);
 
     font-size:8px;
-
-    margin-bottom:5px;
 }
 
-
-.modelCard strong{
+.modelItem strong{
 
     font-size:17px;
 }
-
 
 .modelMessage{
 
@@ -1029,7 +954,7 @@ button{
         11px;
 
     background:
-        var(--surface-soft);
+        var(--soft);
 
     color:
         var(--muted);
@@ -1055,19 +980,17 @@ button{
         11px;
 }
 
-
 table{
 
     width:100%;
 
-    min-width:700px;
+    min-width:720px;
 
     border-collapse:
         collapse;
 
     font-size:9px;
 }
-
 
 th,
 td{
@@ -1077,12 +1000,11 @@ td{
 
     text-align:center;
 
+    white-space:nowrap;
+
     border-bottom:
         1px solid var(--line);
-
-    white-space:nowrap;
 }
-
 
 th{
 
@@ -1090,13 +1012,11 @@ th{
         var(--muted);
 }
 
-
 td{
 
     color:
         #425166;
 }
-
 
 tr:last-child td{
 
@@ -1105,16 +1025,16 @@ tr:last-child td{
 
 
 /* =========================================================
-   RESEARCH
+   RESEARCH PANEL
 ========================================================= */
 
-.researchButton{
+.researchBtn{
 
     width:100%;
 
-    margin-top:10px;
-
     min-height:37px;
+
+    margin-top:10px;
 
     border:
         1px dashed var(--line);
@@ -1122,15 +1042,14 @@ tr:last-child td{
     border-radius:
         10px;
 
-    color:
-        var(--muted);
-
     background:
         transparent;
 
+    color:
+        var(--muted);
+
     font-size:9px;
 }
-
 
 .researchPanel{
 
@@ -1139,12 +1058,10 @@ tr:last-child td{
     margin-top:9px;
 }
 
-
 .researchPanel.open{
 
     display:block;
 }
-
 
 #researchOutput{
 
@@ -1152,23 +1069,23 @@ tr:last-child td{
 
     min-height:180px;
 
+    padding:10px;
+
     border:
         1px solid var(--line);
 
     border-radius:
         11px;
 
-    padding:10px;
-
-    resize:vertical;
+    background:
+        #fafcfd;
 
     font:
         9px monospace;
 
     direction:ltr;
 
-    background:
-        #fafcfd;
+    resize:vertical;
 }
 
 
@@ -1178,14 +1095,14 @@ tr:last-child td{
 
 .footer{
 
+    margin-top:15px;
+
     text-align:center;
 
     color:
         #8391a2;
 
     font-size:9px;
-
-    margin-top:15px;
 }
 
 
@@ -1202,23 +1119,19 @@ tr:last-child td{
     }
 }
 
-
 @media(max-width:650px){
 
     .app{
 
         width:94%;
 
-        padding-top:
-            10px;
+        padding-top:10px;
     }
-
 
     .headerBadge{
 
         display:none;
     }
-
 
     .vitals{
 
@@ -1226,13 +1139,11 @@ tr:last-child td{
             1fr 1fr;
     }
 
-
-    .bp{
+    .bpCard{
 
         grid-column:
             span 2;
     }
-
 
     .form{
 
@@ -1240,13 +1151,10 @@ tr:last-child td{
             1fr;
     }
 
-
     .field.full{
 
-        grid-column:
-            auto;
+        grid-column:auto;
     }
-
 }
 
 </style>
@@ -1301,19 +1209,19 @@ tr:last-child td{
 
 
 <!-- =========================================================
-     CAMERA
+     CAMERA CARD
 ========================================================= -->
 
 <section class="card">
 
-    <div class="cardHeader">
+    <div class="cardHead">
 
         <h2>
             الفحص الذكي
         </h2>
 
         <p>
-            ضع وجهك داخل الشكل فقط — Doctor MIMO يتولى تحديد منطقة القياس تلقائيًا.
+            ضع وجهك داخل الشكل واترك Doctor MIMO يقوم بالباقي.
         </p>
 
     </div>
@@ -1327,11 +1235,10 @@ tr:last-child td{
 
 
         <!--
-             User-facing face alignment guide.
-             This is NOT the technical ROI.
+            USER GUIDANCE ONLY
         -->
 
-        <canvas id="guideCanvas"></canvas>
+        <canvas id="faceGuide"></canvas>
 
 
         <div class="cameraBadge">
@@ -1367,7 +1274,7 @@ tr:last-child td{
         </button>
 
 
-        <button id="assessBtn"
+        <button id="startAssessmentBtn"
                 class="btn btnGreen"
                 disabled>
 
@@ -1437,7 +1344,7 @@ tr:last-child td{
         <div class="vital">
 
             <div class="vitalLabel">
-                الثقة
+                ثقة القياس
             </div>
 
             <div id="confidence"
@@ -1454,7 +1361,7 @@ tr:last-child td{
         </div>
 
 
-        <div class="vital bp">
+        <div class="vital bpCard">
 
             <div class="vitalLabel">
                 ضغط الدم التقديري
@@ -1470,7 +1377,7 @@ tr:last-child td{
             <div id="bpSub"
                  class="vitalSub">
 
-                يحتاج نموذج معايرة صالح
+                نموذج المعايرة غير متاح
 
             </div>
 
@@ -1483,12 +1390,12 @@ tr:last-child td{
 
 
 <!-- =========================================================
-     MIMO MEDICAL INTELLIGENCE
+     MIMO
 ========================================================= -->
 
 <section class="card">
 
-    <div class="cardHeader">
+    <div class="cardHead">
 
         <h2>
             Medical Intelligence
@@ -1595,7 +1502,7 @@ tr:last-child td{
                 </label>
 
                 <textarea id="symptoms"
-                          placeholder="ما الأعراض أو الشكوى الرئيسية؟"></textarea>
+                          placeholder="اكتب الشكوى أو الأعراض..."></textarea>
 
             </div>
 
@@ -1607,7 +1514,7 @@ tr:last-child td{
                 </label>
 
                 <textarea id="history"
-                          placeholder="أدخل المعلومات الطبية المهمة..."></textarea>
+                          placeholder="المعلومات الطبية المهمة..."></textarea>
 
             </div>
 
@@ -1626,7 +1533,7 @@ tr:last-child td{
         <div class="sectionTitle">
 
             <strong>
-                تقييم Doctor MIMO
+                MIMO Clinical Assessment
             </strong>
 
             <span id="analysisStatus">
@@ -1644,7 +1551,7 @@ tr:last-child td{
         </div>
 
 
-        <div class="resultBox">
+        <div class="result">
 
 
             <div class="resultItem">
@@ -1714,13 +1621,11 @@ tr:last-child td{
 
         <div class="progress">
 
-            <div id="confidenceBar">
-            </div>
+            <div id="confidenceBar"></div>
 
         </div>
 
     </div>
-
 
 </section>
 
@@ -1735,7 +1640,7 @@ tr:last-child td{
 <section class="card"
          style="margin-top:16px;">
 
-    <div class="cardHeader">
+    <div class="cardHead">
 
         <h2>
             Blood Pressure Intelligence
@@ -1750,12 +1655,14 @@ tr:last-child td{
 
     <div class="section">
 
+
         <div class="modelGrid">
 
-            <div class="modelCard">
+
+            <div class="modelItem">
 
                 <span>
-                    Calibration Sessions
+                    Paired Sessions
                 </span>
 
                 <strong id="calibrationCount">
@@ -1765,10 +1672,10 @@ tr:last-child td{
             </div>
 
 
-            <div class="modelCard">
+            <div class="modelItem">
 
                 <span>
-                    Model Status
+                    BP Model
                 </span>
 
                 <strong id="modelState">
@@ -1780,10 +1687,10 @@ tr:last-child td{
         </div>
 
 
-        <div class="modelMessage"
-             id="modelMessage">
+        <div id="modelMessage"
+             class="modelMessage">
 
-            النموذج غير معاير حاليًا.
+            لم يتم بناء نموذج ضغط الدم بعد.
 
         </div>
 
@@ -1829,14 +1736,14 @@ tr:last-child td{
 <section class="card"
          style="margin-top:16px;">
 
-    <div class="cardHeader">
+    <div class="cardHead">
 
         <h2>
             Patient History
         </h2>
 
         <p>
-            الفحوصات المحفوظة محليًا
+            الفحوصات النهائية المحفوظة
         </p>
 
     </div>
@@ -1891,7 +1798,7 @@ tr:last-child td{
 
 
         <button id="researchToggle"
-                class="researchButton">
+                class="researchBtn">
 
             Research / Developer Data
 
@@ -1925,7 +1832,7 @@ tr:last-child td{
 <script>
 
 /* ============================================================
-   DOCTOR MIMO 9.0
+   DOCTOR MIMO — STABLE V5.4 CORE
 ============================================================ */
 
 
@@ -1934,18 +1841,12 @@ tr:last-child td{
 ============================================================ */
 
 const PRODUCT_KEY =
-    "doctor_mimo_product_sessions_v90";
+    "doctor_mimo_product_sessions_final";
 
 const BP_MODEL_KEY =
-    "doctor_mimo_bp_model_v90";
+    "doctor_mimo_bp_model_final";
 
 
-/*
- * Previous research keys.
- *
- * These allow the BP engine to reuse the
- * paired reference sessions you already collected.
- */
 const LEGACY_RESEARCH_KEYS = [
 
     "doctor_mimo_research_v60",
@@ -1966,11 +1867,11 @@ const LEGACY_RESEARCH_KEYS = [
 const MAX_SAMPLES =
     700;
 
-const ASSESSMENT_SECONDS =
+const MEASUREMENT_SECONDS =
     15;
 
 const ANALYSIS_INTERVAL =
-    700;
+    600;
 
 
 /* ============================================================
@@ -1982,10 +1883,12 @@ const video =
         "video"
     );
 
+
 const guideCanvas =
     document.getElementById(
-        "guideCanvas"
+        "faceGuide"
     );
+
 
 const guideCtx =
     guideCanvas.getContext(
@@ -1993,13 +1896,14 @@ const guideCtx =
     );
 
 
-const analysisCanvas =
+const sampleCanvas =
     document.createElement(
         "canvas"
     );
 
-const analysisCtx =
-    analysisCanvas.getContext(
+
+const sampleCtx =
+    sampleCanvas.getContext(
         "2d",
         {
             willReadFrequently:true
@@ -2007,22 +1911,23 @@ const analysisCtx =
     );
 
 
-analysisCanvas.width =
-    160;
+sampleCanvas.width=160;
+sampleCanvas.height=120;
 
-analysisCanvas.height =
-    120;
 
+/* buttons */
 
 const startBtn =
     document.getElementById(
         "startBtn"
     );
 
-const assessBtn =
+
+const startAssessmentBtn =
     document.getElementById(
-        "assessBtn"
+        "startAssessmentBtn"
     );
+
 
 const stopBtn =
     document.getElementById(
@@ -2030,10 +1935,13 @@ const stopBtn =
     );
 
 
+/* status */
+
 const scanStatus =
     document.getElementById(
         "scanStatus"
     );
+
 
 const instruction =
     document.getElementById(
@@ -2041,25 +1949,31 @@ const instruction =
     );
 
 
+/* vitals */
+
 const bpmEl =
     document.getElementById(
         "bpm"
     );
+
 
 const qualityEl =
     document.getElementById(
         "quality"
     );
 
+
 const confidenceEl =
     document.getElementById(
         "confidence"
     );
 
+
 const confidenceLabelEl =
     document.getElementById(
         "confidenceLabel"
     );
+
 
 const confidenceBar =
     document.getElementById(
@@ -2072,11 +1986,14 @@ const bpEl =
         "bp"
     );
 
+
 const bpSubEl =
     document.getElementById(
         "bpSub"
     );
 
+
+/* MIMO */
 
 const analysisStatus =
     document.getElementById(
@@ -2095,10 +2012,12 @@ const findingsEl =
         "findings"
     );
 
+
 const considerationsEl =
     document.getElementById(
         "considerations"
     );
+
 
 const recommendationEl =
     document.getElementById(
@@ -2106,21 +2025,27 @@ const recommendationEl =
     );
 
 
+/* BP */
+
 const calibrationCountEl =
     document.getElementById(
         "calibrationCount"
     );
+
 
 const modelStateEl =
     document.getElementById(
         "modelState"
     );
 
+
 const modelMessageEl =
     document.getElementById(
         "modelMessage"
     );
 
+
+/* history */
 
 const historyBody =
     document.getElementById(
@@ -2133,10 +2058,12 @@ const researchToggle =
         "researchToggle"
     );
 
+
 const researchPanel =
     document.getElementById(
         "researchPanel"
     );
+
 
 const researchOutput =
     document.getElementById(
@@ -2148,90 +2075,65 @@ const researchOutput =
    STATE
 ============================================================ */
 
-let faceMesh =
-    null;
+let faceMesh=null;
 
-let camera =
-    null;
+let camera=null;
 
-let cameraRunning =
-    false;
+let cameraRunning=false;
 
-let assessing =
-    false;
+let measuring=false;
 
-let assessmentStart =
-    0;
+let measurementStart=0;
 
-let assessmentTimer =
-    null;
+let measurementTimer=null;
 
-let analysisBusy =
-    false;
+let analysisBusy=false;
 
-let lastAnalysisTime =
-    0;
+let lastAnalysisTime=0;
 
-let faceDetected =
-    false;
+let faceDetected=false;
 
-let foreheadDetected =
-    false;
+let foreheadDetected=false;
 
-let foreheadROI =
-    null;
+let foreheadROI=null;
 
-let stableForeheadROI =
-    null;
+let stableForeheadROI=null;
 
-let lastFaceCenter =
-    null;
+let previousFaceCenter=null;
 
-let faceStability =
-    100;
+let faceStability=100;
 
-let latestLighting =
-    0;
+let latestLighting=0;
 
-let latestAnalysis =
-    null;
+let latestAnalysis=null;
 
-let latestBP =
-    null;
+let latestBP=null;
 
 
 /*
- * Temporal BPM memory.
- *
- * Used only to reject obvious one-frame/one-analysis
- * outliers such as 84 -> 47 -> 84.
+ * We keep intermediate observations,
+ * but NEVER use the first observation
+ * as the final session result.
  */
-const bpmHistory = [];
+const resultHistory=[];
 
 
 /* ============================================================
-   SIGNAL
+   SIGNAL BUFFERS
 ============================================================ */
 
-let signalTimes = [];
-let redSignal = [];
-let greenSignal = [];
-let blueSignal = [];
+let times=[];
+
+let red=[];
+
+let green=[];
+
+let blue=[];
 
 
 /* ============================================================
-   BASIC HELPERS
+   BASIC MATH
 ============================================================ */
-
-function finite(
-    value
-){
-
-    return Number.isFinite(
-        value
-    );
-}
-
 
 function clamp(
     value,
@@ -2249,6 +2151,16 @@ function clamp(
 }
 
 
+function finite(
+    value
+){
+
+    return Number.isFinite(
+        value
+    );
+}
+
+
 function mean(
     values
 ){
@@ -2261,20 +2173,18 @@ function mean(
     }
 
 
-    let total =
-        0;
+    let sum=0;
 
 
     for(
-        const value of values
+        const v of values
     ){
 
-        total +=
-            value;
+        sum+=v;
     }
 
 
-    return total /
+    return sum/
         values.length;
 }
 
@@ -2284,37 +2194,35 @@ function std(
 ){
 
     if(
-        values.length < 2
+        values.length<2
     ){
 
         return 0;
     }
 
 
-    const m =
-        mean(
-            values
-        );
+    const m=
+        mean(values);
 
 
-    let total =
-        0;
+    let sum=0;
 
 
     for(
-        const value of values
+        const v of values
     ){
 
-        const d =
-            value-m;
+        const d=
+            v-m;
 
-        total +=
+
+        sum+=
             d*d;
     }
 
 
     return Math.sqrt(
-        total/
+        sum/
         (
             values.length-1
         )
@@ -2334,14 +2242,14 @@ function median(
     }
 
 
-    const sorted =
+    const sorted=
         [...values].sort(
             (a,b)=>
                 a-b
         );
 
 
-    const middle =
+    const middle=
         Math.floor(
             sorted.length/2
         );
@@ -2349,9 +2257,8 @@ function median(
 
     return
         sorted.length%2
-
-            ? sorted[middle]
-
+            ?
+            sorted[middle]
             :
             (
                 sorted[middle-1]+
@@ -2366,10 +2273,12 @@ function fmt(
 ){
 
     return finite(value)
-        ? Number(value).toFixed(
+        ?
+        Number(value).toFixed(
             decimals
         )
-        : "--";
+        :
+        "--";
 }
 
 
@@ -2410,16 +2319,16 @@ function setStatus(
     type="normal"
 ){
 
-    scanStatus.textContent =
+    scanStatus.textContent=
         text;
 
 
-    scanStatus.className =
+    scanStatus.className=
         "status";
 
 
     if(
-        type === "ready"
+        type==="ready"
     ){
 
         scanStatus.classList.add(
@@ -2427,7 +2336,7 @@ function setStatus(
         );
 
     }else if(
-        type === "warning"
+        type==="warning"
     ){
 
         scanStatus.classList.add(
@@ -2435,7 +2344,7 @@ function setStatus(
         );
 
     }else if(
-        type === "error"
+        type==="error"
     ){
 
         scanStatus.classList.add(
@@ -2446,21 +2355,20 @@ function setStatus(
 
 
 /* ============================================================
-   USER FACE GUIDE
+   FACE GUIDE
 ============================================================ */
 
 function resizeGuide(){
 
-    const rect =
+    const rect=
         guideCanvas.getBoundingClientRect();
 
 
-    const ratio =
-        window.devicePixelRatio ||
-        1;
+    const ratio=
+        window.devicePixelRatio||1;
 
 
-    guideCanvas.width =
+    guideCanvas.width=
         Math.max(
             1,
             Math.round(
@@ -2469,7 +2377,7 @@ function resizeGuide(){
         );
 
 
-    guideCanvas.height =
+    guideCanvas.height=
         Math.max(
             1,
             Math.round(
@@ -2479,14 +2387,6 @@ function resizeGuide(){
 }
 
 
-/*
- * The guide is for the USER.
- *
- * It tells the user where to place
- * the whole face.
- *
- * Technical Forehead ROI is hidden.
- */
 function drawGuide(
     state="waiting"
 ){
@@ -2494,10 +2394,10 @@ function drawGuide(
     resizeGuide();
 
 
-    const w =
+    const w=
         guideCanvas.width;
 
-    const h =
+    const h=
         guideCanvas.height;
 
 
@@ -2509,67 +2409,68 @@ function drawGuide(
     );
 
 
-    const cx =
+    const cx=
         w/2;
 
-
-    const cy =
+    const cy=
         h*.47;
 
 
-    const faceW =
+    const faceW=
         Math.min(
             w*.53,
             h*.50
         );
 
 
-    const faceH =
+    const faceH=
         faceW*1.28;
 
 
-    let line =
+    let stroke=
         "rgba(255,255,255,.70)";
 
 
     if(
-        state === "good"
+        state==="good"
     ){
 
-        line =
-            "rgba(72,225,161,.95)";
+        stroke=
+            "rgba(72,225,161,.96)";
     }
 
 
     if(
-        state === "measure"
+        state==="measure"
     ){
 
-        line =
+        stroke=
             "rgba(69,216,255,.98)";
     }
 
 
     if(
-        state === "bad"
+        state==="bad"
     ){
 
-        line =
-            "rgba(255,111,128,.95)";
+        stroke=
+            "rgba(255,111,128,.96)";
     }
 
 
-    guideCtx.strokeStyle =
-        line;
+    guideCtx.strokeStyle=
+        stroke;
 
 
-    guideCtx.lineWidth =
+    guideCtx.lineWidth=
         2*
-        window.devicePixelRatio;
+        (
+            window.devicePixelRatio||1
+        );
 
 
     /*
-     * Face contour.
+     * Face outline.
      */
     guideCtx.beginPath();
 
@@ -2589,21 +2490,20 @@ function drawGuide(
     /*
      * Eyes.
      */
-    const eyeY =
-        cy -
-        faceH*.10;
+    const eyeY=
+        cy-faceH*.10;
 
 
-    const eyeDX =
+    const eyeDX=
         faceW*.18;
 
 
-    guideCtx.strokeStyle =
-        "rgba(255,255,255,.36)";
+    guideCtx.strokeStyle=
+        "rgba(255,255,255,.34)";
 
 
-    guideCtx.lineWidth =
-        window.devicePixelRatio;
+    guideCtx.lineWidth=
+        window.devicePixelRatio||1;
 
 
     guideCtx.beginPath();
@@ -2643,7 +2543,7 @@ function drawGuide(
 
     guideCtx.moveTo(
         cx,
-        eyeY+faceH*.035
+        eyeY+faceH*.04
     );
 
     guideCtx.lineTo(
@@ -2671,7 +2571,7 @@ function drawGuide(
 
     guideCtx.quadraticCurveTo(
         cx,
-        cy+faceH*.198,
+        cy+faceH*.20,
         cx+faceW*.08,
         cy+faceH*.165
     );
@@ -2680,45 +2580,42 @@ function drawGuide(
 
 
     /*
-     * Forehead guidance.
-     *
-     * This is deliberately subtle.
-     *
-     * It is NOT used as the technical ROI.
+     * Very subtle forehead indication.
      */
-    const foreheadY =
-        cy-
-        faceH*.29;
+    const foreheadY=
+        cy-faceH*.29;
 
 
-    const foreheadW =
+    const foreheadW=
         faceW*.39;
 
 
-    const foreheadH =
+    const foreheadH=
         faceH*.08;
 
 
-    guideCtx.strokeStyle =
-        state === "measure"
-
-            ? "rgba(69,216,255,.52)"
-
+    guideCtx.strokeStyle=
+        state==="measure"
+            ?
+            "rgba(69,216,255,.46)"
             :
-            state === "good"
-
-                ? "rgba(72,225,161,.40)"
-
-                :
-                  "rgba(255,255,255,.20)";
+        state==="good"
+            ?
+            "rgba(72,225,161,.34)"
+            :
+            "rgba(255,255,255,.16)";
 
 
     guideCtx.setLineDash([
         5*
-            window.devicePixelRatio,
+        (
+            window.devicePixelRatio||1
+        ),
 
         5*
-            window.devicePixelRatio
+        (
+            window.devicePixelRatio||1
+        )
     ]);
 
 
@@ -2731,28 +2628,6 @@ function drawGuide(
 
 
     guideCtx.setLineDash([]);
-
-
-    /*
-     * Center line.
-     */
-    guideCtx.strokeStyle =
-        "rgba(255,255,255,.10)";
-
-
-    guideCtx.beginPath();
-
-    guideCtx.moveTo(
-        cx,
-        cy-faceH*.42
-    );
-
-    guideCtx.lineTo(
-        cx,
-        cy+faceH*.42
-    );
-
-    guideCtx.stroke();
 }
 
 
@@ -2760,7 +2635,7 @@ function drawGuide(
    FACE LANDMARKS
 ============================================================ */
 
-const LEFT_BROW = [
+const LEFT_BROW=[
     276,
     283,
     282,
@@ -2774,7 +2649,7 @@ const LEFT_BROW = [
 ];
 
 
-const RIGHT_BROW = [
+const RIGHT_BROW=[
     46,
     53,
     52,
@@ -2788,14 +2663,13 @@ const RIGHT_BROW = [
 ];
 
 
-function averagePoints(
+function averageLandmarks(
     landmarks,
     ids
 ){
 
     let x=0;
     let y=0;
-
     let count=0;
 
 
@@ -2803,45 +2677,36 @@ function averagePoints(
         const id of ids
     ){
 
-        const p =
+        const p=
             landmarks[id];
 
 
-        if(!p){
-
+        if(!p)
             continue;
-        }
 
 
-        x +=
-            p.x;
-
-        y +=
-            p.y;
+        x+=p.x;
+        y+=p.y;
 
         count++;
     }
 
 
-    if(!count){
-
+    if(!count)
         return null;
-    }
 
 
     return {
 
-        x:
-            x/count,
+        x:x/count,
 
-        y:
-            y/count
+        y:y/count
     };
 }
 
 
 /* ============================================================
-   FOREHEAD DETECTOR
+   FOREHEAD ROI
 ============================================================ */
 
 function detectForehead(
@@ -2857,27 +2722,27 @@ function detectForehead(
     }
 
 
-    const leftBrow =
-        averagePoints(
+    const left=
+        averageLandmarks(
             landmarks,
             LEFT_BROW
         );
 
 
-    const rightBrow =
-        averagePoints(
+    const right=
+        averageLandmarks(
             landmarks,
             RIGHT_BROW
         );
 
 
-    const top =
+    const top=
         landmarks[10];
 
 
     if(
-        !leftBrow ||
-        !rightBrow ||
+        !left ||
+        !right ||
         !top
     ){
 
@@ -2885,14 +2750,13 @@ function detectForehead(
     }
 
 
-    const browIds =
-        [
-            ...LEFT_BROW,
-            ...RIGHT_BROW
-        ];
+    const browIds=[
+        ...LEFT_BROW,
+        ...RIGHT_BROW
+    ];
 
 
-    const minX =
+    const minX=
         Math.min(
             ...browIds.map(
                 id =>
@@ -2901,7 +2765,7 @@ function detectForehead(
         );
 
 
-    const maxX =
+    const maxX=
         Math.max(
             ...browIds.map(
                 id =>
@@ -2910,26 +2774,21 @@ function detectForehead(
         );
 
 
-    const browWidth =
-        maxX -
-        minX;
+    const browWidth=
+        maxX-minX;
 
 
-    const browY =
+    const browY=
         (
-            leftBrow.y+
-            rightBrow.y
+            left.y+
+            right.y
         )/2;
 
 
-    const foreheadHeight =
-        browY-
-        top.y;
+    const foreheadHeight=
+        browY-top.y;
 
 
-    /*
-     * Geometry sanity checks.
-     */
     if(
         browWidth<.08 ||
         foreheadHeight<.025
@@ -2939,23 +2798,19 @@ function detectForehead(
     }
 
 
-    const centerX =
+    const centerX=
         (
-            leftBrow.x+
-            rightBrow.x
+            left.x+
+            right.x
         )/2;
 
 
-    /*
-     * Put the internal measurement region
-     * clearly inside the forehead.
-     */
-    const centerY =
+    const centerY=
         top.y+
         foreheadHeight*.43;
 
 
-    const w =
+    const width=
         clamp(
             browWidth*.72,
             .13,
@@ -2963,7 +2818,7 @@ function detectForehead(
         );
 
 
-    const h =
+    const height=
         clamp(
             foreheadHeight*.34,
             .055,
@@ -2971,58 +2826,55 @@ function detectForehead(
         );
 
 
-    let x =
-        centerX-
-        w/2;
+    let x=
+        centerX-width/2;
 
 
-    let y =
-        centerY-
-        h/2;
+    let y=
+        centerY-height/2;
 
 
     /*
-     * Eye/brow safety.
+     * Keep ROI above brows.
      */
-    const gap =
+    const safetyGap=
         Math.max(
             .012,
             foreheadHeight*.09
         );
 
 
-    const maximumBottom =
-        browY-gap;
+    const maximumBottom=
+        browY-safetyGap;
 
 
     if(
-        y+h >
-        maximumBottom
+        y+height>maximumBottom
     ){
 
-        y =
-            maximumBottom-h;
+        y=
+            maximumBottom-height;
     }
 
 
-    x =
+    x=
         clamp(
             x,
             .02,
-            .98-w
+            .98-width
         );
 
 
-    y =
+    y=
         clamp(
             y,
             .02,
-            .95-h
+            .95-height
         );
 
 
     if(
-        y+h>=browY
+        y+height>=browY
     ){
 
         return null;
@@ -3033,16 +2885,13 @@ function detectForehead(
 
         x,
         y,
-        w,
-        h,
+        w:width,
+        h:height,
 
         centerX,
         centerY,
 
-        browY,
-
-        foreheadTopY:
-            top.y
+        browY
     };
 }
 
@@ -3059,64 +2908,54 @@ function smoothROI(
         !stableForeheadROI
     ){
 
-        stableForeheadROI =
-            {
-                ...roi
-            };
+        stableForeheadROI={
+            ...roi
+        };
 
         return stableForeheadROI;
     }
 
 
-    /*
-     * Smoothing prevents tiny face tracking
-     * fluctuations from moving the measurement.
-     */
-    const alpha =
-        .22;
+    const alpha=
+        .25;
 
 
     stableForeheadROI={
 
         x:
-            stableForeheadROI.x*(1-alpha)
-            +
+            stableForeheadROI.x*
+            (1-alpha)+
             roi.x*alpha,
 
         y:
-            stableForeheadROI.y*(1-alpha)
-            +
+            stableForeheadROI.y*
+            (1-alpha)+
             roi.y*alpha,
 
         w:
-            stableForeheadROI.w*(1-alpha)
-            +
+            stableForeheadROI.w*
+            (1-alpha)+
             roi.w*alpha,
 
         h:
-            stableForeheadROI.h*(1-alpha)
-            +
+            stableForeheadROI.h*
+            (1-alpha)+
             roi.h*alpha,
 
         centerX:
-            stableForeheadROI.centerX*(1-alpha)
-            +
+            stableForeheadROI.centerX*
+            (1-alpha)+
             roi.centerX*alpha,
 
         centerY:
-            stableForeheadROI.centerY*(1-alpha)
-            +
+            stableForeheadROI.centerY*
+            (1-alpha)+
             roi.centerY*alpha,
 
         browY:
-            stableForeheadROI.browY*(1-alpha)
-            +
-            roi.browY*alpha,
-
-        foreheadTopY:
-            stableForeheadROI.foreheadTopY*(1-alpha)
-            +
-            roi.foreheadTopY*alpha
+            stableForeheadROI.browY*
+            (1-alpha)+
+            roi.browY*alpha
     };
 
 
@@ -3134,49 +2973,48 @@ function updateFaceStability(
 ){
 
     if(
-        !lastFaceCenter
+        !previousFaceCenter
     ){
 
-        lastFaceCenter={
+        previousFaceCenter={
             x,
             y
         };
 
-        faceStability=
-            100;
+        faceStability=100;
 
         return;
     }
 
 
-    const distance =
+    const distance=
         Math.sqrt(
             (
                 x-
-                lastFaceCenter.x
-            )**2
-            +
+                previousFaceCenter.x
+            )**2+
             (
                 y-
-                lastFaceCenter.y
+                previousFaceCenter.y
             )**2
         );
 
 
-    const instant =
+    const instant=
         clamp(
-            100-distance*900,
+            100-
+            distance*900,
             0,
             100
         );
 
 
-    faceStability =
-        faceStability*.78+
-        instant*.22;
+    faceStability=
+        faceStability*.75+
+        instant*.25;
 
 
-    lastFaceCenter={
+    previousFaceCenter={
         x,
         y
     };
@@ -3184,321 +3022,71 @@ function updateFaceStability(
 
 
 /* ============================================================
-   CAMERA FACE PROCESSING
+   SAMPLE RGB
 ============================================================ */
 
-function processFaceResults(
-    results
-){
-
-    if(
-        !cameraRunning
-    ){
-
-        return;
-    }
-
-
-    if(
-        !results.multiFaceLandmarks ||
-        !results.multiFaceLandmarks.length
-    ){
-
-        faceDetected=
-            false;
-
-        foreheadDetected=
-            false;
-
-        foreheadROI=
-            null;
-
-        stableForeheadROI=
-            null;
-
-        lastFaceCenter=
-            null;
-
-
-        drawGuide(
-            "bad"
-        );
-
-
-        setStatus(
-            "لم يتم اكتشاف الوجه — ضع وجهك داخل الشكل",
-            "error"
-        );
-
-
-        instruction.textContent =
-            "أدخل الوجه بالكامل داخل الشكل";
-
-
-        return;
-    }
-
-
-    faceDetected=
-        true;
-
-
-    const landmarks =
-        results.multiFaceLandmarks[0];
-
-
-    const roi =
-        detectForehead(
-            landmarks
-        );
-
-
-    if(
-        !roi
-    ){
-
-        foreheadDetected=
-            false;
-
-
-        drawGuide(
-            "waiting"
-        );
-
-
-        setStatus(
-            "الوجه ظاهر — اجعل الوجه مستقيمًا أمام الكاميرا",
-            "warning"
-        );
-
-
-        instruction.textContent =
-            "انظر مباشرة إلى الكاميرا";
-
-
-        return;
-    }
-
-
-    foreheadDetected=
-        true;
-
-
-    foreheadROI=
-        roi;
-
-
-    stableForeheadROI=
-        smoothROI(
-            roi
-        );
-
-
-    updateFaceStability(
-        stableForeheadROI.centerX,
-        stableForeheadROI.centerY
-    );
-
-
-    drawGuide(
-        assessing
-            ? "measure"
-            : "good"
-    );
-
-
-    if(
-        assessing
-    ){
-
-        setStatus(
-            "الوجه مضبوط — Doctor MIMO يحلل الإشارة",
-            "ready"
-        );
-
-
-        instruction.textContent =
-            "ممتاز — ابقَ طبيعيًا وثبّت وجهك";
-
-    }else{
-
-        setStatus(
-            "الوجه جاهز — يمكنك بدء الفحص",
-            "ready"
-        );
-
-
-        instruction.textContent =
-            "ممتاز — اضغط بدء الفحص الذكي";
-    }
-
-
-    /*
-     * IMPORTANT:
-     *
-     * User sees the guide.
-     * Technical ROI remains hidden.
-     */
-    if(
-        assessing &&
-        stableForeheadROI
-    ){
-
-        const rgb =
-            sampleForehead(
-                stableForeheadROI
-            );
-
-
-        if(
-            rgb
-        ){
-
-            const now =
-                performance.now();
-
-
-            const elapsed =
-                (
-                    now-
-                    assessmentStart
-                )/1000;
-
-
-            /*
-             * Guaranteed increasing timestamps.
-             */
-            if(
-                !signalTimes.length ||
-                elapsed>
-                signalTimes[
-                    signalTimes.length-1
-                ]
-            ){
-
-                signalTimes.push(
-                    elapsed
-                );
-
-                redSignal.push(
-                    rgb.r
-                );
-
-                greenSignal.push(
-                    rgb.g
-                );
-
-                blueSignal.push(
-                    rgb.b
-                );
-
-
-                latestLighting=
-                    rgb.lighting;
-            }
-
-
-            while(
-                signalTimes.length>
-                MAX_SAMPLES
-            ){
-
-                signalTimes.shift();
-                redSignal.shift();
-                greenSignal.shift();
-                blueSignal.shift();
-            }
-
-
-            if(
-                now-
-                lastAnalysisTime >=
-                ANALYSIS_INTERVAL
-            ){
-
-                lastAnalysisTime=
-                    now;
-
-
-                requestAnalysis();
-            }
-        }
-    }
-}
-
-
-/* ============================================================
-   SAMPLE FOREHEAD
-============================================================ */
-
-function sampleForehead(
+function sampleROI(
     roi
 ){
 
-    if(
-        !video.videoWidth ||
-        !video.videoHeight
-    ){
-
-        return null;
-    }
+    analysisCtxSafe:
 
 
-    analysisCtx.drawImage(
+    sampleCtx.drawImage(
         video,
         0,
         0,
-        analysisCanvas.width,
-        analysisCanvas.height
+        sampleCanvas.width,
+        sampleCanvas.height
     );
 
 
-    const x =
+    const x=
         clamp(
             Math.floor(
                 roi.x*
-                analysisCanvas.width
+                sampleCanvas.width
             ),
             0,
-            analysisCanvas.width-1
+            sampleCanvas.width-1
         );
 
 
-    const y =
+    const y=
         clamp(
             Math.floor(
                 roi.y*
-                analysisCanvas.height
+                sampleCanvas.height
             ),
             0,
-            analysisCanvas.height-1
+            sampleCanvas.height-1
         );
 
 
-    const width =
+    const width=
         clamp(
             Math.floor(
                 roi.w*
-                analysisCanvas.width
+                sampleCanvas.width
             ),
             5,
-            analysisCanvas.width-x
+            sampleCanvas.width-x
         );
 
 
-    const height =
+    const height=
         clamp(
             Math.floor(
                 roi.h*
-                analysisCanvas.height
+                sampleCanvas.height
             ),
             5,
-            analysisCanvas.height-y
+            sampleCanvas.height-y
         );
 
 
-    const pixels =
-        analysisCtx.getImageData(
+    const data=
+        sampleCtx.getImageData(
             x,
             y,
             width,
@@ -3510,24 +3098,24 @@ function sampleForehead(
     let g=0;
     let b=0;
 
-    let lighting=0;
-    let valid=0;
+    let light=0;
+    let count=0;
 
 
     for(
         let i=0;
-        i<pixels.length;
+        i<data.length;
         i+=4
     ){
 
         const rr=
-            pixels[i];
+            data[i];
 
         const gg=
-            pixels[i+1];
+            data[i+1];
 
         const bb=
-            pixels[i+2];
+            data[i+2];
 
 
         const luminance=
@@ -3536,29 +3124,26 @@ function sampleForehead(
             .0722*bb;
 
 
-        lighting +=
+        light+=
             luminance;
 
 
-        /*
-         * Ignore near black and clipped pixels.
-         */
         if(
             luminance>18 &&
             luminance<248
         ){
 
-            r += rr;
-            g += gg;
-            b += bb;
+            r+=rr;
+            g+=gg;
+            b+=bb;
 
-            valid++;
+            count++;
         }
     }
 
 
     if(
-        valid<5
+        count<5
     ){
 
         return null;
@@ -3567,124 +3152,38 @@ function sampleForehead(
 
     return {
 
-        r:
-            r/valid,
+        r:r/count,
 
-        g:
-            g/valid,
+        g:g/count,
 
-        b:
-            b/valid,
+        b:b/count,
 
         lighting:
-            lighting/
+            light/
             (
-                pixels.length/4
+                data.length/4
             )
     };
 }
 
 
 /* ============================================================
-   SIGNAL MATH
+   MOVING AVERAGE
 ============================================================ */
-
-function detrend(
-    signal
-){
-
-    if(
-        signal.length<3
-    ){
-
-        return [
-            ...signal
-        ];
-    }
-
-
-    const n=
-        signal.length;
-
-
-    let sx=0;
-    let sy=0;
-    let sxy=0;
-    let sxx=0;
-
-
-    for(
-        let i=0;
-        i<n;
-        i++
-    ){
-
-        sx += i;
-
-        sy +=
-            signal[i];
-
-        sxy +=
-            i*signal[i];
-
-        sxx +=
-            i*i;
-    }
-
-
-    const denominator =
-        n*sxx-
-        sx*sx;
-
-
-    const slope =
-        Math.abs(
-            denominator
-        )<1e-12
-
-            ?0
-
-            :
-            (
-                n*sxy-
-                sx*sy
-            )/
-            denominator;
-
-
-    const intercept=
-        (
-            sy-
-            slope*sx
-        )/n;
-
-
-    return signal.map(
-        (value,i)=>
-            value-
-            (
-                slope*i+
-                intercept
-            )
-    );
-}
-
 
 function movingAverage(
     signal,
-    windowSize
+    window
 ){
 
-    windowSize =
+    const w=
         Math.max(
             2,
-            Math.round(
-                windowSize
-            )
+            Math.round(window)
         );
 
 
-    const output =
+    const result=
         new Array(
             signal.length
         );
@@ -3699,35 +3198,36 @@ function movingAverage(
         i++
     ){
 
-        sum +=
-            signal[i];
+        sum+=signal[i];
 
 
         if(
-            i>=windowSize
+            i>=w
         ){
 
-            sum -=
-                signal[
-                    i-windowSize
-                ];
+            sum-=
+                signal[i-w];
         }
 
 
-        output[i]=
+        result[i]=
             sum/
             Math.min(
                 i+1,
-                windowSize
+                w
             );
     }
 
 
-    return output;
+    return result;
 }
 
 
-function bandpass(
+/* ============================================================
+   LIGHTWEIGHT BANDPASS
+============================================================ */
+
+function lightweightBandpass(
     signal,
     fs
 ){
@@ -3764,12 +3264,98 @@ function bandpass(
 }
 
 
-function getActualFs(
-    times
+/* ============================================================
+   DETREND
+============================================================ */
+
+function detrend(
+    signal
 ){
 
     if(
-        times.length<2
+        signal.length<3
+    ){
+
+        return [
+            ...signal
+        ];
+    }
+
+
+    const n=
+        signal.length;
+
+
+    let sx=0;
+    let sy=0;
+    let sxy=0;
+    let sxx=0;
+
+
+    for(
+        let i=0;
+        i<n;
+        i++
+    ){
+
+        sx+=i;
+        sy+=signal[i];
+        sxy+=i*signal[i];
+        sxx+=i*i;
+    }
+
+
+    const denominator=
+        n*sxx-
+        sx*sx;
+
+
+    if(
+        Math.abs(denominator)<1e-12
+    ){
+
+        return [
+            ...signal
+        ];
+    }
+
+
+    const slope=
+        (
+            n*sxy-
+            sx*sy
+        )/
+        denominator;
+
+
+    const intercept=
+        (
+            sy-
+            slope*sx
+        )/n;
+
+
+    return signal.map(
+        (value,i)=>
+            value-
+            (
+                slope*i+
+                intercept
+            )
+    );
+}
+
+
+/* ============================================================
+   ACTUAL FS
+============================================================ */
+
+function actualFs(
+    sampleTimes
+){
+
+    if(
+        sampleTimes.length<2
     ){
 
         return 0;
@@ -3779,19 +3365,19 @@ function getActualFs(
     const n=
         Math.min(
             100,
-            times.length
+            sampleTimes.length
         );
 
 
     const start=
-        times.length-n;
+        sampleTimes.length-n;
 
 
     const elapsed=
-        times[
-            times.length-1
+        sampleTimes[
+            sampleTimes.length-1
         ]-
-        times[start];
+        sampleTimes[start];
 
 
     if(
@@ -3804,101 +3390,39 @@ function getActualFs(
 
     return (
         n-1
-    )/
-    elapsed;
+    )/elapsed;
 }
 
 
 /* ============================================================
-   WINDOW
+   IRREGULAR TIME DFT
 ============================================================ */
 
-function recentWindow(
-    data,
-    times,
-    seconds
-){
-
-    if(
-        !data.length ||
-        data.length!==times.length
-    ){
-
-        return {
-            data:[],
-            times:[]
-        };
-    }
-
-
-    const end=
-        times[
-            times.length-1
-        ];
-
-
-    const minimum=
-        end-seconds;
-
-
-    let start=0;
-
-
-    for(
-        let i=times.length-1;
-        i>=0;
-        i--
-    ){
-
-        if(
-            times[i]<minimum
-        ){
-
-            start=
-                i+1;
-
-            break;
-        }
-    }
-
-
-    return {
-
-        data:
-            data.slice(
-                start
-            ),
-
-        times:
-            times.slice(
-                start
-            )
-    };
-}
-
-
-/* ============================================================
-   DFT
-============================================================ */
-
-function estimateBpm(
+function estimateBpmIrregular(
     signal,
-    times
+    sampleTimes
 ){
 
     if(
         signal.length<60 ||
-        signal.length!==times.length
+        signal.length!==sampleTimes.length
     ){
 
         return {
+
             bpm:null,
-            quality:0
+
+            quality:0,
+
+            snr:0
         };
     }
 
 
-    const count=
+    /*
+     * Same successful window logic.
+     */
+    const n=
         Math.min(
             140,
             signal.length
@@ -3906,7 +3430,7 @@ function estimateBpm(
 
 
     const start=
-        signal.length-count;
+        signal.length-n;
 
 
     const x=
@@ -3918,7 +3442,7 @@ function estimateBpm(
 
 
     const t=
-        times.slice(
+        sampleTimes.slice(
             start
         );
 
@@ -3933,8 +3457,12 @@ function estimateBpm(
     ){
 
         return {
+
             bpm:null,
-            quality:0
+
+            quality:0,
+
+            snr:0
         };
     }
 
@@ -3949,6 +3477,7 @@ function estimateBpm(
     let bestPower=
         -Infinity;
 
+
     let bestFreq=
         null;
 
@@ -3956,6 +3485,11 @@ function estimateBpm(
     const powers=[];
 
 
+    /*
+     * Same 42-150 search used by successful
+     * V5.4. The important part is that time
+     * remains irregular — no forced resampling.
+     */
     for(
         let f=42/60;
         f<=150/60;
@@ -3973,17 +3507,20 @@ function estimateBpm(
         ){
 
             const phase=
-                2*Math.PI*f*t[i];
+                2*
+                Math.PI*
+                f*
+                t[i];
 
 
-            re +=
+            re+=
                 z[i]*
                 Math.cos(
                     phase
                 );
 
 
-            im +=
+            im+=
                 z[i]*
                 Math.sin(
                     phase
@@ -3996,12 +3533,12 @@ function estimateBpm(
             im*im;
 
 
-        powers.push(
-            {
-                f,
-                power
-            }
-        );
+        powers.push({
+
+            f,
+
+            power
+        });
 
 
         if(
@@ -4022,8 +3559,12 @@ function estimateBpm(
     ){
 
         return {
+
             bpm:null,
-            quality:0
+
+            quality:0,
+
+            snr:0
         };
     }
 
@@ -4045,21 +3586,23 @@ function estimateBpm(
         );
 
 
+    const snrDb=
+        10*
+        Math.log10(
+            (
+                bestPower+
+                1e-9
+            )/
+            (
+                background+
+                1e-9
+            )
+        );
+
+
     const snr=
         clamp(
-            (
-                10*
-                Math.log10(
-                    (
-                        bestPower+
-                        1e-9
-                    )/
-                    (
-                        background+
-                        1e-9
-                    )
-                )
-            )/18,
+            snrDb/18,
             0,
             1
         );
@@ -4073,35 +3616,10 @@ function estimateBpm(
         quality:
             Math.round(
                 snr*100
-            )
+            ),
+
+        snr
     };
-}
-
-
-/* ============================================================
-   NORMALIZE COLOR
-============================================================ */
-
-function normalizeChannel(
-    values
-){
-
-    const m=
-        mean(values);
-
-
-    if(
-        m<=1e-9
-    ){
-
-        return [];
-    }
-
-
-    return values.map(
-        value =>
-            value/m
-    );
 }
 
 
@@ -4115,22 +3633,45 @@ function computeChrom(
     b
 ){
 
-    const nr=
-        normalizeChannel(r);
+    const mr=
+        mean(r);
 
-    const ng=
-        normalizeChannel(g);
+    const mg=
+        mean(g);
 
-    const nb=
-        normalizeChannel(b);
+    const mb=
+        mean(b);
 
 
     if(
-        nr.length!==r.length
+        mr<=1e-9 ||
+        mg<=1e-9 ||
+        mb<=1e-9
     ){
 
         return [];
     }
+
+
+    const nr=
+        r.map(
+            v =>
+                v/mr
+        );
+
+
+    const ng=
+        g.map(
+            v =>
+                v/mg
+        );
+
+
+    const nb=
+        b.map(
+            v =>
+                v/mb
+        );
 
 
     const X=[];
@@ -4185,22 +3726,45 @@ function computePOS(
     b
 ){
 
-    const nr=
-        normalizeChannel(r);
+    const mr=
+        mean(r);
 
-    const ng=
-        normalizeChannel(g);
+    const mg=
+        mean(g);
 
-    const nb=
-        normalizeChannel(b);
+    const mb=
+        mean(b);
 
 
     if(
-        nr.length!==r.length
+        mr<=1e-9 ||
+        mg<=1e-9 ||
+        mb<=1e-9
     ){
 
         return [];
     }
+
+
+    const nr=
+        r.map(
+            v =>
+                v/mr
+        );
+
+
+    const ng=
+        g.map(
+            v =>
+                v/mg
+        );
+
+
+    const nb=
+        b.map(
+            v =>
+                v/mb
+        );
 
 
     const s1=[];
@@ -4246,6 +3810,63 @@ function computePOS(
 
 
 /* ============================================================
+   ESTIMATOR
+============================================================ */
+
+function estimateProcessed(
+    signal,
+    sampleTimes
+){
+
+    if(
+        signal.length<60
+    ){
+
+        return {
+
+            bpm:null,
+
+            quality:0
+        };
+    }
+
+
+    const fs=
+        actualFs(
+            sampleTimes
+        );
+
+
+    if(
+        !finite(fs) ||
+        fs<5 ||
+        fs>30
+    ){
+
+        return {
+
+            bpm:null,
+
+            quality:0
+        };
+    }
+
+
+    const filtered=
+        lightweightBandpass(
+            signal,
+            fs
+        );
+
+
+    return estimateBpmIrregular(
+        filtered,
+        sampleTimes
+    );
+}
+
+
+/* ============================================================
    TEMPORAL GREEN
 ============================================================ */
 
@@ -4263,19 +3884,55 @@ function temporalGreen(){
 
 
     for(
-        const seconds of windows
+        const seconds of
+        windows
     ){
 
-        const w=
-            recentWindow(
-                greenSignal,
-                signalTimes,
-                seconds
+        const end=
+            times[
+                times.length-1
+            ];
+
+
+        const minTime=
+            end-seconds;
+
+
+        let start=0;
+
+
+        for(
+            let i=times.length-1;
+            i>=0;
+            i--
+        ){
+
+            if(
+                times[i]<minTime
+            ){
+
+                start=
+                    i+1;
+
+                break;
+            }
+        }
+
+
+        const s=
+            green.slice(
+                start
+            );
+
+
+        const t=
+            times.slice(
+                start
             );
 
 
         if(
-            w.data.length<50
+            s.length<50
         ){
 
             continue;
@@ -4283,14 +3940,9 @@ function temporalGreen(){
 
 
         const result=
-            estimateBpm(
-                bandpass(
-                    w.data,
-                    getActualFs(
-                        w.times
-                    )
-                ),
-                w.times
+            estimateProcessed(
+                s,
+                t
             );
 
 
@@ -4336,17 +3988,318 @@ function temporalGreen(){
 
 
 /* ============================================================
-   TEMPORAL BPM VALIDATION
+   ROBUST CLUSTER
 ============================================================ */
 
-function stabilizeBpm(
-    candidate,
-    confidence,
+function createClusters(
+    candidates,
+    tolerance=8
+){
+
+    const clusters=[];
+
+
+    for(
+        const candidate of
+        candidates
+    ){
+
+        let found=null;
+
+
+        for(
+            const cluster of
+            clusters
+        ){
+
+            const center=
+                median(
+                    cluster.map(
+                        x=>x.bpm
+                    )
+                );
+
+
+            if(
+                Math.abs(
+                    candidate.bpm-
+                    center
+                )<=tolerance
+            ){
+
+                found=
+                    cluster;
+
+                break;
+            }
+        }
+
+
+        if(
+            found
+        ){
+
+            found.push(
+                candidate
+            );
+
+        }else{
+
+            clusters.push(
+                [candidate]
+            );
+        }
+    }
+
+
+    return clusters;
+}
+
+
+/* ============================================================
+   FINAL FUSION
+============================================================ */
+
+function fuseCandidates(
+    candidates,
     temporal
 ){
 
+    const valid=
+        candidates.filter(
+            x =>
+                finite(x.bpm)
+        );
+
+
     if(
-        !finite(candidate)
+        !valid.length
+    ){
+
+        return null;
+    }
+
+
+    const clusters=
+        createClusters(
+            valid,
+            8
+        );
+
+
+    /*
+     * V5.4-style preference:
+     * strongest support + quality + CHROM/POS.
+     */
+    const scored=
+        clusters.map(
+            cluster =>{
+
+                const support=
+                    cluster.length;
+
+
+                const spread=
+                    support>1
+                        ?
+                        std(
+                            cluster.map(
+                                x =>
+                                    x.bpm
+                            )
+                        )
+                        :
+                        0;
+
+
+                const averageQuality=
+                    mean(
+                        cluster.map(
+                            x =>
+                                x.quality
+                        )
+                    );
+
+
+                let score=0;
+
+
+                if(
+                    support===3
+                ){
+
+                    score+=60;
+
+                }else if(
+                    support===2
+                ){
+
+                    score+=90;
+
+                }else{
+
+                    score+=25;
+                }
+
+
+                score+=
+                    averageQuality*.15;
+
+
+                score+=
+                    clamp(
+                        15-spread,
+                        0,
+                        15
+                    );
+
+
+                const names=
+                    cluster.map(
+                        x =>
+                            x.name
+                    );
+
+
+                if(
+                    names.includes("CHROM") &&
+                    names.includes("POS")
+                ){
+
+                    score+=35;
+                }
+
+
+                return {
+
+                    cluster,
+
+                    support,
+
+                    spread,
+
+                    averageQuality,
+
+                    score
+                };
+            }
+        );
+
+
+    scored.sort(
+        (a,b)=>
+            b.score-a.score
+    );
+
+
+    const best=
+        scored[0];
+
+
+    if(!best)
+        return null;
+
+
+    const bestCluster=
+        best.cluster;
+
+
+    const chrom=
+        bestCluster.find(
+            x =>
+                x.name==="CHROM"
+        );
+
+
+    const pos=
+        bestCluster.find(
+            x =>
+                x.name==="POS"
+        );
+
+
+    let bpm;
+
+
+    /*
+     * This is the exact behavioral idea
+     * that produced the successful ~80.8
+     * session: CHROM + POS first.
+     */
+    if(
+        chrom &&
+        pos
+    ){
+
+        bpm=
+            (
+                chrom.bpm+
+                pos.bpm
+            )/2;
+
+    }else{
+
+        let numerator=0;
+        let denominator=0;
+
+
+        for(
+            const item of
+            bestCluster
+        ){
+
+            const weight=
+                item.name==="Green"
+                    ? .85
+                    :
+                item.name==="CHROM"
+                    ?1.20
+                    :
+                    1.25;
+
+
+            numerator +=
+                item.bpm*
+                weight;
+
+
+            denominator +=
+                weight;
+        }
+
+
+        bpm=
+            denominator>0
+                ?
+                numerator/
+                denominator
+                :
+                null;
+    }
+
+
+    /*
+     * Temporal Green is a refinement,
+     * not the primary result.
+     */
+    if(
+        finite(
+            temporal.bpm
+        ) &&
+        Math.abs(
+            temporal.bpm-
+            bpm
+        )<=6
+    ){
+
+        bpm=
+            bpm*.85+
+            temporal.bpm*.15;
+    }
+
+
+    if(
+        !finite(bpm)
     ){
 
         return null;
@@ -4354,120 +4307,183 @@ function stabilizeBpm(
 
 
     /*
-     * Initial value.
+     * Agreement.
      */
+    let agreement;
+
+
     if(
-        !bpmHistory.length
+        best.support===3
     ){
 
-        bpmHistory.push(
-            candidate
-        );
+        agreement=
+            70+
+            clamp(
+                30-
+                best.spread*3,
+                0,
+                30
+            );
 
-        return candidate;
+    }else if(
+        best.support===2
+    ){
+
+        agreement=
+            75-
+            clamp(
+                best.spread*3,
+                0,
+                35
+            );
+
+    }else{
+
+        agreement=
+            35;
     }
 
 
-    const previous=
-        median(
-            bpmHistory
-        );
-
-
-    const jump=
-        Math.abs(
-            candidate-
-            previous
+    /*
+     * Stable quality.
+     */
+    const quality=
+        Math.round(
+            clamp(
+                best.averageQuality,
+                0,
+                100
+            )
         );
 
 
     /*
-     * Strong agreement + reasonable temporal
-     * stability can accept a change.
+     * Confidence.
+     *
+     * Unlike the old bug, it can never
+     * become null/NaN.
      */
-    const temporalStable=
+    let confidence;
+
+
+    if(
+        best.support===3
+    ){
+
+        confidence=
+            86+
+            clamp(
+                (
+                    100-
+                    best.spread*4
+                ),
+                0,
+                14
+            );
+
+    }else if(
+        best.support===2
+    ){
+
+        confidence=
+            68+
+            clamp(
+                (
+                    25-
+                    best.spread*3
+                ),
+                0,
+                25
+            );
+
+    }else{
+
+        confidence=
+            40;
+    }
+
+
+    /*
+     * Quality affects confidence,
+     * but not the BPM itself.
+     */
+    confidence=
+        confidence*.65+
+        quality*.20+
+        agreement*.15;
+
+
+    /*
+     * Temporal instability lowers confidence.
+     */
+    if(
         finite(
             temporal.spread
         ) &&
-        temporal.spread<=6;
-
-
-    const strong=
-        confidence>=75;
-
-
-    /*
-     * Reject obvious outlier:
-     *
-     * 84 -> 47 -> 84
-     *
-     * especially when the candidate has
-     * weak confidence or poor temporal support.
-     */
-    if(
-        jump>20 &&
-        !strong &&
-        !temporalStable
+        temporal.spread>12
     ){
 
-        return previous;
-    }
-
-
-    /*
-     * If temporal estimator agrees with the
-     * previous value, prefer the temporal path.
-     */
-    if(
-        jump>14 &&
-        finite(temporal.bpm) &&
-        Math.abs(
-            temporal.bpm-
-            previous
-        )<=6
-    ){
-
-        candidate=
-            (
-                candidate*.35+
-                temporal.bpm*.65
+        confidence=
+            Math.min(
+                confidence,
+                72
             );
     }
 
 
-    bpmHistory.push(
-        candidate
-    );
+    confidence=
+        Math.round(
+            clamp(
+                confidence,
+                0,
+                100
+            )
+        );
 
 
-    while(
-        bpmHistory.length>5
-    ){
+    return {
 
-        bpmHistory.shift();
-    }
+        bpm,
 
+        quality,
 
-    return median(
-        bpmHistory.slice(
-            -3
-        )
-    );
+        confidence,
+
+        agreement:
+            Math.round(
+                clamp(
+                    agreement,
+                    0,
+                    100
+                )
+            ),
+
+        spread:
+            best.spread,
+
+        support:
+            best.support,
+
+        cluster:
+            bestCluster
+    };
 }
 
 
 /* ============================================================
-   RPPG ANALYSIS
+   FULL ANALYSIS
 ============================================================ */
 
-async function requestAnalysis(){
+async function analyzeNow(
+    finalPass=false
+){
 
     if(
         analysisBusy ||
-        greenSignal.length<60
+        green.length<60
     ){
 
-        return;
+        return null;
     }
 
 
@@ -4478,7 +4494,7 @@ async function requestAnalysis(){
     try{
 
         /*
-         * Let rendering/camera breathe.
+         * Give camera rendering room.
          */
         await new Promise(
             resolve =>
@@ -4488,100 +4504,76 @@ async function requestAnalysis(){
         );
 
 
-        const greenWindow=
-            recentWindow(
-                greenSignal,
-                signalTimes,
-                10
+        const greenResult=
+            estimateProcessed(
+                green.slice(),
+                times.slice()
             );
 
 
-        const fs=
-            getActualFs(
-                greenWindow.times
-            );
-
-
-        const greenSignalProcessed=
-            bandpass(
-                greenWindow.data,
-                fs
-            );
-
-
-        const green=
-            estimateBpm(
-                greenSignalProcessed,
-                greenWindow.times
-            );
-
-
-        const count=
+        const recentCount=
             Math.min(
                 280,
-                signalTimes.length
+                times.length
             );
 
 
         const start=
-            signalTimes.length-count;
+            times.length-
+            recentCount;
 
 
-        const times=
-            signalTimes.slice(
+        const rt=
+            times.slice(
                 start
             );
 
 
-        const r=
-            redSignal.slice(
+        const rr=
+            red.slice(
                 start
             );
 
-        const g=
-            greenSignal.slice(
+
+        const rg=
+            green.slice(
                 start
             );
 
-        const b=
-            blueSignal.slice(
+
+        const rb=
+            blue.slice(
                 start
             );
 
 
         const chromSignal=
             computeChrom(
-                r,
-                g,
-                b
+                rr,
+                rg,
+                rb
             );
 
 
         const posSignal=
             computePOS(
-                r,
-                g,
-                b
+                rr,
+                rg,
+                rb
             );
 
 
-        const chrom=
-            estimateBpm(
-                bandpass(
-                    chromSignal,
-                    getActualFs(times)
-                ),
-                times
+        const chromResult=
+            estimateProcessed(
+                chromSignal,
+                rt
             );
 
 
-        const pos=
-            estimateBpm(
-                bandpass(
-                    posSignal,
-                    getActualFs(times)
-                ),
-                times
+        const posResult=
+            estimateProcessed(
+                posSignal,
+                rt
             );
 
 
@@ -4589,327 +4581,109 @@ async function requestAnalysis(){
             temporalGreen();
 
 
-        /*
-         * Candidate estimators.
-         */
-        const candidates=
-            [
-                {
-                    name:"Green",
-                    bpm:green.bpm,
-                    quality:green.quality,
-                    weight:.85
-                },
+        const candidates=[
 
-                {
-                    name:"CHROM",
-                    bpm:chrom.bpm,
-                    quality:chrom.quality,
-                    weight:1.20
-                },
+            {
+                name:"Green",
 
-                {
-                    name:"POS",
-                    bpm:pos.bpm,
-                    quality:pos.quality,
-                    weight:1.25
-                }
-            ]
-            .filter(
-                item =>
+                bpm:
+                    greenResult.bpm,
+
+                quality:
                     finite(
-                        item.bpm
+                        greenResult.quality
                     )
-            );
+                        ?
+                        greenResult.quality
+                        :
+                        0
+            },
 
 
-        if(
-            !candidates.length
-        ){
+            {
+                name:"CHROM",
 
-            return;
-        }
+                bpm:
+                    chromResult.bpm,
 
-
-        /*
-         * Find strongest agreement cluster.
-         */
-        let bestCluster=[];
-
-
-        for(
-            const candidate of
-            candidates
-        ){
-
-            const cluster=
-                candidates.filter(
-                    item =>
-                        Math.abs(
-                            item.bpm-
-                            candidate.bpm
-                        )<=8
-                );
+                quality:
+                    finite(
+                        chromResult.quality
+                    )
+                        ?
+                        chromResult.quality
+                        :
+                        0
+            },
 
 
-            if(
-                cluster.length>
-                bestCluster.length
-            ){
+            {
+                name:"POS",
 
-                bestCluster=
-                    cluster;
-            }
-        }
+                bpm:
+                    posResult.bpm,
 
-
-        /*
-         * Fusion.
-         *
-         * CHROM + POS remain the preferred pair,
-         * preserving the behavior that produced
-         * the user's strong results.
-         */
-        const chromPos=
-            bestCluster.filter(
-                item =>
-                    item.name==="CHROM" ||
-                    item.name==="POS"
-            );
-
-
-        let candidateBpm;
-
-
-        if(
-            chromPos.length===2
-        ){
-
-            candidateBpm=
-                (
-                    chromPos[0].bpm+
-                    chromPos[1].bpm
-                )/2;
-
-        }else{
-
-            let numerator=0;
-            let denominator=0;
-
-
-            for(
-                const item of
-                bestCluster
-            ){
-
-                numerator +=
-                    item.bpm*
-                    item.weight;
-
-                denominator +=
-                    item.weight;
+                quality:
+                    finite(
+                        posResult.quality
+                    )
+                        ?
+                        posResult.quality
+                        :
+                        0
             }
 
-
-            candidateBpm=
-                numerator/
-                denominator;
-        }
+        ];
 
 
-        /*
-         * Temporal adjustment only when
-         * temporal estimator is actually close.
-         */
-        let finalBpm=
-            candidateBpm;
-
-
-        if(
-            finite(
-                temporal.bpm
-            ) &&
-            Math.abs(
-                temporal.bpm-
-                candidateBpm
-            )<=6
-        ){
-
-            finalBpm=
-                candidateBpm*.85+
-                temporal.bpm*.15;
-        }
-
-
-        /*
-         * Quality.
-         */
-        const quality=
-            Math.round(
-                clamp(
-                    mean(
-                        bestCluster.map(
-                            item =>
-                                item.quality
-                        )
-                    ),
-                    0,
-                    100
-                )
-            );
-
-
-        /*
-         * Spread.
-         */
-        const spread=
-            bestCluster.length>1
-
-                ?std(
-                    bestCluster.map(
-                        item =>
-                            item.bpm
-                    )
-                )
-
-                :0;
-
-
-        /*
-         * Agreement.
-         */
-        let agreement;
-
-
-        if(
-            bestCluster.length===3
-        ){
-
-            agreement=
-                clamp(
-                    100-
-                    spread*3,
-                    70,
-                    100
-                );
-
-        }else if(
-            bestCluster.length===2
-        ){
-
-            agreement=
-                clamp(
-                    90-
-                    spread*3,
-                    55,
-                    90
-                );
-
-        }else{
-
-            agreement=
-                40;
-        }
-
-
-        /*
-         * Face stability is used as an
-         * input to confidence, not BPM.
-         */
-        let confidence=
-            (
-                quality*.55+
-                agreement*.35+
-                faceStability*.10
-            );
-
-
-        /*
-         * Temporal instability cap.
-         */
-        if(
-            finite(
-                temporal.spread
-            ) &&
-            temporal.spread>10
-        ){
-
-            confidence=
-                Math.min(
-                    confidence,
-                    72
-                );
-        }
-
-
-        /*
-         * Very weak agreement cap.
-         */
-        if(
-            agreement<55
-        ){
-
-            confidence=
-                Math.min(
-                    confidence,
-                    65
-                );
-        }
-
-
-        confidence=
-            Math.round(
-                clamp(
-                    confidence,
-                    0,
-                    100
-                )
-            );
-
-
-        /*
-         * IMPORTANT:
-         *
-         * Now stabilize BPM BEFORE storing it.
-         */
-        finalBpm=
-            stabilizeBpm(
-                finalBpm,
-                confidence,
+        const fused=
+            fuseCandidates(
+                candidates,
                 temporal
             );
 
 
         if(
-            !finite(finalBpm)
+            !fused
         ){
 
-            return;
+            if(
+                finalPass
+            ){
+
+                latestAnalysis=
+                    null;
+            }
+
+
+            return null;
         }
 
 
-        latestAnalysis={
+        /*
+         * Crucial change:
+         *
+         * We do NOT immediately accept a single
+         * strange result as the final measurement.
+         *
+         * Intermediate results are history only.
+         */
+        const observation={
 
             bpm:
-                finalBpm,
-
-            candidateBpm,
+                fused.bpm,
 
             quality:
-
-                finite(quality)
-                    ?quality
-                    :0,
+                fused.quality,
 
             confidence:
+                fused.confidence,
 
-                finite(confidence)
-                    ?confidence
-                    :0,
+            agreement:
+                fused.agreement,
 
-            agreement,
-
-            spread,
+            spread:
+                fused.spread,
 
             temporalBpm:
                 temporal.bpm,
@@ -4917,31 +4691,150 @@ async function requestAnalysis(){
             temporalSpread:
                 temporal.spread,
 
-            candidates,
-
-            sample_rate:
-                fs,
-
             greenBpm:
-                green.bpm,
+                greenResult.bpm,
 
             chromBpm:
-                chrom.bpm,
+                chromResult.bpm,
 
             posBpm:
-                pos.bpm
+                posResult.bpm,
+
+            sampleRate:
+                actualFs(
+                    times
+                )
         };
+
+
+        if(
+            finalPass
+        ){
+
+            /*
+             * Final result from the last stable
+             * observations, not the first one.
+             *
+             * When enough valid observations exist,
+             * use a median over the stable tail.
+             */
+            const history=[
+                ...resultHistory,
+                observation
+            ].filter(
+                x =>
+                    finite(x.bpm)
+            );
+
+
+            let finalBpm=
+                observation.bpm;
+
+
+            if(
+                history.length>=3
+            ){
+
+                const recent=
+                    history.slice(
+                        -5
+                    );
+
+
+                /*
+                 * Reject an isolated outlier
+                 * before taking the median.
+                 */
+                const med=
+                    median(
+                        recent.map(
+                            x =>
+                                x.bpm
+                        )
+                    );
+
+
+                const stable=
+                    recent.filter(
+                        x =>
+                            Math.abs(
+                                x.bpm-
+                                med
+                            )<=10
+                    );
+
+
+                if(
+                    stable.length>=2
+                ){
+
+                    finalBpm=
+                        median(
+                            stable.map(
+                                x =>
+                                    x.bpm
+                            )
+                        );
+                }
+            }
+
+
+            /*
+             * We deliberately keep BPM
+             * from the proven fusion path.
+             */
+            latestAnalysis={
+
+                ...observation,
+
+                bpm:
+                    finite(finalBpm)
+                        ?
+                        finalBpm
+                        :
+                        observation.bpm,
+
+                candidates
+            };
+
+        }else{
+
+            latestAnalysis=
+                observation;
+        }
+
+
+        /*
+         * Save observation only if valid.
+         */
+        resultHistory.push(
+            observation
+        );
+
+
+        while(
+            resultHistory.length>8
+        ){
+
+            resultHistory.shift();
+        }
 
 
         renderAnalysis();
 
 
+        return latestAnalysis;
+
+
     }catch(error){
 
         console.error(
-            "Doctor MIMO analysis error:",
+            "Doctor MIMO analysis:",
             error
         );
+
+
+        return null;
 
     }finally{
 
@@ -4965,6 +4858,34 @@ function renderAnalysis(){
     }
 
 
+    const quality=
+        finite(
+            latestAnalysis.quality
+        )
+            ?
+            clamp(
+                latestAnalysis.quality,
+                0,
+                100
+            )
+            :
+            0;
+
+
+    const confidence=
+        finite(
+            latestAnalysis.confidence
+        )
+            ?
+            clamp(
+                latestAnalysis.confidence,
+                0,
+                100
+            )
+            :
+            0;
+
+
     bpmEl.textContent=
         fmt(
             latestAnalysis.bpm,
@@ -4975,11 +4896,7 @@ function renderAnalysis(){
     qualityEl.textContent=
         String(
             Math.round(
-                finite(
-                    latestAnalysis.quality
-                )
-                    ?latestAnalysis.quality
-                    :0
+                quality
             )
         );
 
@@ -4987,1314 +4904,38 @@ function renderAnalysis(){
     confidenceEl.textContent=
         String(
             Math.round(
-                finite(
-                    latestAnalysis.confidence
-                )
-                    ?latestAnalysis.confidence
-                    :0
+                confidence
             )
         );
 
 
-    const confidence=
-        finite(
-            latestAnalysis.confidence
-        )
-            ?latestAnalysis.confidence
-            :0;
+    confidenceLabelEl.textContent=
+        confidence>=80
+            ?
+            "High"
+            :
+        confidence>=60
+            ?
+            "Medium"
+            :
+            "Low";
 
 
     confidenceBar.style.width=
         `${confidence}%`;
 
 
-    confidenceLabelEl.textContent=
-        confidence>=80
-            ?"High"
-            :
-        confidence>=60
-            ?"Medium"
-            :
-            "Low";
-
-
     analysisStatus.textContent=
         "تم التحليل";
 
 
-    runBP();
-
-
     buildClinicalAssessment();
-}
-
-
-/* ============================================================
-   BP MODEL — STORAGE
-============================================================ */
-
-function getBPModel(){
-
-    try{
-
-        const raw=
-            localStorage.getItem(
-                BP_MODEL_KEY
-            );
-
-
-        return raw
-            ?JSON.parse(raw)
-            :null;
-
-    }catch{
-
-        return null;
-    }
-}
-
-
-function saveBPModel(
-    model
-){
-
-    localStorage.setItem(
-        BP_MODEL_KEY,
-        JSON.stringify(
-            model
-        )
-    );
-}
-
-
-/* ============================================================
-   GET CALIBRATION DATA
-============================================================ */
-
-function getCalibrationSessions(){
-
-    const all=[];
 
 
     /*
-     * Read legacy research sessions.
+     * BP remains separate.
      */
-    for(
-        const key of
-        LEGACY_RESEARCH_KEYS
-    ){
-
-        try{
-
-            const raw=
-                localStorage.getItem(
-                    key
-                );
-
-
-            if(!raw){
-                continue;
-            }
-
-
-            const data=
-                JSON.parse(raw);
-
-
-            if(
-                Array.isArray(data)
-            ){
-
-                all.push(
-                    ...data
-                );
-            }
-
-        }catch{}
-    }
-
-
-    /*
-     * Also inspect current product
-     * sessions in case reference values
-     * are added later.
-     */
-    try{
-
-        const raw=
-            localStorage.getItem(
-                PRODUCT_KEY
-            );
-
-
-        if(raw){
-
-            const data=
-                JSON.parse(raw);
-
-
-            if(
-                Array.isArray(data)
-            ){
-
-                all.push(
-                    ...data
-                );
-            }
-        }
-
-    }catch{}
-
-
-    /*
-     * Deduplicate.
-     */
-    const map=
-        new Map();
-
-
-    for(
-        const session of all
-    ){
-
-        const sys=
-            Number(
-                session.reference_sys
-            );
-
-
-        const dia=
-            Number(
-                session.reference_dia
-            );
-
-
-        if(
-            !finite(sys) ||
-            !finite(dia)
-        ){
-
-            continue;
-        }
-
-
-        const key=
-            session.session_id ||
-            session.id ||
-            (
-                session.timestamp+
-                "_"+
-                sys+
-                "_"+
-                dia
-            );
-
-
-        map.set(
-            key,
-            session
-        );
-    }
-
-
-    return [
-        ...map.values()
-    ];
-}
-
-
-/* ============================================================
-   BP FEATURES
-============================================================ */
-
-function extractBPFeatures(){
-
-    if(
-        !latestAnalysis
-    ){
-
-        return null;
-    }
-
-
-    const window=
-        recentWindow(
-            greenSignal,
-            signalTimes,
-            12
-        );
-
-
-    if(
-        window.data.length<70
-    ){
-
-        return null;
-    }
-
-
-    const x=
-        detrend(
-            window.data
-        );
-
-
-    const duration=
-        window.times.length>1
-            ?
-            window.times[
-                window.times.length-1
-            ]-
-            window.times[0]
-            :
-            10;
-
-
-    const amplitude=
-        Math.max(
-            ...x
-        )-
-        Math.min(
-            ...x
-        );
-
-
-    const sd=
-        std(x);
-
-
-    const cv=
-        Math.abs(
-            sd/
-            (
-                Math.abs(
-                    mean(x)
-                )+
-                1e-9
-            )
-        );
-
-
-    let crossings=0;
-
-
-    for(
-        let i=1;
-        i<x.length;
-        i++
-    ){
-
-        if(
-            (
-                x[i-1]<=0 &&
-                x[i]>0
-            ) ||
-            (
-                x[i-1]>=0 &&
-                x[i]<0
-            )
-        ){
-
-            crossings++;
-        }
-    }
-
-
-    const crossingRate=
-        crossings/
-        Math.max(
-            duration,
-            1
-        );
-
-
-    const bpm=
-        latestAnalysis.bpm;
-
-
-    const pulsePeriod=
-        bpm>0
-            ?60/bpm
-            :0;
-
-
-    return [
-
-        1,
-
-        bpm,
-
-        amplitude,
-
-        sd,
-
-        cv,
-
-        crossingRate,
-
-        pulsePeriod,
-
-        latestAnalysis.quality,
-
-        faceStability,
-
-        latestLighting,
-
-        bpm*
-        latestAnalysis.quality,
-
-        bpm*
-        faceStability
-    ];
-}
-
-
-/* ============================================================
-   SESSION -> BP FEATURES
-============================================================ */
-
-function sessionToFeatures(
-    session
-){
-
-    const bpm=
-        Number(
-            session.mimo_bpm ??
-            session.bpm
-        );
-
-
-    const quality=
-        Number(
-            session.signal_quality ??
-            session.quality
-        );
-
-
-    const stability=
-        Number(
-            session.face_stability ??
-            80
-        );
-
-
-    const lighting=
-        Number(
-            session.lighting ??
-            120
-        );
-
-
-    if(
-        !finite(bpm) ||
-        !finite(quality)
-    ){
-
-        return null;
-    }
-
-
-    let rawGreen=
-        Array.isArray(
-            session.raw_green
-        )
-            ?session.raw_green
-            :[];
-
-
-    if(
-        rawGreen.length<70
-    ){
-
-        /*
-         * Feature fallback.
-         *
-         * This permits older sessions to
-         * contribute basic physiological
-         * features without fabricating a
-         * pulse waveform.
-         */
-        rawGreen=
-            [];
-    }
-
-
-    let amplitude=0;
-    let sd=0;
-    let cv=0;
-    let crossingRate=0;
-
-
-    if(
-        rawGreen.length>=70
-    ){
-
-        const x=
-            detrend(
-                rawGreen
-            );
-
-
-        amplitude=
-            Math.max(...x)-
-            Math.min(...x);
-
-
-        sd=
-            std(x);
-
-
-        cv=
-            Math.abs(
-                sd/
-                (
-                    Math.abs(
-                        mean(x)
-                    )+
-                    1e-9
-                )
-            );
-
-
-        const times=
-            Array.isArray(
-                session.raw_times
-            )
-                ?session.raw_times
-                :[];
-
-
-        const duration=
-            times.length>1
-
-                ?
-                times[
-                    times.length-1
-                ]-
-                times[0]
-
-                :
-                10;
-
-
-        let crossings=0;
-
-
-        for(
-            let i=1;
-            i<x.length;
-            i++
-        ){
-
-            if(
-                (
-                    x[i-1]<=0 &&
-                    x[i]>0
-                ) ||
-                (
-                    x[i-1]>=0 &&
-                    x[i]<0
-                )
-            ){
-
-                crossings++;
-            }
-        }
-
-
-        crossingRate=
-            crossings/
-            Math.max(
-                duration,
-                1
-            );
-    }
-
-
-    return [
-
-        1,
-
-        bpm,
-
-        amplitude,
-
-        sd,
-
-        cv,
-
-        crossingRate,
-
-        bpm>0
-            ?60/bpm
-            :0,
-
-        quality,
-
-        stability,
-
-        lighting,
-
-        bpm*quality,
-
-        bpm*stability
-    ];
-}
-
-
-/* ============================================================
-   RIDGE REGRESSION
-============================================================ */
-
-function solveLinearSystem(
-    A,
-    b
-){
-
-    const n=
-        b.length;
-
-
-    const M=
-        A.map(
-            (row,i)=>
-                [
-                    ...row,
-                    b[i]
-                ]
-        );
-
-
-    for(
-        let col=0;
-        col<n;
-        col++
-    ){
-
-        let pivot=
-            col;
-
-
-        for(
-            let row=col+1;
-            row<n;
-            row++
-        ){
-
-            if(
-                Math.abs(
-                    M[row][col]
-                )>
-                Math.abs(
-                    M[pivot][col]
-                )
-            ){
-
-                pivot=
-                    row;
-            }
-        }
-
-
-        if(
-            Math.abs(
-                M[pivot][col]
-            )<1e-10
-        ){
-
-            return null;
-        }
-
-
-        [
-            M[col],
-            M[pivot]
-        ]=
-        [
-            M[pivot],
-            M[col]
-        ];
-
-
-        const divisor=
-            M[col][col];
-
-
-        for(
-            let j=col;
-            j<=n;
-            j++
-        ){
-
-            M[col][j]/=
-                divisor;
-        }
-
-
-        for(
-            let row=0;
-            row<n;
-            row++
-        ){
-
-            if(
-                row===col
-            ){
-
-                continue;
-            }
-
-
-            const factor=
-                M[row][col];
-
-
-            for(
-                let j=col;
-                j<=n;
-                j++
-            ){
-
-                M[row][j]-=
-                    factor*
-                    M[col][j];
-            }
-        }
-    }
-
-
-    return M.map(
-        row =>
-            row[n]
-    );
-}
-
-
-function ridgeRegression(
-    X,
-    y,
-    lambda=.8
-){
-
-    if(
-        !X.length
-    ){
-
-        return null;
-    }
-
-
-    const p=
-        X[0].length;
-
-
-    const A=
-        Array.from(
-            {
-                length:p
-            },
-            () =>
-                Array(
-                    p
-                ).fill(0)
-        );
-
-
-    const b=
-        Array(p).fill(0);
-
-
-    for(
-        let i=0;
-        i<X.length;
-        i++
-    ){
-
-        for(
-            let j=0;
-            j<p;
-            j++
-        ){
-
-            b[j]+=
-                X[i][j]*
-                y[i];
-
-
-            for(
-                let k=0;
-                k<p;
-                k++
-            ){
-
-                A[j][k]+=
-                    X[i][j]*
-                    X[i][k];
-            }
-        }
-    }
-
-
-    for(
-        let i=0;
-        i<p;
-        i++
-    ){
-
-        A[i][i]+=lambda;
-    }
-
-
-    const weights=
-        solveLinearSystem(
-            A,
-            b
-        );
-
-
-    return weights
-        ?{
-            weights,
-            lambda
-        }
-        :null;
-}
-
-
-/* ============================================================
-   STANDARDIZATION
-============================================================ */
-
-function standardize(
-    X
-){
-
-    const p=
-        X[0].length;
-
-
-    const means=
-        Array(p).fill(0);
-
-
-    const stds=
-        Array(p).fill(1);
-
-
-    for(
-        let j=0;
-        j<p;
-        j++
-    ){
-
-        means[j]=
-            mean(
-                X.map(
-                    row =>
-                        row[j]
-                )
-            );
-
-
-        stds[j]=
-            std(
-                X.map(
-                    row =>
-                        row[j]
-                )
-            )||
-            1;
-    }
-
-
-    const transformed=
-        X.map(
-            row =>
-                row.map(
-                    (value,j)=>
-                        (
-                            value-
-                            means[j]
-                        )/
-                        stds[j]
-                )
-        );
-
-
-    return {
-
-        transformed,
-
-        means,
-
-        stds
-    };
-}
-
-
-/* ============================================================
-   MODEL BUILD
-============================================================ */
-
-function trainBPModel(){
-
-    const sessions=
-        getCalibrationSessions();
-
-
-    calibrationCountEl.textContent=
-        sessions.length;
-
-
-    if(
-        sessions.length<8
-    ){
-
-        modelStateEl.textContent=
-            "Not Ready";
-
-
-        modelMessageEl.textContent=
-            "نحتاج إلى 8 جلسات مرجعية على الأقل. الأفضل أكثر من 20 جلسة وبقيم SYS/DIA متنوعة.";
-
-        return;
-    }
-
-
-    const rawX=[];
-    const sys=[];
-    const dia=[];
-
-
-    for(
-        const session of sessions
-    ){
-
-        const features=
-            sessionToFeatures(
-                session
-            );
-
-
-        if(
-            !features
-        ){
-
-            continue;
-        }
-
-
-        const s=
-            Number(
-                session.reference_sys
-            );
-
-
-        const d=
-            Number(
-                session.reference_dia
-            );
-
-
-        if(
-            !finite(s) ||
-            !finite(d)
-        ){
-
-            continue;
-        }
-
-
-        rawX.push(
-            features
-        );
-
-
-        sys.push(s);
-
-        dia.push(d);
-    }
-
-
-    if(
-        rawX.length<8
-    ){
-
-        modelStateEl.textContent=
-            "Not Ready";
-
-
-        modelMessageEl.textContent=
-            "عدد الجلسات الصالحة للمعايرة أقل من المطلوب.";
-
-
-        return;
-    }
-
-
-    const sysRange=
-        Math.max(...sys)-
-        Math.min(...sys);
-
-
-    const diaRange=
-        Math.max(...dia)-
-        Math.min(...dia);
-
-
-    /*
-     * Do not produce an apparently precise
-     * model from a very narrow reference range.
-     */
-    if(
-        sysRange<10 ||
-        diaRange<6
-    ){
-
-        modelStateEl.textContent=
-            "Not Ready";
-
-
-        modelMessageEl.textContent=
-            "قيم الضغط المرجعية متقاربة جدًا لبناء نموذج قابل للتعميم. نحتاج نطاقًا أوسع من القياسات.";
-
-
-        return;
-    }
-
-
-    const normalized=
-        standardize(
-            rawX
-        );
-
-
-    const sysModel=
-        ridgeRegression(
-            normalized.transformed,
-            sys
-        );
-
-
-    const diaModel=
-        ridgeRegression(
-            normalized.transformed,
-            dia
-        );
-
-
-    if(
-        !sysModel ||
-        !diaModel
-    ){
-
-        modelStateEl.textContent=
-            "Failed";
-
-
-        modelMessageEl.textContent=
-            "تعذر إنشاء نموذج المعايرة.";
-
-
-        return;
-    }
-
-
-    /*
-     * Training error.
-     */
-    let maeSys=0;
-    let maeDia=0;
-
-
-    for(
-        let i=0;
-        i<normalized.transformed.length;
-        i++
-    ){
-
-        const predictedSys=
-            predictLinear(
-                sysModel,
-                normalized.transformed[i]
-            );
-
-
-        const predictedDia=
-            predictLinear(
-                diaModel,
-                normalized.transformed[i]
-            );
-
-
-        maeSys +=
-            Math.abs(
-                predictedSys-
-                sys[i]
-            );
-
-
-        maeDia +=
-            Math.abs(
-                predictedDia-
-                dia[i]
-            );
-    }
-
-
-    maeSys/=
-        normalized.transformed.length;
-
-
-    maeDia/=
-        normalized.transformed.length;
-
-
-    const model={
-
-        version:
-            "9.0",
-
-        created_at:
-            new Date()
-                .toISOString(),
-
-        samples:
-            rawX.length,
-
-        normalization:
-            normalized,
-
-        systolic:
-            sysModel,
-
-        diastolic:
-            diaModel,
-
-        sys_range:[
-            Math.min(...sys),
-            Math.max(...sys)
-        ],
-
-        dia_range:[
-            Math.min(...dia),
-            Math.max(...dia)
-        ],
-
-        training_mae_sys:
-            maeSys,
-
-        training_mae_dia:
-            maeDia
-    };
-
-
-    saveBPModel(
-        model
-    );
-
-
-    renderModelStatus(
-        model
-    );
-
-
-    if(
-        latestAnalysis
-    ){
-
-        runBP();
-
-        buildClinicalAssessment();
-    }
-}
-
-
-/* ============================================================
-   LINEAR PREDICTION
-============================================================ */
-
-function predictLinear(
-    model,
-    features
-){
-
-    if(
-        !model ||
-        !model.weights
-    ){
-
-        return null;
-    }
-
-
-    let total=0;
-
-
-    for(
-        let i=0;
-        i<model.weights.length;
-        i++
-    ){
-
-        total+=
-            model.weights[i]*
-            features[i];
-    }
-
-
-    return total;
-}
-
-
-/* ============================================================
-   BP PREDICTION
-============================================================ */
-
-function runBP(){
-
-    latestBP=
-        null;
-
-
-    const model=
-        getBPModel();
-
-
-    if(
-        !model
-    ){
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "يحتاج نموذج معايرة صالح";
-
-
-        return;
-    }
-
-
-    const features=
-        extractBPFeatures();
-
-
-    if(
-        !features
-    ){
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "الإشارة غير كافية";
-
-
-        return;
-    }
-
-
-    const normalized=
-        features.map(
-            (value,i)=>
-                (
-                    value-
-                    model.normalization.means[i]
-                )/
-                (
-                    model.normalization.stds[i]||
-                    1
-                )
-        );
-
-
-    const sys=
-        predictLinear(
-            model.systolic,
-            normalized
-        );
-
-
-    const dia=
-        predictLinear(
-            model.diastolic,
-            normalized
-        );
-
-
-    if(
-        !finite(sys) ||
-        !finite(dia) ||
-        sys<=dia
-    ){
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "تقدير غير مستقر";
-
-
-        return;
-    }
-
-
-    /*
-     * Keep predictions close to
-     * the trained calibration domain.
-     */
-    const safeSys=
-        clamp(
-            sys,
-            model.sys_range[0]-15,
-            model.sys_range[1]+15
-        );
-
-
-    const safeDia=
-        clamp(
-            dia,
-            model.dia_range[0]-10,
-            model.dia_range[1]+10
-        );
-
-
-    if(
-        safeSys<=safeDia
-    ){
-
-        bpEl.textContent=
-            "--";
-
-
-        bpSubEl.textContent=
-            "تقدير غير مستقر";
-
-
-        return;
-    }
-
-
-    latestBP={
-
-        sys:
-            safeSys,
-
-        dia:
-            safeDia
-    };
-
-
-    bpEl.textContent=
-        `${safeSys.toFixed(0)}/${safeDia.toFixed(0)}`;
-
-
-    bpSubEl.textContent=
-        "AI estimated • calibrated research model";
+    runBP();
 }
 
 
@@ -6321,46 +4962,32 @@ function buildClinicalAssessment(){
             .trim();
 
 
-    const history=
-        document
-            .getElementById(
-                "history"
-            )
-            .value
-            .trim();
-
-
-    let risk=
-        "low";
+    let risk="low";
 
 
     let riskText=
-        "لا توجد إشارة آلية مرتفعة في القياسات الحالية.";
+        "لا توجد إشارة آلية مرتفعة في القياس الحالي.";
 
 
     let considerations=
-        "ينبغي تفسير القياسات مع الأعراض والتاريخ المرضي والفحص السريري.";
+        "يجب تفسير القياسات مع الأعراض والتاريخ المرضي والفحص السريري.";
 
 
     let recommendation=
         "مراجعة الطبيب عند وجود أعراض أو عوامل خطورة.";
 
 
-    /*
-     * Urgent symptom screening.
-     */
-    const urgentPattern=
+    const urgent=
         /(ألم صدر|ضيق تنفس شديد|إغماء|فقدان الوعي|تشنج|ضعف مفاجئ|صعوبة الكلام|نزيف شديد)/i;
 
 
     if(
-        urgentPattern.test(
+        urgent.test(
             symptoms
         )
     ){
 
-        risk=
-            "urgent";
+        risk="urgent";
 
 
         riskText=
@@ -6368,71 +4995,30 @@ function buildClinicalAssessment(){
 
 
         considerations=
-            "الأعراض الحالية أهم من نتيجة القياس التجريبي وحدها.";
+            "الأعراض السريرية أهم من النتيجة التجريبية الحالية.";
 
 
         recommendation=
-            "اطلب تقييمًا طبيًا عاجلًا أو خدمات الطوارئ المناسبة حسب شدة الحالة.";
+            "اطلب تقييمًا طبيًا عاجلًا أو خدمات الطوارئ المناسبة.";
 
     }else if(
-        latestAnalysis.bpm>=120 ||
-        latestAnalysis.bpm<=45
+        latestAnalysis.bpm<=45 ||
+        latestAnalysis.bpm>=120
     ){
 
-        risk=
-            "attention";
+        risk="attention";
 
 
         riskText=
-            "معدل ضربات القلب خارج النطاق المعتاد ويحتاج إلى مراجعة السياق السريري.";
+            "معدل ضربات القلب خارج النطاق المعتاد.";
 
 
         considerations=
-            "قد تتأثر النتيجة بالإجهاد أو الحركة أو جودة الإشارة.";
+            "قد تتأثر النتيجة بالحركة أو جودة الإشارة، ويجب تأكيدها.";
 
 
         recommendation=
-            "أعد القياس في حالة الراحة، واستشر الطبيب إذا استمرت النتيجة أو ظهرت أعراض.";
-
-    }else if(
-        latestBP &&
-        latestBP.sys>=140
-    ){
-
-        risk=
-            "attention";
-
-
-        riskText=
-            "تقدير الضغط الانقباضي مرتفع ويحتاج إلى تأكيد بقياس طبي موثوق.";
-
-
-        considerations=
-            "تقدير Doctor MIMO تجريبي ولا يجب اعتباره تشخيصًا أو بديلًا لجهاز ضغط معتمد.";
-
-
-        recommendation=
-            "أكد القراءة بجهاز ضغط معتمد وأجرِ التقييم الطبي المناسب.";
-
-    }else if(
-        latestBP &&
-        latestBP.sys<90
-    ){
-
-        risk=
-            "attention";
-
-
-        riskText=
-            "تقدير الضغط الانقباضي منخفض ويحتاج إلى تأكيد طبي.";
-
-
-        considerations=
-            "يجب ربط القراءة بالأعراض مثل الدوخة أو الإغماء أو الضعف إن وجدت.";
-
-
-        recommendation=
-            "أعد القياس في حالة الراحة واطلب تقييمًا طبيًا عند وجود أعراض.";
+            "أعد القياس في حالة الراحة واستشر الطبيب عند استمرار النتيجة أو وجود أعراض.";
     }
 
 
@@ -6444,10 +5030,12 @@ function buildClinicalAssessment(){
         "risk "+
         (
             risk==="urgent"
-                ?"riskUrgent"
+                ?
+                "riskUrgent"
                 :
             risk==="attention"
-                ?"riskAttention"
+                ?
+                "riskAttention"
                 :
                 "riskLow"
         );
@@ -6459,15 +5047,19 @@ function buildClinicalAssessment(){
         ${latestAnalysis.bpm.toFixed(1)} BPM.
         Signal Quality:
         ${latestAnalysis.quality}%.
-        ${
-            latestBP
-                ?
-                `Estimated BP:
-                 ${latestBP.sys.toFixed(0)}/${latestBP.dia.toFixed(0)} mmHg.`
-                :
-                "Blood pressure estimate unavailable."
-        }
         `;
+
+
+    if(
+        latestBP
+    ){
+
+        findingsEl.textContent+=
+            `
+            Estimated BP:
+            ${latestBP.sys.toFixed(0)}/${latestBP.dia.toFixed(0)} mmHg.
+            `;
+    }
 
 
     considerationsEl.textContent=
@@ -6476,423 +5068,11 @@ function buildClinicalAssessment(){
 
     recommendationEl.textContent=
         recommendation;
-
-
-    analysisStatus.textContent=
-        "اكتمل التحليل";
-
-
-    if(
-        history
-    ){
-
-        findingsEl.textContent +=
-            " يوجد تاريخ مرضي مدخل يحتاج إلى تفسير سريري.";
-    }
 }
 
 
 /* ============================================================
-   PRODUCT SESSION
-============================================================ */
-
-function getProductSessions(){
-
-    try{
-
-        const raw=
-            localStorage.getItem(
-                PRODUCT_KEY
-            );
-
-
-        if(!raw){
-            return [];
-        }
-
-
-        const data=
-            JSON.parse(raw);
-
-
-        return Array.isArray(data)
-            ?data
-            :[];
-
-    }catch{
-
-        return [];
-    }
-}
-
-
-function saveProductSession(){
-
-    if(
-        !latestAnalysis
-    ){
-
-        return;
-    }
-
-
-    const session={
-
-        id:
-            "DM-"+
-            Date.now()+
-            "-"+
-            Math.random()
-                .toString(36)
-                .slice(2,7),
-
-
-        timestamp:
-            new Date()
-                .toISOString(),
-
-
-        patient_name:
-            document
-                .getElementById(
-                    "patientName"
-                )
-                .value
-                .trim(),
-
-
-        patient_id:
-            document
-                .getElementById(
-                    "patientId"
-                )
-                .value
-                .trim(),
-
-
-        age:
-            document
-                .getElementById(
-                    "age"
-                )
-                .value
-                .trim(),
-
-
-        sex:
-            document
-                .getElementById(
-                    "sex"
-                )
-                .value,
-
-
-        bpm:
-            latestAnalysis.bpm,
-
-
-        quality:
-            finite(
-                latestAnalysis.quality
-            )
-                ?latestAnalysis.quality
-                :0,
-
-
-        confidence:
-            finite(
-                latestAnalysis.confidence
-            )
-                ?latestAnalysis.confidence
-                :0,
-
-
-        bp_sys:
-            latestBP
-                ?latestBP.sys
-                :null,
-
-
-        bp_dia:
-            latestBP
-                ?latestBP.dia
-                :null,
-
-
-        sample_rate:
-            latestAnalysis.sample_rate,
-
-
-        lighting:
-            latestLighting,
-
-
-        face_stability:
-            faceStability,
-
-
-        temporal_bpm:
-            latestAnalysis.temporalBpm,
-
-
-        temporal_spread:
-            latestAnalysis.temporalSpread,
-
-
-        agreement:
-            latestAnalysis.agreement,
-
-
-        roi_type:
-            "FOREHEAD",
-
-
-        raw_times:
-            [...signalTimes],
-
-
-        raw_green:
-            [...greenSignal]
-    };
-
-
-    const sessions=
-        getProductSessions();
-
-
-    sessions.unshift(
-        session
-    );
-
-
-    localStorage.setItem(
-        PRODUCT_KEY,
-        JSON.stringify(
-            sessions
-        )
-    );
-
-
-    renderHistory();
-}
-
-
-/* ============================================================
-   HISTORY
-============================================================ */
-
-function renderHistory(){
-
-    const sessions=
-        getProductSessions();
-
-
-    historyBody.innerHTML=
-        "";
-
-
-    if(
-        !sessions.length
-    ){
-
-        historyBody.innerHTML=
-            `
-            <tr>
-                <td colspan="6"
-                    style="padding:18px;color:#8290a1;">
-                    لا توجد فحوصات محفوظة حتى الآن.
-                </td>
-            </tr>
-            `;
-
-
-        return;
-    }
-
-
-    for(
-        const session of
-        sessions.slice(
-            0,
-            30
-        )
-    ){
-
-        const row=
-            document.createElement(
-                "tr"
-            );
-
-
-        row.innerHTML=
-            `
-
-            <td>
-                ${new Date(
-                    session.timestamp
-                ).toLocaleString(
-                    "ar-EG"
-                )}
-            </td>
-
-
-            <td>
-                ${escapeHtml(
-                    session.patient_name ||
-                    "--"
-                )}
-            </td>
-
-
-            <td>
-                ${fmt(
-                    Number(
-                        session.bpm
-                    ),
-                    1
-                )}
-            </td>
-
-
-            <td>
-                ${
-                    finite(
-                        Number(
-                            session.bp_sys
-                        )
-                    ) &&
-                    finite(
-                        Number(
-                            session.bp_dia
-                        )
-                    )
-                        ?
-                        `${Number(
-                            session.bp_sys
-                        ).toFixed(0)}
-                        /
-                        ${Number(
-                            session.bp_dia
-                        ).toFixed(0)}`
-
-                        :
-                        "--"
-                }
-            </td>
-
-
-            <td>
-                ${
-                    finite(
-                        Number(
-                            session.quality
-                        )
-                    )
-                        ?
-                        Number(
-                            session.quality
-                        ).toFixed(0)+"%"
-                        :
-                        "--"
-                }
-            </td>
-
-
-            <td>
-                ${
-                    finite(
-                        Number(
-                            session.confidence
-                        )
-                    )
-                        ?
-                        Number(
-                            session.confidence
-                        ).toFixed(0)+"%"
-                        :
-                        "--"
-                }
-            </td>
-
-            `;
-
-
-        historyBody.appendChild(
-            row
-        );
-    }
-
-
-    updateResearchOutput();
-}
-
-
-/* ============================================================
-   RESEARCH OUTPUT
-============================================================ */
-
-function updateResearchOutput(){
-
-    researchOutput.value=
-        JSON.stringify(
-            getProductSessions(),
-            null,
-            2
-        );
-}
-
-
-/* ============================================================
-   MODEL STATUS
-============================================================ */
-
-function renderModelStatus(
-    model
-){
-
-    const sessions=
-        getCalibrationSessions();
-
-
-    calibrationCountEl.textContent=
-        sessions.length;
-
-
-    if(
-        !model
-    ){
-
-        modelStateEl.textContent=
-            "Not Ready";
-
-
-        modelMessageEl.textContent=
-            "النموذج غير معاير حاليًا.";
-
-        return;
-    }
-
-
-    modelStateEl.textContent=
-        "Ready";
-
-
-    modelMessageEl.textContent=
-        `
-        ${model.samples}
-        paired sessions.
-        Training MAE:
-        SYS ${model.training_mae_sys.toFixed(1)}
-        /
-        DIA ${model.training_mae_dia.toFixed(1)}
-        mmHg.
-        `
-        .trim();
-}
-
-
-/* ============================================================
-   START CAMERA
+   CAMERA
 ============================================================ */
 
 async function startCamera(){
@@ -6939,7 +5119,7 @@ async function startCamera(){
 
 
             faceMesh.onResults(
-                processFaceResults
+                handleFaceResults
             );
         }
 
@@ -7015,12 +5195,113 @@ async function startCamera(){
             true;
 
 
-        assessBtn.disabled=
+        startAssessmentBtn.disabled=
             false;
 
 
         stopBtn.disabled=
             false;
+
+
+        setStatus(
+            "جاري اكتشاف الوجه تلقائيًا",
+            "warning"
+        );
+
+
+        instruction.textContent=
+            "ضع وجهك بالكامل داخل الشكل";
+
+
+        drawGuide(
+            "waiting"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        setStatus(
+            "تعذر تشغيل الكاميرا. تأكد من HTTPS وصلاحيات الكاميرا.",
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   FACE RESULTS
+============================================================ */
+
+function handleFaceResults(
+    results
+){
+
+    if(
+        !cameraRunning
+    ){
+
+        return;
+    }
+
+
+    if(
+        !results.multiFaceLandmarks ||
+        !results.multiFaceLandmarks.length
+    ){
+
+        faceDetected=false;
+
+        foreheadDetected=false;
+
+        foreheadROI=null;
+
+        stableForeheadROI=null;
+
+        previousFaceCenter=null;
+
+
+        drawGuide(
+            "bad"
+        );
+
+
+        setStatus(
+            "لم يتم اكتشاف الوجه — ضع وجهك داخل الشكل",
+            "error"
+        );
+
+
+        instruction.textContent=
+            "أدخل الوجه بالكامل داخل الإطار";
+
+
+        return;
+    }
+
+
+    faceDetected=true;
+
+
+    const landmarks=
+        results.multiFaceLandmarks[0];
+
+
+    const roi=
+        detectForehead(
+            landmarks
+        );
+
+
+    if(
+        !roi
+    ){
+
+        foreheadDetected=false;
 
 
         drawGuide(
@@ -7029,93 +5310,232 @@ async function startCamera(){
 
 
         setStatus(
-            "جاري اكتشاف الوجه والجبهة تلقائيًا",
+            "تم اكتشاف الوجه — اجعله مستقيمًا أمام الكاميرا",
             "warning"
         );
 
 
         instruction.textContent=
-            "ضع وجهك بالكامل داخل الشكل";
-        
+            "انظر مباشرة إلى الكاميرا";
 
-    }catch(error){
 
-        console.error(
-            "Camera error:",
-            error
+        return;
+    }
+
+
+    foreheadDetected=true;
+
+    foreheadROI=
+        roi;
+
+
+    stableForeheadROI=
+        smoothROI(
+            roi
         );
 
+
+    updateFaceStability(
+        stableForeheadROI.centerX,
+        stableForeheadROI.centerY
+    );
+
+
+    drawGuide(
+        measuring
+            ?
+            "measure"
+            :
+            "good"
+    );
+
+
+    if(
+        measuring
+    ){
 
         setStatus(
-            "تعذر تشغيل الكاميرا — تأكد من HTTPS وصلاحية الكاميرا.",
-            "error"
+            "جاري جمع الإشارة — لا تحرك رأسك",
+            "ready"
         );
+
+
+        instruction.textContent=
+            "ممتاز — ابقَ طبيعيًا وثابتًا";
+
+    }else{
+
+        setStatus(
+            "الوجه جاهز — يمكنك بدء الفحص",
+            "ready"
+        );
+
+
+        instruction.textContent=
+            "اضغط بدء الفحص الذكي";
+    }
+
+
+    /*
+     * Internal forehead sampling.
+     */
+    if(
+        measuring &&
+        stableForeheadROI
+    ){
+
+        const sample=
+            sampleROI(
+                stableForeheadROI
+            );
+
+
+        if(!sample){
+
+            return;
+        }
+
+
+        const elapsed=
+            (
+                performance.now()-
+                measurementStart
+            )/1000;
+
+
+        if(
+            !times.length ||
+            elapsed>
+            times[
+                times.length-1
+            ]
+        ){
+
+            times.push(
+                elapsed
+            );
+
+            red.push(
+                sample.r
+            );
+
+            green.push(
+                sample.g
+            );
+
+            blue.push(
+                sample.b
+            );
+
+
+            latestLighting=
+                sample.lighting;
+        }
+
+
+        while(
+            times.length>
+            MAX_SAMPLES
+        ){
+
+            times.shift();
+
+            red.shift();
+
+            green.shift();
+
+            blue.shift();
+        }
+
+
+        const now=
+            performance.now();
+
+
+        if(
+            now-lastAnalysisTime>=
+            ANALYSIS_INTERVAL
+        ){
+
+            lastAnalysisTime=
+                now;
+
+
+            /*
+             * Intermediate analysis.
+             * NOT final save.
+             */
+            analyzeNow(
+                false
+            );
+        }
     }
 }
 
 
 /* ============================================================
-   CLEAR MEASUREMENT
+   START ASSESSMENT
 ============================================================ */
 
-function clearMeasurement(){
+function startAssessment(){
 
-    signalTimes=[];
-    redSignal=[];
-    greenSignal=[];
-    blueSignal=[];
+    if(
+        !cameraRunning ||
+        !faceDetected ||
+        !foreheadDetected ||
+        !stableForeheadROI
+    ){
 
+        alert(
+            "انتظر حتى يصبح الوجه جاهزًا."
+        );
 
-    bpmHistory.length=
-        0;
-
-
-    latestAnalysis=
-        null;
-
-
-    latestBP=
-        null;
+        return;
+    }
 
 
-    latestLighting=
-        0;
+    times=[];
+
+    red=[];
+
+    green=[];
+
+    blue=[];
 
 
-    bpmEl.textContent=
-        "--";
+    latestLighting=0;
+
+    latestAnalysis=null;
+
+    latestBP=null;
+
+    resultHistory.length=0;
 
 
-    qualityEl.textContent=
-        "--";
+    lastAnalysisTime=0;
+
+    analysisBusy=false;
 
 
-    confidenceEl.textContent=
-        "--";
+    bpmEl.textContent="--";
+
+    qualityEl.textContent="--";
+
+    confidenceEl.textContent="--";
+
+    confidenceLabelEl.textContent="--";
+
+    confidenceBar.style.width="0%";
 
 
-    confidenceLabelEl.textContent=
-        "--";
-
-
-    confidenceBar.style.width=
-        "0%";
-
-
-    bpEl.textContent=
-        "--";
-
+    bpEl.textContent="--";
 
     bpSubEl.textContent=
-        "يحتاج نموذج معايرة صالح";
-
-
-    analysisStatus.textContent=
-        "في انتظار الفحص";
+        "نموذج المعايرة غير متاح";
 
 
     findingsEl.textContent=
-        "ابدأ الفحص لإجراء التحليل.";
+        "جاري جمع الإشارة...";
 
 
     considerationsEl.textContent=
@@ -7127,69 +5547,36 @@ function clearMeasurement(){
 
 
     riskBadge.textContent=
-        "في انتظار البيانات";
+        "جاري القياس";
 
 
     riskBadge.className=
         "risk riskLow";
-}
 
 
-/* ============================================================
-   START ASSESSMENT
-============================================================ */
-
-function startAssessment(){
-
-    if(
-        !cameraRunning
-    ){
-
-        return;
-    }
+    analysisStatus.textContent=
+        "جاري القياس";
 
 
-    if(
-        !faceDetected ||
-        !foreheadDetected ||
-        !stableForeheadROI
-    ){
-
-        alert(
-            "انتظر حتى يظهر أن الوجه جاهز."
-        );
-
-        return;
-    }
+    measuring=true;
 
 
-    clearMeasurement();
-
-
-    assessing=
-        true;
-
-
-    assessmentStart=
+    measurementStart=
         performance.now();
 
 
-    lastAnalysisTime=
-        0;
-
-
-    assessBtn.disabled=
+    startAssessmentBtn.disabled=
         true;
 
 
     setStatus(
-        "بدأ الفحص — ابقَ طبيعيًا وثبّت وجهك",
+        "بدأ الفحص — النتيجة النهائية تعتمد على الجلسة الكاملة",
         "ready"
     );
 
 
     instruction.textContent=
-        "جاري القياس... لا تحرك رأسك";
+        "لا تحرك رأسك لمدة 15 ثانية";
 
 
     drawGuide(
@@ -7197,57 +5584,62 @@ function startAssessment(){
     );
 
 
-    assessmentTimer=
+    measurementTimer=
         setTimeout(
             finishAssessment,
-            ASSESSMENT_SECONDS*1000
+            MEASUREMENT_SECONDS*1000
         );
 }
 
 
 /* ============================================================
-   FINISH ASSESSMENT
+   FINISH
 ============================================================ */
 
 async function finishAssessment(){
 
     if(
-        !assessing
+        !measuring
     ){
 
         return;
     }
 
 
-    assessing=
-        false;
+    measuring=false;
 
 
     if(
-        assessmentTimer
+        measurementTimer
     ){
 
         clearTimeout(
-            assessmentTimer
+            measurementTimer
         );
 
-
-        assessmentTimer=
-            null;
+        measurementTimer=null;
     }
 
 
+    setStatus(
+        "جاري تحليل الجلسة الكاملة...",
+        "ready"
+    );
+
+
+    instruction.textContent=
+        "Doctor MIMO يحلل القياس النهائي";
+
+
     /*
-     * FINAL ANALYSIS FIX
-     *
-     * Wait for any running analysis.
+     * Wait for any intermediate analysis.
      */
-    let guard=0;
+    let wait=0;
 
 
     while(
         analysisBusy &&
-        guard<20
+        wait<30
     ){
 
         await new Promise(
@@ -7259,183 +5651,1684 @@ async function finishAssessment(){
         );
 
 
-        guard++;
+        wait++;
     }
 
 
     /*
-     * Force one final analysis.
+     * Final analysis uses the complete
+     * current buffer.
      */
-    if(
-        greenSignal.length>=60
-    ){
-
-        await requestAnalysis();
-    }
-
-
-    /*
-     * Only NOW save the session.
-     *
-     * This fixes the previous null
-     * quality/confidence problem.
-     */
-    if(
-        latestAnalysis &&
-        finite(
-            latestAnalysis.bpm
-        )
-    ){
-
-        renderAnalysis();
-
-
-        saveProductSession();
-
-
-        setStatus(
-            "اكتمل الفحص وتم حفظ النتيجة.",
-            "ready"
+    const finalResult=
+        await analyzeNow(
+            true
         );
 
 
-        instruction.textContent=
-            "اكتمل الفحص ويمكن مراجعة النتيجة.";
-
-    }else{
+    if(
+        !finalResult ||
+        !finite(
+            finalResult.bpm
+        )
+    ){
 
         setStatus(
-            "لم نحصل على إشارة كافية — أعد الفحص مع ثبات وإضاءة أفضل.",
+            "الإشارة غير كافية للحصول على نتيجة نهائية موثوقة.",
             "warning"
         );
 
 
         instruction.textContent=
-            "أعد الفحص وحافظ على وضع الوجه ثابتًا.";
+            "أعد الفحص مع إضاءة جيدة وثبات أكبر";
+
+
+        startAssessmentBtn.disabled=
+            !cameraRunning;
+
+
+        return;
     }
 
 
-    assessBtn.disabled=
+    /*
+     * Reject obviously weak final sessions.
+     */
+    if(
+        finalResult.quality<20
+    ){
+
+        setStatus(
+            "جودة الإشارة منخفضة — أعد الفحص.",
+            "warning"
+        );
+
+
+        instruction.textContent=
+            "أعد الفحص في إضاءة أفضل";
+
+
+        startAssessmentBtn.disabled=
+            !cameraRunning;
+
+
+        return;
+    }
+
+
+    runBP();
+
+
+    buildClinicalAssessment();
+
+
+    /*
+     * Save AFTER everything is final.
+     */
+    saveProductSession();
+
+
+    setStatus(
+        "اكتمل الفحص وتم حفظ النتيجة النهائية.",
+        "ready"
+    );
+
+
+    instruction.textContent=
+        "اكتمل الفحص ويمكن مراجعة النتيجة.";
+
+
+    startAssessmentBtn.disabled=
         !cameraRunning;
 
 
     drawGuide(
         foreheadDetected
-            ?"good"
-            :"waiting"
+            ?
+            "good"
+            :
+            "waiting"
     );
 }
 
 
 /* ============================================================
-   STOP CAMERA
+   BP MODEL
 ============================================================ */
 
-function stopCamera(){
+function getBPModel(){
 
-    assessing=
-        false;
+    try{
+
+        const raw=
+            localStorage.getItem(
+                BP_MODEL_KEY
+            );
 
 
-    cameraRunning=
-        false;
-
-
-    if(
-        assessmentTimer
-    ){
-
-        clearTimeout(
-            assessmentTimer
-        );
-
-        assessmentTimer=
+        return raw
+            ?
+            JSON.parse(raw)
+            :
             null;
+
+    }catch{
+
+        return null;
     }
+}
 
 
-    if(
-        camera
+function getCalibrationSessions(){
+
+    const all=[];
+
+
+    for(
+        const key of
+        LEGACY_RESEARCH_KEYS
     ){
 
         try{
 
-            camera.stop();
+            const raw=
+                localStorage.getItem(
+                    key
+                );
+
+
+            if(!raw)
+                continue;
+
+
+            const data=
+                JSON.parse(raw);
+
+
+            if(
+                Array.isArray(data)
+            ){
+
+                all.push(
+                    ...data
+                );
+            }
 
         }catch{}
     }
 
 
-    camera=
-        null;
+    try{
 
-
-    if(
-        video.srcObject
-    ){
-
-        video.srcObject
-            .getTracks()
-            .forEach(
-                track =>
-                    track.stop()
+        const raw=
+            localStorage.getItem(
+                PRODUCT_KEY
             );
 
 
-        video.srcObject=
-            null;
+        if(raw){
+
+            const data=
+                JSON.parse(raw);
+
+
+            if(
+                Array.isArray(data)
+            ){
+
+                all.push(
+                    ...data
+                );
+            }
+        }
+
+    }catch{}
+
+
+    const map=
+        new Map();
+
+
+    for(
+        const session of all
+    ){
+
+        const sys=
+            Number(
+                session.reference_sys
+            );
+
+
+        const dia=
+            Number(
+                session.reference_dia
+            );
+
+
+        if(
+            !finite(sys) ||
+            !finite(dia)
+        ){
+
+            continue;
+        }
+
+
+        const key=
+            session.session_id ||
+            session.id ||
+            (
+                session.timestamp+
+                "_"+
+                sys+
+                "_"+
+                dia
+            );
+
+
+        map.set(
+            key,
+            session
+        );
     }
 
 
-    startBtn.disabled=
-        false;
+    return [
+        ...map.values()
+    ];
+}
 
 
-    assessBtn.disabled=
-        true;
+/*
+ * Basic feature fallback for old
+ * paired research sessions.
+ */
+function sessionFeatures(
+    session
+){
+
+    const bpm=
+        Number(
+            session.mimo_bpm ??
+            session.bpm
+        );
 
 
-    stopBtn.disabled=
-        true;
+    const quality=
+        Number(
+            session.signal_quality ??
+            session.quality
+        );
 
 
-    faceDetected=
-        false;
+    const stability=
+        Number(
+            session.face_stability ??
+            80
+        );
 
 
-    foreheadDetected=
-        false;
+    const lighting=
+        Number(
+            session.lighting ??
+            120
+        );
 
 
-    foreheadROI=
+    if(
+        !finite(bpm) ||
+        !finite(quality)
+    ){
+
+        return null;
+    }
+
+
+    let raw=
+        Array.isArray(
+            session.raw_green
+        )
+            ?
+            session.raw_green
+            :
+            [];
+
+
+    let amplitude=0;
+    let sd=0;
+    let cv=0;
+    let crossings=0;
+
+
+    if(
+        raw.length>=10
+    ){
+
+        raw=
+            detrend(
+                raw
+            );
+
+
+        amplitude=
+            Math.max(...raw)-
+            Math.min(...raw);
+
+
+        sd=
+            std(raw);
+
+
+        cv=
+            Math.abs(
+                sd/
+                (
+                    Math.abs(
+                        mean(raw)
+                    )+
+                    1e-9
+                )
+            );
+
+
+        for(
+            let i=1;
+            i<raw.length;
+            i++
+        ){
+
+            if(
+                (
+                    raw[i-1]<=0 &&
+                    raw[i]>0
+                ) ||
+                (
+                    raw[i-1]>=0 &&
+                    raw[i]<0
+                )
+            ){
+
+                crossings++;
+            }
+        }
+    }
+
+
+    const rawTimes=
+        Array.isArray(
+            session.raw_times
+        )
+            ?
+            session.raw_times
+            :
+            [];
+
+
+    const duration=
+        rawTimes.length>1
+            ?
+            rawTimes[
+                rawTimes.length-1
+            ]-
+            rawTimes[0]
+            :
+            10;
+
+
+    const crossingRate=
+        crossings/
+        Math.max(
+            duration,
+            1
+        );
+
+
+    return [
+
+        1,
+
+        bpm,
+
+        amplitude,
+
+        sd,
+
+        cv,
+
+        crossingRate,
+
+        bpm>0
+            ?
+            60/bpm
+            :
+            0,
+
+        quality,
+
+        stability,
+
+        lighting,
+
+        bpm*quality,
+
+        bpm*stability
+    ];
+}
+
+
+function solveLinearSystem(
+    A,
+    b
+){
+
+    const n=
+        b.length;
+
+
+    const M=
+        A.map(
+            (row,i)=>
+                [
+                    ...row,
+                    b[i]
+                ]
+        );
+
+
+    for(
+        let col=0;
+        col<n;
+        col++
+    ){
+
+        let pivot=
+            col;
+
+
+        for(
+            let row=col+1;
+            row<n;
+            row++
+        ){
+
+            if(
+                Math.abs(
+                    M[row][col]
+                )>
+                Math.abs(
+                    M[pivot][col]
+                )
+            ){
+
+                pivot=row;
+            }
+        }
+
+
+        if(
+            Math.abs(
+                M[pivot][col]
+            )<
+            1e-10
+        ){
+
+            return null;
+        }
+
+
+        [
+            M[col],
+            M[pivot]
+        ]=
+        [
+            M[pivot],
+            M[col]
+        ];
+
+
+        const divisor=
+            M[col][col];
+
+
+        for(
+            let j=col;
+            j<=n;
+            j++
+        ){
+
+            M[col][j]/=
+                divisor;
+        }
+
+
+        for(
+            let row=0;
+            row<n;
+            row++
+        ){
+
+            if(
+                row===col
+            ){
+
+                continue;
+            }
+
+
+            const factor=
+                M[row][col];
+
+
+            for(
+                let j=col;
+                j<=n;
+                j++
+            ){
+
+                M[row][j]-=
+                    factor*
+                    M[col][j];
+            }
+        }
+    }
+
+
+    return M.map(
+        row =>
+            row[n]
+    );
+}
+
+
+function ridge(
+    X,
+    y,
+    lambda=.8
+){
+
+    const p=
+        X[0].length;
+
+
+    const A=
+        Array.from(
+            {
+                length:p
+            },
+            () =>
+                Array(p).fill(0)
+        );
+
+
+    const b=
+        Array(p).fill(0);
+
+
+    for(
+        let i=0;
+        i<X.length;
+        i++
+    ){
+
+        for(
+            let j=0;
+            j<p;
+            j++
+        ){
+
+            b[j]+=
+                X[i][j]*
+                y[i];
+
+
+            for(
+                let k=0;
+                k<p;
+                k++
+            ){
+
+                A[j][k]+=
+                    X[i][j]*
+                    X[i][k];
+            }
+        }
+    }
+
+
+    for(
+        let i=0;
+        i<p;
+        i++
+    ){
+
+        A[i][i]+=lambda;
+    }
+
+
+    const weights=
+        solveLinearSystem(
+            A,
+            b
+        );
+
+
+    return weights
+        ?{
+            weights
+        }
+        :
         null;
+}
 
 
-    stableForeheadROI=
-        null;
+function standardize(
+    X
+){
+
+    const p=
+        X[0].length;
 
 
-    lastFaceCenter=
-        null;
+    const means=
+        Array(p).fill(0);
 
 
-    faceStability=
-        100;
+    const stds=
+        Array(p).fill(1);
 
 
-    drawGuide(
-        "waiting"
+    for(
+        let j=0;
+        j<p;
+        j++
+    ){
+
+        means[j]=
+            mean(
+                X.map(
+                    row =>
+                        row[j]
+                )
+            );
+
+
+        stds[j]=
+            std(
+                X.map(
+                    row =>
+                        row[j]
+                )
+            )||
+            1;
+    }
+
+
+    return {
+
+        means,
+
+        stds,
+
+        transformed:
+            X.map(
+                row =>
+                    row.map(
+                        (v,j)=>
+                            (
+                                v-
+                                means[j]
+                            )/
+                            stds[j]
+                    )
+            )
+    };
+}
+
+
+function predict(
+    model,
+    x
+){
+
+    if(
+        !model ||
+        !model.weights
+    ){
+
+        return null;
+    }
+
+
+    let result=0;
+
+
+    for(
+        let i=0;
+        i<model.weights.length;
+        i++
+    ){
+
+        result+=
+            model.weights[i]*
+            x[i];
+    }
+
+
+    return result;
+}
+
+
+/* ============================================================
+   TRAIN BP MODEL
+============================================================ */
+
+function trainBPModel(){
+
+    const sessions=
+        getCalibrationSessions();
+
+
+    calibrationCountEl.textContent=
+        sessions.length;
+
+
+    if(
+        sessions.length<8
+    ){
+
+        modelStateEl.textContent=
+            "Not Ready";
+
+
+        modelMessageEl.textContent=
+            "نحتاج إلى 8 جلسات مرجعية على الأقل. والأفضل 20+ جلسة وبمدى SYS/DIA متنوع.";
+
+
+        return;
+    }
+
+
+    const X=[];
+    const sys=[];
+    const dia=[];
+
+
+    for(
+        const session of sessions
+    ){
+
+        const features=
+            sessionFeatures(
+                session
+            );
+
+
+        const s=
+            Number(
+                session.reference_sys
+            );
+
+
+        const d=
+            Number(
+                session.reference_dia
+            );
+
+
+        if(
+            features &&
+            finite(s) &&
+            finite(d)
+        ){
+
+            X.push(features);
+
+            sys.push(s);
+
+            dia.push(d);
+        }
+    }
+
+
+    if(
+        X.length<8
+    ){
+
+        modelStateEl.textContent=
+            "Not Ready";
+
+
+        modelMessageEl.textContent=
+            "عدد الجلسات الصالحة غير كافٍ.";
+
+        return;
+    }
+
+
+    const sysRange=
+        Math.max(...sys)-
+        Math.min(...sys);
+
+
+    const diaRange=
+        Math.max(...dia)-
+        Math.min(...dia);
+
+
+    if(
+        sysRange<10 ||
+        diaRange<6
+    ){
+
+        modelStateEl.textContent=
+            "Not Ready";
+
+
+        modelMessageEl.textContent=
+            "النطاق المرجعي لضغط الدم ضيق جدًا لبناء نموذج مفيد.";
+
+        return;
+    }
+
+
+    const norm=
+        standardize(X);
+
+
+    const sysModel=
+        ridge(
+            norm.transformed,
+            sys
+        );
+
+
+    const diaModel=
+        ridge(
+            norm.transformed,
+            dia
+        );
+
+
+    if(
+        !sysModel ||
+        !diaModel
+    ){
+
+        modelStateEl.textContent=
+            "Failed";
+
+
+        modelMessageEl.textContent=
+            "تعذر بناء نموذج ضغط الدم.";
+
+
+        return;
+    }
+
+
+    let maeSys=0;
+    let maeDia=0;
+
+
+    for(
+        let i=0;
+        i<X.length;
+        i++
+    ){
+
+        maeSys+=
+            Math.abs(
+                predict(
+                    sysModel,
+                    norm.transformed[i]
+                )-
+                sys[i]
+            );
+
+
+        maeDia+=
+            Math.abs(
+                predict(
+                    diaModel,
+                    norm.transformed[i]
+                )-
+                dia[i]
+            );
+    }
+
+
+    maeSys/=
+        X.length;
+
+
+    maeDia/=
+        X.length;
+
+
+    const model={
+
+        version:
+            "Doctor-MIMO-BP-1",
+
+        created_at:
+            new Date()
+                .toISOString(),
+
+        samples:
+            X.length,
+
+        normalization:
+            norm,
+
+        systolic:
+            sysModel,
+
+        diastolic:
+            diaModel,
+
+        sys_range:[
+            Math.min(...sys),
+            Math.max(...sys)
+        ],
+
+        dia_range:[
+            Math.min(...dia),
+            Math.max(...dia)
+        ],
+
+        training_mae_sys:
+            maeSys,
+
+        training_mae_dia:
+            maeDia
+    };
+
+
+    localStorage.setItem(
+        BP_MODEL_KEY,
+        JSON.stringify(
+            model
+        )
     );
 
 
-    setStatus(
-        "الكاميرا متوقفة",
-        "normal"
+    renderModelStatus(
+        model
     );
 
 
-    instruction.textContent=
-        "اضغط تشغيل الكاميرا للبدء";
+    if(
+        latestAnalysis
+    ){
+
+        runBP();
+
+        buildClinicalAssessment();
+    }
+}
+
+
+/* ============================================================
+   RUN BP
+============================================================ */
+
+function runBP(){
+
+    latestBP=null;
+
+
+    const model=
+        getBPModel();
+
+
+    if(
+        !model ||
+        !latestAnalysis
+    ){
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "نموذج المعايرة غير متاح";
+
+
+        return;
+    }
+
+
+    const features=
+        extractCurrentBPFeatures();
+
+
+    if(
+        !features
+    ){
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "الإشارة غير كافية";
+
+
+        return;
+    }
+
+
+    const normalized=
+        features.map(
+            (v,i)=>
+                (
+                    v-
+                    model.normalization.means[i]
+                )/
+                (
+                    model.normalization.stds[i]||
+                    1
+                )
+        );
+
+
+    const sys=
+        predict(
+            model.systolic,
+            normalized
+        );
+
+
+    const dia=
+        predict(
+            model.diastolic,
+            normalized
+        );
+
+
+    if(
+        !finite(sys) ||
+        !finite(dia) ||
+        sys<=dia
+    ){
+
+        bpEl.textContent=
+            "--";
+
+
+        bpSubEl.textContent=
+            "التقدير غير مستقر";
+
+
+        return;
+    }
+
+
+    const safeSys=
+        clamp(
+            sys,
+            model.sys_range[0]-15,
+            model.sys_range[1]+15
+        );
+
+
+    const safeDia=
+        clamp(
+            dia,
+            model.dia_range[0]-10,
+            model.dia_range[1]+10
+        );
+
+
+    if(
+        safeSys<=safeDia
+    ){
+
+        return;
+    }
+
+
+    latestBP={
+
+        sys:
+            safeSys,
+
+        dia:
+            safeDia
+    };
+
+
+    bpEl.textContent=
+        `${safeSys.toFixed(0)}/${safeDia.toFixed(0)}`;
+
+
+    bpSubEl.textContent=
+        "AI estimated • calibrated research model";
+}
+
+
+function extractCurrentBPFeatures(){
+
+    if(
+        !latestAnalysis
+    ){
+
+        return null;
+    }
+
+
+    if(
+        green.length<70 ||
+        times.length<70
+    ){
+
+        return null;
+    }
+
+
+    const x=
+        detrend(
+            green.slice(-180)
+        );
+
+
+    const t=
+        times.slice(-180);
+
+
+    const duration=
+        t.length>1
+            ?
+            t[t.length-1]-
+            t[0]
+            :
+            10;
+
+
+    const amplitude=
+        Math.max(...x)-
+        Math.min(...x);
+
+
+    const sd=
+        std(x);
+
+
+    const cv=
+        Math.abs(
+            sd/
+            (
+                Math.abs(
+                    mean(x)
+                )+
+                1e-9
+            )
+        );
+
+
+    let crossings=0;
+
+
+    for(
+        let i=1;
+        i<x.length;
+        i++
+    ){
+
+        if(
+            (
+                x[i-1]<=0 &&
+                x[i]>0
+            ) ||
+            (
+                x[i-1]>=0 &&
+                x[i]<0
+            )
+        ){
+
+            crossings++;
+        }
+    }
+
+
+    return [
+
+        1,
+
+        latestAnalysis.bpm,
+
+        amplitude,
+
+        sd,
+
+        cv,
+
+        crossings/
+        Math.max(
+            duration,
+            1
+        ),
+
+        latestAnalysis.bpm>0
+            ?
+            60/
+            latestAnalysis.bpm
+            :
+            0,
+
+        latestAnalysis.quality,
+
+        faceStability,
+
+        latestLighting,
+
+        latestAnalysis.bpm*
+        latestAnalysis.quality,
+
+        latestAnalysis.bpm*
+        faceStability
+    ];
+}
+
+
+/* ============================================================
+   MODEL STATUS
+============================================================ */
+
+function renderModelStatus(
+    model
+){
+
+    const sessions=
+        getCalibrationSessions();
+
+
+    calibrationCountEl.textContent=
+        sessions.length;
+
+
+    if(
+        !model
+    ){
+
+        modelStateEl.textContent=
+            "Not Ready";
+
+
+        modelMessageEl.textContent=
+            "نموذج ضغط الدم غير معاير حاليًا.";
+
+        return;
+    }
+
+
+    modelStateEl.textContent=
+        "Ready";
+
+
+    modelMessageEl.textContent=
+        `
+        ${model.samples}
+        paired sessions.
+        Training MAE:
+        SYS ${model.training_mae_sys.toFixed(1)}
+        /
+        DIA ${model.training_mae_dia.toFixed(1)}
+        mmHg.
+        `
+        .trim();
+}
+
+
+/* ============================================================
+   PRODUCT HISTORY
+============================================================ */
+
+function getProductSessions(){
+
+    try{
+
+        const raw=
+            localStorage.getItem(
+                PRODUCT_KEY
+            );
+
+
+        if(!raw)
+            return [];
+
+
+        const data=
+            JSON.parse(raw);
+
+
+        return Array.isArray(data)
+            ? data
+            :[];
+
+    }catch{
+
+        return [];
+    }
+}
+
+
+function saveProductSession(){
+
+    if(
+        !latestAnalysis ||
+        !finite(
+            latestAnalysis.bpm
+        )
+    ){
+
+        return;
+    }
+
+
+    /*
+     * Additional protection:
+     * Never save null confidence/quality.
+     */
+    const quality=
+        finite(
+            latestAnalysis.quality
+        )
+            ?
+            clamp(
+                latestAnalysis.quality,
+                0,
+                100
+            )
+            :
+            0;
+
+
+    const confidence=
+        finite(
+            latestAnalysis.confidence
+        )
+            ?
+            clamp(
+                latestAnalysis.confidence,
+                0,
+                100
+            )
+            :
+            0;
+
+
+    const session={
+
+        id:
+            "DM-"+
+            Date.now()+
+            "-"+
+            Math.random()
+                .toString(36)
+                .slice(2,7),
+
+
+        timestamp:
+            new Date()
+                .toISOString(),
+
+
+        patient_name:
+            document
+                .getElementById(
+                    "patientName"
+                )
+                .value
+                .trim(),
+
+
+        patient_id:
+            document
+                .getElementById(
+                    "patientId"
+                )
+                .value
+                .trim(),
+
+
+        age:
+            document
+                .getElementById(
+                    "age"
+                )
+                .value
+                .trim(),
+
+
+        sex:
+            document
+                .getElementById(
+                    "sex"
+                )
+                .value,
+
+
+        bpm:
+            latestAnalysis.bpm,
+
+
+        candidate_bpm:
+            latestAnalysis.bpm,
+
+
+        quality,
+
+
+        confidence,
+
+
+        bp_sys:
+            latestBP
+                ?
+                latestBP.sys
+                :
+                null,
+
+
+        bp_dia:
+            latestBP
+                ?
+                latestBP.dia
+                :
+                null,
+
+
+        sample_rate:
+            latestAnalysis.sampleRate,
+
+
+        duration_sec:
+            latestAnalysis.duration ||
+            (
+                times.length>1
+                    ?
+                    times[times.length-1]-
+                    times[0]
+                    :
+                    0
+            ),
+
+
+        lighting:
+            latestLighting,
+
+
+        face_stability:
+            faceStability,
+
+
+        temporal_bpm:
+            latestAnalysis.temporalBpm,
+
+
+        temporal_spread:
+            latestAnalysis.temporalSpread,
+
+
+        method_agreement:
+            latestAnalysis.agreement,
+
+
+        support:
+            latestAnalysis.support,
+
+
+        roi_type:
+            "FOREHEAD",
+
+
+        raw_times:
+            [...times],
+
+
+        raw_green:
+            [...green]
+    };
+
+
+    const sessions=
+        getProductSessions();
+
+
+    sessions.unshift(
+        session
+    );
+
+
+    localStorage.setItem(
+        PRODUCT_KEY,
+        JSON.stringify(
+            sessions
+        )
+    );
+
+
+    renderHistory();
+}
+
+
+/* ============================================================
+   HISTORY
+============================================================ */
+
+function renderHistory(){
+
+    const sessions=
+        getProductSessions();
+
+
+    historyBody.innerHTML=
+        "";
+
+
+    if(
+        !sessions.length
+    ){
+
+        historyBody.innerHTML=
+            `
+            <tr>
+                <td colspan="6"
+                    style="padding:18px;color:#8290a1;">
+                    لا توجد فحوصات محفوظة حتى الآن.
+                </td>
+            </tr>
+            `;
+
+        return;
+    }
+
+
+    for(
+        const s of
+        sessions.slice(0,30)
+    ){
+
+        const row=
+            document.createElement(
+                "tr"
+            );
+
+
+        row.innerHTML=
+            `
+
+            <td>
+                ${new Date(
+                    s.timestamp
+                ).toLocaleString(
+                    "ar-EG"
+                )}
+            </td>
+
+
+            <td>
+                ${escapeHtml(
+                    s.patient_name ||
+                    "--"
+                )}
+            </td>
+
+
+            <td>
+                ${fmt(
+                    Number(
+                        s.bpm
+                    ),
+                    1
+                )}
+            </td>
+
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            s.bp_sys
+                        )
+                    ) &&
+                    finite(
+                        Number(
+                            s.bp_dia
+                        )
+                    )
+                        ?
+                        `${Number(
+                            s.bp_sys
+                        ).toFixed(0)}
+                        /
+                        ${Number(
+                            s.bp_dia
+                        ).toFixed(0)}`
+                        :
+                        "--"
+                }
+            </td>
+
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            s.quality
+                        )
+                    )
+                        ?
+                        Number(
+                            s.quality
+                        ).toFixed(0)+"%"
+                        :
+                        "--"
+                }
+            </td>
+
+
+            <td>
+                ${
+                    finite(
+                        Number(
+                            s.confidence
+                        )
+                    )
+                        ?
+                        Number(
+                            s.confidence
+                        ).toFixed(0)+"%"
+                        :
+                        "--"
+                }
+            </td>
+
+            `;
+
+
+        historyBody.appendChild(
+            row
+        );
+    }
+
+
+    updateResearchOutput();
+}
+
+
+/* ============================================================
+   RESEARCH OUTPUT
+============================================================ */
+
+function updateResearchOutput(){
+
+    researchOutput.value=
+        JSON.stringify(
+            getProductSessions(),
+            null,
+            2
+        );
 }
 
 
@@ -7449,12 +7342,10 @@ function exportModel(){
         getBPModel();
 
 
-    if(
-        !model
-    ){
+    if(!model){
 
         alert(
-            "لا يوجد نموذج معايرة."
+            "لا يوجد نموذج BP."
         );
 
         return;
@@ -7462,7 +7353,7 @@ function exportModel(){
 
 
     download(
-        "doctor-mimo-bp-model-v90.json",
+        "doctor-mimo-bp-model.json",
         JSON.stringify(
             model,
             null,
@@ -7474,14 +7365,14 @@ function exportModel(){
 
 
 /* ============================================================
-   DELETE MODEL
+   RESET MODEL
 ============================================================ */
 
 function resetModel(){
 
     if(
         !confirm(
-            "هل تريد حذف نموذج ضغط الدم الحالي؟"
+            "هل تريد حذف نموذج ضغط الدم؟"
         )
     ){
 
@@ -7494,8 +7385,7 @@ function resetModel(){
     );
 
 
-    latestBP=
-        null;
+    latestBP=null;
 
 
     bpEl.textContent=
@@ -7503,7 +7393,7 @@ function resetModel(){
 
 
     bpSubEl.textContent=
-        "يحتاج نموذج معايرة صالح";
+        "نموذج المعايرة غير متاح";
 
 
     renderModelStatus(
@@ -7574,6 +7464,101 @@ function download(
 
 
 /* ============================================================
+   STOP CAMERA
+============================================================ */
+
+function stopCamera(){
+
+    measuring=false;
+
+    cameraRunning=false;
+
+
+    if(
+        measurementTimer
+    ){
+
+        clearTimeout(
+            measurementTimer
+        );
+
+        measurementTimer=null;
+    }
+
+
+    if(
+        camera
+    ){
+
+        try{
+
+            camera.stop();
+
+        }catch{}
+    }
+
+
+    camera=null;
+
+
+    if(
+        video.srcObject
+    ){
+
+        video.srcObject
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+
+        video.srcObject=null;
+    }
+
+
+    startBtn.disabled=
+        false;
+
+
+    startAssessmentBtn.disabled=
+        true;
+
+
+    stopBtn.disabled=
+        true;
+
+
+    faceDetected=false;
+
+    foreheadDetected=false;
+
+    foreheadROI=null;
+
+    stableForeheadROI=null;
+
+    previousFaceCenter=null;
+
+    faceStability=100;
+
+
+    drawGuide(
+        "waiting"
+    );
+
+
+    setStatus(
+        "الكاميرا متوقفة",
+        "normal"
+    );
+
+
+    instruction.textContent=
+        "اضغط تشغيل الكاميرا للبدء";
+}
+
+
+/* ============================================================
    EVENTS
 ============================================================ */
 
@@ -7583,7 +7568,7 @@ startBtn.addEventListener(
 );
 
 
-assessBtn.addEventListener(
+startAssessmentBtn.addEventListener(
     "click",
     startAssessment
 );
@@ -7616,11 +7601,9 @@ resetModelBtn.addEventListener(
 researchToggle.addEventListener(
     "click",
     ()=>{
-
         researchPanel.classList.toggle(
             "open"
         );
-
 
         updateResearchOutput();
     }
@@ -7634,9 +7617,8 @@ researchToggle.addEventListener(
 window.addEventListener(
     "resize",
     ()=>{
-
         drawGuide(
-            assessing
+            measuring
                 ?"measure"
                 :
             foreheadDetected
@@ -7648,24 +7630,17 @@ window.addEventListener(
 
 
 /* ============================================================
-   INITIALIZE
+   INIT
 ============================================================ */
 
 renderHistory();
-
 
 renderModelStatus(
     getBPModel()
 );
 
-
 drawGuide(
     "waiting"
-);
-
-
-console.log(
-    "Doctor MIMO 9.0 — Product Engine initialized."
 );
 
 </script>
